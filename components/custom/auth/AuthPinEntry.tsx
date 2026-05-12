@@ -6,7 +6,7 @@ import { Button } from "../../ui/button";
 import Link from "next/link";
 
 const AuthPinEntry = () => {
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   return (
     <form>
       <div className="relative">
@@ -15,12 +15,13 @@ const AuthPinEntry = () => {
           size={18}
         />
         <input
-          type={passwordVisible ? "text" : "password"}
+          type={isPasswordVisible ? "text" : "password"}
+          inputMode="numeric"
           className="w-full text-xl border border-gray-400 rounded-lg pl-12 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
           placeholder="••••"
         />
         <Button
-          onClick={() => setPasswordVisible((prev) => !prev)}
+          onClick={() => setIsPasswordVisible((prev) => !prev)}
           type="button"
           variant="link"
           className="absolute right-3 top-1/2 -translate-y-1/2!"
