@@ -2,7 +2,7 @@
 import { useState } from "react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 const PhoneNumberInputForm = () => {
   const [value, setValue] = useState<string | undefined>();

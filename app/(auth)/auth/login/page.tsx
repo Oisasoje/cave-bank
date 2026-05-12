@@ -1,4 +1,4 @@
-import PhoneNumberInputForm from "@/components/custom/PhoneNumberInputForm";
+import PhoneNumberInputForm from "@/components/custom/auth/PhoneNumberInputForm";
 import Link from "next/link";
 
 const LoginPage = () => {

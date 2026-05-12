@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Eye, Lock } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import Link from "next/link";
 
 const AuthPinEntry = () => {

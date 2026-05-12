@@ -1,4 +1,4 @@
-import AuthPinEntry from "@/components/custom/AuthPinEntry";
+import AuthPinEntry from "@/components/custom/auth/AuthPinEntry";
 import Link from "next/link";
 
 const EnterPinPage = () => {
