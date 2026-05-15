@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Eye, Lock } from "lucide-react";
+import { CircleAlert, Eye, Lock } from "lucide-react";
 import { Button } from "../../ui/button";
 import Link from "next/link";
 
 const AuthPinEntry = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [error, setError] = useState("");
+
   return (
     <form>
       <div className="relative">
@@ -17,7 +19,7 @@ const AuthPinEntry = () => {
         <input
           type={isPasswordVisible ? "text" : "password"}
           inputMode="numeric"
-          className="w-full text-xl border border-gray-400 rounded-lg pl-12 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent"
+          className={`w-full text-xl border rounded-lg pl-12 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${error ? "border-red-500" : "border-gray-400"}`}
           placeholder="••••"
         />
         <Button
@@ -31,10 +33,17 @@ const AuthPinEntry = () => {
         </Button>
       </div>
 
-      <div className="flex items-center justify-end">
+      {error && (
+        <div className="mt-2 flex items-center gap-2 text-red-500">
+          <CircleAlert size={16} />
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
+      <div className="flex mt-2 items-center justify-end">
         <Link
           href="/auth/reset-pin"
-          className="text-sm font-medium mt-2 text-foreground"
+          className="text-sm font-medium text-foreground"
         >
           Forgot PIN?
         </Link>

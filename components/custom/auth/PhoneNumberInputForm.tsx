@@ -3,10 +3,11 @@ import { useState } from "react";
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import { Button } from "../../ui/button";
+import { CircleAlert } from "lucide-react";
 
 const PhoneNumberInputForm = () => {
   const [value, setValue] = useState<string | undefined>();
-  const [error, setError] = useState();
+  const [error, setError] = useState("");
   const errorStyle = {
     border: "1px solid red",
     borderRadius: "8px",
@@ -19,9 +20,14 @@ const PhoneNumberInputForm = () => {
           placeholder="Enter phone number"
           value={value}
           onChange={setValue}
-          style={error && errorStyle}
+          style={error ? errorStyle : undefined}
         />
-        {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
+        {error && (
+          <div className="mt-2 flex items-center gap-2 text-red-500">
+            <CircleAlert size={16} />
+            <p className="text-sm">{error}</p>
+          </div>
+        )}
       </div>
 
       <Button type="submit" size="lg" className="w-full">
