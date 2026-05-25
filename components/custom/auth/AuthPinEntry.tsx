@@ -19,7 +19,7 @@ const AuthPinEntry = () => {
         <input
           type={isPasswordVisible ? "text" : "password"}
           inputMode="numeric"
-          className={`w-full text-xl border rounded-lg pl-12 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent ${error ? "border-red-500" : "border-gray-400"}`}
+          className={`w-full text-xl border rounded-lg pl-12 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand-yellow focus:border-transparent ${error ? "border-red-500" : "border-gray-400"}`}
           placeholder="••••"
         />
         <Button
