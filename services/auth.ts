@@ -8,3 +8,13 @@ export async function start(phone: string) {
     }),
   });
 }
+
+export async function verify(id: string, pin: string) {
+  return api("/auth/verify", {
+    method: "POST",
+    body: JSON.stringify({
+      id,
+      pin,
+    }),
+  });
+}

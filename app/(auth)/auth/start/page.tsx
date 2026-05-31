@@ -73,9 +73,11 @@ export default function LoginPage() {
 
     try {
       const response = await start(selectedCountry.dialCode + digits);
+      const { id } = response.data;
+
+      sessionStorage.setItem("authAttemptID", id);
 
       router.push("/auth/verify");
-      console.log(response);
     } catch (error: any) {
       setErrors(error.message);
     } finally {
