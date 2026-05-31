@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { DM_Sans, Space_Mono, Geist } from "next/font/google";
+import { Geist, DM_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -29,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", dmSans.variable, spaceMono.variable, "font-sans", geist.variable)}
+      className={`h-full antialiased ${dmSans.variable} ${spaceMono.variable} font-sans ${geist.variable}`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
