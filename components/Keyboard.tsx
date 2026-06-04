@@ -24,7 +24,10 @@ const Keyboard = ({
           {/* 1 */}
           <div
             className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("1")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("1");
+            }}
           >
             <span className="text-[26px]">1</span>
           </div>
@@ -32,7 +35,10 @@ const Keyboard = ({
           {/* 2 */}
           <div
             className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("2")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("2");
+            }}
           >
             <span className="text-[24px] leading-none">2</span>
             <span className="text-[10px] text-neutral-500 tracking-widest">
@@ -43,7 +49,10 @@ const Keyboard = ({
           {/* 3 */}
           <div
             className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("3")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("3");
+            }}
           >
             <span className="text-[24px] leading-none">3</span>
             <span className="text-[10px] text-neutral-500 tracking-widest">
@@ -54,7 +63,10 @@ const Keyboard = ({
           {/* 4 */}
           <div
             className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("4")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("4");
+            }}
           >
             <span className="text-[24px] leading-none">4</span>
             <span className="text-[10px] text-neutral-500 tracking-widest">
@@ -65,7 +77,10 @@ const Keyboard = ({
           {/* 5 */}
           <div
             className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("5")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("5");
+            }}
           >
             <span className="text-[24px] leading-none">5</span>
             <span className="text-[10px] text-neutral-500 tracking-widest">
@@ -76,7 +91,10 @@ const Keyboard = ({
           {/* 6 */}
           <div
             className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("6")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("6");
+            }}
           >
             <span className="text-[24px] leading-none">6</span>
             <span className="text-[10px] text-neutral-500 tracking-widest">
@@ -87,7 +105,10 @@ const Keyboard = ({
           {/* 7 */}
           <div
             className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("7")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("7");
+            }}
           >
             <span className="text-[24px] leading-none">7</span>
             <span className="text-[10px] text-neutral-500 tracking-widest">
@@ -98,7 +119,10 @@ const Keyboard = ({
           {/* 8 */}
           <div
             className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("8")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("8");
+            }}
           >
             <span className="text-[24px] leading-none">8</span>
             <span className="text-[10px] text-neutral-500 tracking-widest">
@@ -109,7 +133,10 @@ const Keyboard = ({
           {/* 9 */}
           <div
             className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("9")}
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("9");
+            }}
           >
             <span className="text-[24px] leading-none">9</span>
             <span className="text-[10px] text-neutral-500 tracking-widest">
@@ -117,13 +144,13 @@ const Keyboard = ({
             </span>
           </div>
 
-          {/* empty */}
-          <div className="h-[52px]"></div>
-
           {/* 0 */}
           <div
-            className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("0")}
+            className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col col-span-2 items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onKey("0");
+            }}
           >
             <span className="text-[24px] leading-none">0</span>
           </div>
@@ -131,7 +158,10 @@ const Keyboard = ({
           {/* delete */}
           <div
             className="h-[52px] rounded-[5px] flex items-center justify-center text-black cursor-pointer active:bg-neutral-300/40 transition-colors"
-            onClick={onDelete}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
           >
             <svg
               width="22"

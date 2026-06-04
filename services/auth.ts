@@ -1,7 +1,33 @@
 import api from "../lib/api";
 
-export async function start(phone: string) {
-  return api("/auth/start", {
+export async function signupStart(phone: string) {
+  return api("/auth/signup/start", {
+    method: "POST",
+    body: JSON.stringify({
+      phone,
+    }),
+  });
+}
+export async function signupVerify(id: string, otp: string) {
+  return api("/auth/signup/verify", {
+    method: "POST",
+    body: JSON.stringify({
+      id,
+      otp,
+    }),
+  });
+}
+export async function sendOTP(id: string) {
+  return api("/auth/signup/resend-otp", {
+    method: "POST",
+    body: JSON.stringify({
+      id,
+    }),
+  });
+}
+
+export async function loginStart(phone: string) {
+  return api("/auth/login/start", {
     method: "POST",
     body: JSON.stringify({
       phone,
@@ -9,8 +35,8 @@ export async function start(phone: string) {
   });
 }
 
-export async function verify(id: string, pin: string) {
-  return api("/auth/verify", {
+export async function loginVerify(id: string, pin: string) {
+  return api("/auth/login/verify", {
     method: "POST",
     body: JSON.stringify({
       id,

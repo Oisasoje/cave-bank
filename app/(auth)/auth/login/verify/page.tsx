@@ -1,6 +1,6 @@
 "use client";
 import Keyboard from "@/components/Keyboard";
-import { verify } from "@/services/auth";
+import { loginVerify } from "@/services/auth";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -24,14 +24,15 @@ const Verify = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const authAttemptID = sessionStorage.getItem("authAttemptID");
-    if (!authAttemptID) {
+    const loginAttemptID = sessionStorage.getItem("loginAttemptID");
+    if (!loginAttemptID) {
       setTimeout(() => {
         router.push("/auth/start");
       }, 3000);
     }
   }, []);
   const [digits, setDigits] = useState("");
+  const [focus, setFocus] = useState(true);
   const [errors, setErrors] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPin, setShowPin] = useState<boolean>(false);
@@ -39,6 +40,7 @@ const Verify = () => {
   const isDisabled = digits.length < 4 || isSubmitting;
 
   const handleKey = (key: string) => {
+    if (!focus) return;
     if (digits.length < 4) {
       const newDigits = digits + key;
       setDigits(newDigits);
@@ -55,32 +57,34 @@ const Verify = () => {
     setErrors("");
 
     try {
-      const authAttemptID = sessionStorage.getItem("authAttemptID");
-      if (!authAttemptID) {
+      const loginAttemptID = sessionStorage.getItem("loginAttemptID");
+      if (!loginAttemptID) {
         setTimeout(() => {
           router.push("/auth/start");
         }, 3000);
         throw new Error("You cannot proceed. Please try logging in again.");
       }
-      const response = await verify(authAttemptID, digits);
+      const response = await loginVerify(loginAttemptID, digits);
 
       router.push("/dashboard");
     } catch (error: any) {
       setErrors(error.message);
     } finally {
       setIsSubmitting(false);
+      setFocus(true);
     }
   };
 
   return (
     <div
       className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-screen ${inter.className}`}
+      onClick={() => setFocus(false)}
     >
       <div className="flex-1 pt-10 px-6 flex flex-col">
         {/* Welcome Header */}
         <div className="mt-6">
           <h1 className="text-[28px] font-bold text-neutral-900 tracking-tight leading-tight">
-            Hello, there!
+            Hello, Caveman!
           </h1>
           <p
             className={`text-[15px] text-neutral-500 mt-2 font-normal ${dm_sans.className}`}
@@ -91,7 +95,11 @@ const Verify = () => {
 
         {/* PIN Input Box with Red Border Error State */}
         <div
-          className={`flex items-center border ${errors ? "border-red-300" : "border-neutral-300"} rounded-[10px] px-4 h-[48px] bg-white mt-8 justify-between`}
+          className={`flex items-center border ${focus ? "border-amber-500" : errors ? "border-red-500" : "border-neutral-200"} rounded-[10px] px-4 h-[48px] bg-white mt-8 justify-between`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setFocus(true);
+          }}
         >
           <div className="flex items-center gap-3">
             {/* Lock Icon */}
@@ -118,6 +126,13 @@ const Verify = () => {
                   ? digits
                   : Array.from({ length: digits.length }, () => "•")}
               </span>
+              {/* Fake cursor */}
+              {focus && (
+                <span
+                  className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5"
+                  style={{ animation: "blink 1s step-end infinite" }}
+                />
+              )}
             </div>
           </div>
 
@@ -179,6 +194,7 @@ const Verify = () => {
 
         {/* Login Button */}
         <button
+          disabled={isDisabled}
           onClick={handleSubmit}
           className={`w-full h-[54px] ${dm_sans.className} ${
             isDisabled

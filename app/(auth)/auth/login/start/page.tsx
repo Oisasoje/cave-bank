@@ -1,12 +1,12 @@
 "use client";
-import { start } from "@/services/auth";
+import { loginStart } from "@/services/auth";
 import Keyboard from "@/components/Keyboard";
 import CountrySelector from "@/components/CountrySelector";
 import type { Country } from "@/components/CountrySelector";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
 import { useState } from "react";
 import { AsYouType, isValidPhoneNumber } from "libphonenumber-js";
-import { CircleFlag } from "react-circle-flags";
+import { allCountryFlags, CountryCode, SquareFlag } from "react-square-flags";
 import { useRouter } from "next/navigation";
 
 const inter = Inter({
@@ -31,6 +31,7 @@ export default function LoginPage() {
     dialCode: "+234",
   });
   const [digits, setDigits] = useState("");
+  const [focus, setFocus] = useState(true);
   const [formatted, setFormatted] = useState("");
   const [showCountrySelector, setShowCountrySelector] = useState(false);
   const [errors, setErrors] = useState<string>("");
@@ -41,6 +42,7 @@ export default function LoginPage() {
   const isDisabled = !isValid || isSubmitting;
 
   const handleKey = (key: string) => {
+    if (!focus) return;
     const newDigits = digits + key;
     setDigits(newDigits);
 
@@ -72,10 +74,10 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await start(selectedCountry.dialCode + digits);
+      const response = await loginStart(selectedCountry.dialCode + digits);
       const { id } = response.data;
 
-      sessionStorage.setItem("authAttemptID", id);
+      sessionStorage.setItem("loginAttemptID", id);
 
       router.push("/auth/verify");
     } catch (error: any) {
@@ -88,6 +90,7 @@ export default function LoginPage() {
   return (
     <div
       className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-screen ${inter.className}`}
+      onClick={() => setFocus(false)}
     >
       <div className="flex-1 pt-10 px-6 flex flex-col">
         {/* Welcome Header */}
@@ -109,8 +112,12 @@ export default function LoginPage() {
             className="flex items-center gap-2 border border-neutral-200 rounded-[10px] px-3 h-[48px] bg-white select-none cursor-pointer hover:bg-neutral-50 transition-colors"
             onClick={() => setShowCountrySelector(true)}
           >
-            <CircleFlag
-              countryCode={selectedCountry.code.toLowerCase()}
+            <SquareFlag
+              flag={
+                allCountryFlags[
+                  selectedCountry.code.toLowerCase() as CountryCode
+                ]
+              }
               height={24}
               width={24}
             />
@@ -136,16 +143,22 @@ export default function LoginPage() {
           </div>
 
           {/* Phone Input Box */}
-          <div className="flex-1 border border-neutral-200 rounded-[10px] px-4 h-[48px] bg-white flex items-center">
+          <div
+            className={`flex-1 ${focus ? "border-amber-500" : errors ? "border-red-500" : "border-neutral-200"} border  rounded-[10px] px-4 h-[48px] bg-white flex items-center`}
+            onClick={(e) => {
+              e.stopPropagation();
+              setFocus(true);
+            }}
+          >
             <span
               className={`text-[15px] font-medium tracking-wide ${
                 digits.length > 0 ? "text-neutral-900" : "text-neutral-400"
               }`}
             >
-              {digits.length > 0 ? formatted : "8123456789"}
+              {focus || formatted.length > 0 ? formatted : "8123456789"}
             </span>
             {/* Fake cursor */}
-            {digits.length > 0 && (
+            {focus && (
               <span
                 className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5"
                 style={{ animation: "blink 1s step-end infinite" }}
@@ -179,8 +192,11 @@ export default function LoginPage() {
         <div
           className={`mt-5 text-center text-[13px] ${dm_sans.className} text-neutral-500 font-normal`}
         >
-          Don&apos;t have a Cave Bank account?{" "}
-          <span className="text-neutral-900 font-semibold cursor-pointer">
+          Don&apos;t have a Cave Bank account?
+          <span
+            onClick={() => router.push("/auth/enter-phone")}
+            className="text-neutral-900 font-semibold cursor-pointer hover:underline"
+          >
             Sign Up
           </span>
         </div>
