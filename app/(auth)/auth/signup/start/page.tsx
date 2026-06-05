@@ -1,6 +1,7 @@
 "use client";
 
 import { signupStart } from "@/services/auth";
+import ProgressBar from "@/components/ProgressBar";
 import CountrySelector from "@/components/CountrySelector";
 import type { Country } from "@/components/CountrySelector";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
@@ -115,12 +116,8 @@ export default function EnterPhonePage() {
       }}
     >
       <div className="flex-1 pt-6 px-6 flex flex-col">
-        {/* Progress Bar (4 segments) */}
-        <div className="flex gap-1.5 w-full mt-2">
-          <div className="h-[3px] flex-1 bg-black rounded-full" />
-          <div className="h-[3px] flex-1 bg-neutral-200 rounded-full" />
-          <div className="h-[3px] flex-1 bg-neutral-200 rounded-full" />
-          <div className="h-[3px] flex-1 bg-neutral-200 rounded-full" />
+        <div className="mt-2">
+          <ProgressBar currentStep={1} />
         </div>
 
         {/* Back and Help Header */}

@@ -1,9 +1,10 @@
 "use client";
 
 import Keyboard from "@/components/Keyboard";
+import ProgressBar from "@/components/ProgressBar";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -35,8 +36,20 @@ export default function CreatePin() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
+    const user = sessionStorage.getItem("signupAttemptID");
+    if (!user) {
+      router.replace("/auth/signup/start");
+      return;
+    }
     setHydrated(true);
-  }, []);
+  }, [router]);
+
+  useEffect(() => {
+    if (pin.length === 4 && activeField === "pin") {
+      setActiveField("confirmPin");
+      setFocus(true);
+    }
+  }, [pin]); // ✅ only runs when pin changes, not when activeField changes
 
   const handleKey = (key: string) => {
     if (activeField === "pin") {
@@ -58,14 +71,8 @@ export default function CreatePin() {
     }
   };
 
-  // Switch fields automatically when first field is filled
-  useEffect(() => {
-    if (pin.length === 4 && activeField === "pin") {
-      setActiveField("confirmPin");
-    }
-  }, [pin, activeField]);
-
-  const isValid = pin.length === 4 && confirmPin.length === 4 && pin === confirmPin;
+  const isValid =
+    pin.length === 4 && confirmPin.length === 4 && pin === confirmPin;
   const isDisabled = !isValid || isSubmitting;
 
   const handleSubmit = async () => {
@@ -75,7 +82,7 @@ export default function CreatePin() {
     try {
       // Simulate API complete call
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      router.push("/dashboard");
+      router.push("/auth/signup/congratulations");
     } catch (err: any) {
       setErrors(err.message || "Failed to set PIN. Please try again.");
     } finally {
@@ -91,12 +98,8 @@ export default function CreatePin() {
       onClick={() => setFocus(false)}
     >
       <div className="flex-1 pt-6 px-6 flex flex-col">
-        {/* Progress Bar (Step 3 of 4) */}
-        <div className="flex gap-1.5 w-full mt-2">
-          <div className="h-[3px] flex-1 bg-black rounded-full" />
-          <div className="h-[3px] flex-1 bg-black rounded-full" />
-          <div className="h-[3px] flex-1 bg-black rounded-full" />
-          <div className="h-[3px] flex-1 bg-neutral-200 rounded-full" />
+        <div className="mt-2">
+          <ProgressBar currentStep={3} />
         </div>
 
         {/* Navigation Header */}
@@ -128,10 +131,14 @@ export default function CreatePin() {
 
         {/* Title */}
         <div className="mt-6">
-          <h1 className={`text-[24px] ${dm_sans.className} font-bold text-neutral-900 tracking-tight leading-tight`}>
+          <h1
+            className={`text-[24px] ${dm_sans.className} font-bold text-neutral-900 tracking-tight leading-tight`}
+          >
             Create Your Pin
           </h1>
-          <p className={`text-[15px] text-neutral-500 mt-2 font-normal ${dm_sans.className}`}>
+          <p
+            className={`text-[15px] text-neutral-500 mt-2 font-normal ${dm_sans.className}`}
+          >
             Create a 4 digit pin you will use to login
           </p>
         </div>
@@ -140,7 +147,9 @@ export default function CreatePin() {
         <div className="mt-8 space-y-6">
           {/* Field 1: New PIN */}
           <div className="space-y-2">
-            <label className="text-[14px] font-semibold text-neutral-800">New pin</label>
+            <label className="text-[14px] font-semibold text-neutral-800">
+              New pin
+            </label>
             <div
               onClick={(e) => {
                 e.stopPropagation();
@@ -155,23 +164,55 @@ export default function CreatePin() {
             >
               <div className="flex items-center gap-1.5 h-full">
                 {showPin ? (
-                  <span className={`text-[16px] font-bold text-neutral-900 tracking-[0.2em] ${space_mono.className}`}>{pin}</span>
+                  <div className="flex items-center">
+                    <span
+                      className={`text-[15px] font-medium tracking-wide text-neutral-900 ${space_mono.className}`}
+                    >
+                      {pin}
+                    </span>
+                    {activeField === "pin" && focus && (
+                      <span
+                        className="w-[1.5px] h-[18px] bg-neutral-900 ml-1"
+                        style={{ animation: "blink 1s step-end infinite" }}
+                      />
+                    )}
+                  </div>
                 ) : (
                   <div className="flex gap-1.5 items-center">
                     {Array.from({ length: 4 }).map((_, i) => (
-                      <span
-                        key={i}
-                        className={`text-[24px] leading-none ${
-                          i < pin.length ? "text-neutral-900" : "text-neutral-300"
-                        }`}
-                      >
-                        •
-                      </span>
+                      <React.Fragment key={i}>
+                        {/* Cursor BEFORE first dot when empty */}
+                        {activeField === "pin" &&
+                          focus &&
+                          pin.length === 0 &&
+                          i === 0 && (
+                            <span
+                              className="w-[1.5px] h-[18px] bg-neutral-900"
+                              style={{
+                                animation: "blink 1s step-end infinite",
+                              }}
+                            />
+                          )}
+                        <span
+                          className={`text-[24px] leading-none ${i < pin.length ? "text-neutral-900" : "text-neutral-300"}`}
+                        >
+                          •
+                        </span>
+                        {/* Cursor AFTER last filled dot */}
+                        {activeField === "pin" &&
+                          focus &&
+                          pin.length > 0 &&
+                          i === pin.length - 1 && (
+                            <span
+                              className="w-[1.5px] h-[18px] bg-neutral-900"
+                              style={{
+                                animation: "blink 1s step-end infinite",
+                              }}
+                            />
+                          )}
+                      </React.Fragment>
                     ))}
                   </div>
-                )}
-                {activeField === "pin" && focus && (
-                  <span className="w-[1.5px] h-[18px] bg-neutral-900 ml-1 animate-pulse" />
                 )}
               </div>
               <button
@@ -213,7 +254,9 @@ export default function CreatePin() {
 
           {/* Field 2: Confirm PIN / New PIN label */}
           <div className="space-y-2">
-            <label className="text-[14px] font-semibold text-neutral-800">New pin</label>
+            <label className="text-[14px] font-semibold text-neutral-800">
+              Confirm pin
+            </label>
             <div
               onClick={(e) => {
                 e.stopPropagation();
@@ -228,23 +271,55 @@ export default function CreatePin() {
             >
               <div className="flex items-center gap-1.5 h-full">
                 {showConfirmPin ? (
-                  <span className={`text-[16px] font-bold text-neutral-900 tracking-[0.2em] ${space_mono.className}`}>{confirmPin}</span>
+                  <div className="flex items-center">
+                    <span
+                      className={`text-[15px] font-medium tracking-wide text-neutral-900 ${space_mono.className}`}
+                    >
+                      {confirmPin}
+                    </span>
+                    {activeField === "confirmPin" && focus && (
+                      <span
+                        className="w-[1.5px] h-[18px] bg-neutral-900 ml-1"
+                        style={{ animation: "blink 1s step-end infinite" }}
+                      />
+                    )}
+                  </div>
                 ) : (
                   <div className="flex gap-1.5 items-center">
                     {Array.from({ length: 4 }).map((_, i) => (
-                      <span
-                        key={i}
-                        className={`text-[24px] leading-none ${
-                          i < confirmPin.length ? "text-neutral-900" : "text-neutral-300"
-                        }`}
-                      >
-                        •
-                      </span>
+                      <React.Fragment key={i}>
+                        {/* Cursor BEFORE first dot when empty */}
+                        {activeField === "confirmPin" &&
+                          focus &&
+                          confirmPin.length === 0 &&
+                          i === 0 && (
+                            <span
+                              className="w-[1.5px] h-[18px] bg-neutral-900"
+                              style={{
+                                animation: "blink 1s step-end infinite",
+                              }}
+                            />
+                          )}
+                        <span
+                          className={`text-[24px] leading-none ${i < confirmPin.length ? "text-neutral-900" : "text-neutral-300"}`}
+                        >
+                          •
+                        </span>
+                        {/* Cursor AFTER last filled dot */}
+                        {activeField === "confirmPin" &&
+                          focus &&
+                          confirmPin.length > 0 &&
+                          i === confirmPin.length - 1 && (
+                            <span
+                              className="w-[1.5px] h-[18px] bg-neutral-900"
+                              style={{
+                                animation: "blink 1s step-end infinite",
+                              }}
+                            />
+                          )}
+                      </React.Fragment>
                     ))}
                   </div>
-                )}
-                {activeField === "confirmPin" && focus && (
-                  <span className="w-[1.5px] h-[18px] bg-neutral-900 ml-1 animate-pulse" />
                 )}
               </div>
               <button
@@ -306,11 +381,14 @@ export default function CreatePin() {
               {errors}
             </span>
           )}
-          {!errors && pin.length === 4 && confirmPin.length === 4 && pin !== confirmPin && (
-            <span className="text-[12px] font-semibold text-red-500 flex items-center gap-1">
-              PINs do not match.
-            </span>
-          )}
+          {!errors &&
+            pin.length === 4 &&
+            confirmPin.length === 4 &&
+            pin !== confirmPin && (
+              <span className="text-[12px] font-semibold text-red-500 flex items-center gap-1">
+                PINs do not match.
+              </span>
+            )}
         </div>
 
         {/* Continue Button */}
@@ -329,42 +407,8 @@ export default function CreatePin() {
         </div>
       </div>
 
-      {/* Styled Inline Blinking Cursor style tag */}
-      <style jsx global>{`
-        @keyframes cursor-blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
-        }
-        .animate-cursor-blink {
-          animation: cursor-blink 1s step-end infinite;
-        }
-      `}</style>
-
       {/* Custom iOS-style Numeric Keyboard */}
-      {focus && (
-        <div
-          className="fixed bottom-0 left-0 right-0 w-full bg-[#D1D5DB] border-t border-neutral-300 pb-[calc(env(safe-area-inset-bottom)+8px)] select-none z-50"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Keyboard Header */}
-          <div className="flex justify-between items-center px-4 py-2 bg-[#EFEFF4]/85 border-b border-neutral-300">
-            <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest">
-              Security Entry
-            </span>
-            <button
-              onClick={() => setFocus(false)}
-              className="text-[15px] font-semibold text-neutral-800 hover:text-black cursor-pointer"
-            >
-              Close
-            </button>
-          </div>
-
-          {/* Keyboard Keys Grid */}
-          <div className="px-2 pt-2">
-            <Keyboard onKey={handleKey} onDelete={handleDelete} />
-          </div>
-        </div>
-      )}
+      {focus && <Keyboard onKey={handleKey} onDelete={handleDelete} />}
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import Keyboard from "@/components/Keyboard";
+import ProgressBar from "@/components/ProgressBar";
 import { signupVerify, sendOTP } from "@/services/auth";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
 import { useRouter } from "next/navigation";
@@ -115,12 +116,8 @@ export default function VerifySignup() {
       onClick={() => setFocus(false)}
     >
       <div className="flex-1 pt-6 px-6 flex flex-col">
-        {/* Progress Bar (Step 2 of 4: Phone -> Verify -> Set Pin -> Confirm Pin) */}
-        <div className="flex gap-1.5 w-full mt-2">
-          <div className="h-[3px] flex-1 bg-black rounded-full" />
-          <div className="h-[3px] flex-1 bg-black rounded-full" />
-          <div className="h-[3px] flex-1 bg-neutral-200 rounded-full" />
-          <div className="h-[3px] flex-1 bg-neutral-200 rounded-full" />
+        <div className="mt-2">
+          <ProgressBar currentStep={2} />
         </div>
 
         {/* Navigation Header */}
