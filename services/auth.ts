@@ -44,3 +44,19 @@ export async function loginVerify(id: string, pin: string) {
     }),
   });
 }
+
+export function createPin(id: string, pin: string) {
+  return api("/auth/signup/create-pin", {
+    method: "POST",
+    body: JSON.stringify({
+      setup_token_id: id,
+      pin,
+    }),
+  });
+}
+
+export function getUser() {
+  return api("/auth/me", {
+    method: "GET",
+  });
+}

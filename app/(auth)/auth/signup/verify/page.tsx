@@ -81,11 +81,11 @@ export default function VerifySignup() {
     setIsSubmitting(true);
     setErrors("");
     try {
-      const id = sessionStorage.getItem("signupAttemptID") || "";
+      const signupAttemptID = sessionStorage.getItem("signupAttemptID") || "";
       // Call the API
-      const result = await signupVerify(id, otp);
-      const userID = result.id;
-      setUserID(userID);
+      const result = await signupVerify(signupAttemptID, otp);
+      const setupTokenID = result.data.setup_token_id;
+      sessionStorage.setItem("setupTokenID", setupTokenID);
       router.push("/auth/signup/create-pin");
     } catch (error: any) {
       setErrors(error.message || "Invalid verification code.");
@@ -158,7 +158,7 @@ export default function VerifySignup() {
 
         {/* Card: Check your email */}
         <div className="flex gap-4 p-4 bg-[#F3F4F6] rounded-[12px] mt-6">
-          <div className="mt-0.5 text-neutral-800 flex-shrink-0">
+          <div className="mt-0.5 text-neutral-800 shrink-0">
             {/* SVG Envelope Mail Icon */}
             <svg
               width="24"

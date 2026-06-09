@@ -1,5 +1,6 @@
 "use client";
 import Keyboard from "@/components/Keyboard";
+import generateUserData from "@/lib/getUserData";
 import { loginVerify } from "@/services/auth";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
 import { useRouter } from "next/navigation";
@@ -66,7 +67,9 @@ const Verify = () => {
       }
       const response = await loginVerify(loginAttemptID, digits);
 
-      router.push("/dashboard");
+      await generateUserData();
+
+      router.push("/wallet");
     } catch (error: any) {
       setErrors(error.message);
     } finally {

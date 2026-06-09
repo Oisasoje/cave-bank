@@ -79,7 +79,7 @@ export default function LoginPage() {
 
       sessionStorage.setItem("loginAttemptID", id);
 
-      router.push("/auth/verify");
+      router.push("/auth/login/verify");
     } catch (error: any) {
       setErrors(error.message);
     } finally {

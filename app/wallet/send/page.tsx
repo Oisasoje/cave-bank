@@ -1,0 +1,419 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Inter, DM_Sans, Space_Mono } from "next/font/google";
+import { useRouter } from "next/navigation";
+import RecipientSelection from "@/components/RecipientSelection";
+import { AmountAndNoteEntry } from "@/components/AmountAndNoteEntry";
+import TransactionConfirmation from "@/components/TransactionConfirmation";
+import AuthorizeTransaction from "@/components/AuthorizeTransaction";
+import TransferSuccess from "@/components/TransferSuccess";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const dm_sans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const space_mono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
+export interface Beneficiary {
+  id: string;
+  name: string;
+  address: string;
+  avatarUrl?: string;
+  isSaved?: boolean;
+}
+
+export default function SendCoinsPage() {
+  const router = useRouter();
+  const [step, setStep] = useState(1);
+  const [recipientInput, setRecipientInput] = useState("");
+  const [selectedRecipient, setSelectedRecipient] =
+    useState<Beneficiary | null>(null);
+
+  // Transaction details (Step 2, 3, 4 & 5)
+  const [amountDigits, setAmountDigits] = useState("");
+  const [description, setDescription] = useState("");
+  const [pin, setPin] = useState("");
+  const [successDate, setSuccessDate] = useState("");
+
+  // Tab control in Step 1
+  const [activeTab, setActiveTab] = useState<"recents" | "saved">("recents");
+
+  // Toast Alert states
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const triggerToast = (msg: string) => {
+    setToastMessage(msg);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
+
+  // Static Beneficiaries list matching mockup names
+  const beneficiaries: Beneficiary[] = [
+    {
+      id: "b1",
+      name: "Catherine Onyeulo",
+      address: "TCB-NG8123456789",
+      avatarUrl: "/catherine_avatar.png",
+      isSaved: false,
+    },
+    {
+      id: "b2",
+      name: "Ohikemota Victor",
+      address: "TCB-NG8123456789",
+      isSaved: false,
+    },
+    {
+      id: "b3",
+      name: "Ayomide Olatunji",
+      address: "TCB-NG81987654321",
+      isSaved: true,
+    },
+    {
+      id: "b4",
+      name: "Nuel Samuel",
+      address: "TCB-NG81564738290",
+      isSaved: true,
+    },
+  ];
+
+  // Filter list based on search/input query (Step 1)
+  const filteredBeneficiaries = beneficiaries.filter((b) => {
+    const isTabMatch = activeTab === "recents" ? !b.isSaved : b.isSaved;
+    if (!recipientInput) return isTabMatch;
+    const query = recipientInput.toLowerCase();
+    return (
+      isTabMatch &&
+      (b.name.toLowerCase().includes(query) ||
+        b.address.toLowerCase().includes(query))
+    );
+  });
+
+  // Get formatted timestamp safely on client side
+  const getFormattedDate = () => {
+    const now = new Date();
+
+    // Time part: e.g. "11:08 AM"
+    let hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+    const ampm = hours >= 12 ? "PM" : "AM";
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const timeStr = `${hours}:${minutes} ${ampm}`;
+
+    // Date part: e.g. "Friday, May 15, 2026"
+    const weekdays = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const dayName = weekdays[now.getDay()];
+    const monthName = months[now.getMonth()];
+    const dateNum = now.getDate();
+    const year = now.getFullYear();
+
+    return `${timeStr}, ${dayName}, ${monthName} ${dateNum}, ${year}`;
+  };
+
+  // Populate dynamic success date when Step 5 is reached
+  useEffect(() => {
+    if (step === 5) {
+      setSuccessDate(getFormattedDate());
+    }
+  }, [step]);
+
+  // Selection handler (Step 1)
+  const handleBeneficiarySelect = (b: Beneficiary) => {
+    setRecipientInput(b.address);
+    setSelectedRecipient(b);
+    triggerToast(`Selected: ${b.name}`);
+  };
+
+  // Form submit handler (Step 1 -> Step 2 transition)
+  const handleContinue = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!recipientInput.trim()) return;
+
+    const existing = beneficiaries.find(
+      (b) =>
+        b.address.toLowerCase() === recipientInput.trim().toLowerCase() ||
+        b.name.toLowerCase() === recipientInput.trim().toLowerCase(),
+    );
+
+    const recipient = existing || {
+      id: "custom",
+      name: recipientInput.trim(),
+      address: recipientInput.trim().includes("TCB")
+        ? recipientInput.trim()
+        : `TCB-NG${Math.floor(1000000000 + Math.random() * 9000000000)}`,
+    };
+
+    setSelectedRecipient(recipient);
+    setStep(2);
+  };
+
+  // Unified Custom Keyboard input router
+  const handleKey = (digit: string) => {
+    if (step === 2) {
+      if (amountDigits.length >= 10) return;
+      if (amountDigits === "" && digit === "0") return; // Avoid leading zero
+      setAmountDigits((prev) => prev + digit);
+    } else if (step === 4) {
+      if (pin.length >= 4) return;
+      const newPin = pin + digit;
+      setPin(newPin);
+      if (newPin.length === 4) {
+        setStep(5); // Go to Step 5 Success screen
+      }
+    }
+  };
+
+  const handleDelete = () => {
+    if (step === 2) {
+      setAmountDigits((prev) => prev.slice(0, -1));
+    } else if (step === 4) {
+      setPin((prev) => prev.slice(0, -1));
+    }
+  };
+
+  // Format digit string into ATM-style currency format (e.g. 500 becomes 5.00)
+  const formatAmount = (digits: string) => {
+    if (!digits) return "0.00";
+    const value = parseInt(digits, 10) / 100;
+    return value.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
+  // Get raw float value of the entered amount
+  const getRawAmountValue = () => {
+    if (!amountDigits) return 0;
+    return parseInt(amountDigits, 10) / 100;
+  };
+
+  const handleSendCoins = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!amountDigits) return;
+    setStep(3); // Transition to Confirmation Screen
+  };
+
+  const handleResetFlow = () => {
+    setStep(1);
+    setRecipientInput("");
+    setSelectedRecipient(null);
+    setAmountDigits("");
+    setDescription("");
+    setPin("");
+    setSuccessDate("");
+    router.push("/wallet");
+  };
+
+  const handleBack = () => {
+    if (step === 5) {
+      handleResetFlow();
+    } else if (step === 4) {
+      setStep(3);
+      setPin("");
+    } else if (step === 3) {
+      setStep(2);
+    } else if (step === 2) {
+      setStep(1);
+    } else {
+      router.push("/wallet");
+    }
+  };
+
+  // Dynamic calculations for Step 3 & 5
+  const rawAmount = getRawAmountValue();
+  const transactionCharge = rawAmount * 0.01; // 1% charge
+
+  // Formatting displays
+  const formattedRawAmount = rawAmount.toLocaleString("en-US", {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
+  const formattedCharge = transactionCharge.toLocaleString("en-US", {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 2,
+  });
+
+  return (
+    <div
+      className={`max-w-md mx-auto bg-[#F9F9F9] flex flex-col w-full h-screen relative ${
+        inter.className
+      } select-none overflow-x-hidden ${
+        step === 2 || step === 4 ? "overflow-hidden" : "overflow-y-auto pb-8"
+      }`}
+    >
+      {/* Toast Alert popup */}
+      {showToast && (
+        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-neutral-900 text-white text-[13px] px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 border border-neutral-800 transition-all animate-bounce">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#EAB308"
+            strokeWidth="2.5"
+          >
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* HEADER SECTION */}
+      <div className="pt-6 px-6 flex items-center justify-between bg-[#F9F9F9] sticky top-0 z-30">
+        <button
+          onClick={handleBack}
+          className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors shadow-xs cursor-pointer active:scale-95 duration-100"
+          aria-label="Go back"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#1F2937"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        </button>
+        <h1
+          className={`text-[18px] font-bold text-neutral-850 tracking-tight ${dm_sans.className}`}
+        >
+          {step === 4 || step === 5
+            ? "Authorize Transaction"
+            : step === 3
+              ? "Confirm Transaction"
+              : "Send Cave Coins"}
+        </h1>
+        <div className="w-[42px]" /> {/* Spacer to center the header title */}
+      </div>
+
+      {step === 1 && (
+        /* STEP 1: RECIPIENT SELECTION */
+        <RecipientSelection
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          filteredBeneficiaries={filteredBeneficiaries}
+          handleBeneficiarySelect={handleBeneficiarySelect}
+          triggerToast={triggerToast}
+          setRecipientInput={setRecipientInput}
+          recipientInput={recipientInput}
+          handleContinue={handleContinue}
+          setSelectedRecipient={setSelectedRecipient}
+        />
+      )}
+
+      {step === 2 && (
+        /* STEP 2: AMOUNT & NOTES ENTRY */
+        <AmountAndNoteEntry
+          selectedRecipient={selectedRecipient}
+          handleSendCoins={handleSendCoins}
+          setStep={setStep}
+          amountDigits={amountDigits}
+          setAmountDigits={setAmountDigits}
+          description={description}
+          setDescription={setDescription}
+          handleKey={handleKey}
+          handleDelete={handleDelete}
+          formatAmount={formatAmount}
+        />
+      )}
+
+      {step === 3 && (
+        /* STEP 3: TRANSACTION CONFIRMATION */
+        <TransactionConfirmation
+          selectedRecipient={selectedRecipient}
+          formattedRawAmount={formattedRawAmount}
+          formattedCharge={formattedCharge}
+          description={description}
+          setStep={setStep}
+        />
+      )}
+
+      {step === 4 && (
+        /* STEP 4: AUTHORIZE TRANSACTION (PIN ENTRY) */
+        <AuthorizeTransaction
+          pin={pin}
+          handleKey={handleKey}
+          handleDelete={handleDelete}
+          triggerToast={triggerToast}
+        />
+      )}
+
+      {step === 5 && (
+        /* STEP 5: TRANSFER SUCCESSFUL STATE */
+        <TransferSuccess
+          selectedRecipient={selectedRecipient}
+          formattedRawAmount={formattedRawAmount}
+          description={description}
+          setStep={setStep}
+          handleResetFlow={handleResetFlow}
+          successDate={successDate}
+          triggerToast={triggerToast}
+        />
+      )}
+
+      <style jsx global>{`
+        .animate-fade-in {
+          animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(4px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        @keyframes blink {
+          50% {
+            opacity: 0;
+          }
+        }
+        .animate-blink {
+          animation: blink 1s step-end infinite;
+        }
+      `}</style>
+    </div>
+  );
+}

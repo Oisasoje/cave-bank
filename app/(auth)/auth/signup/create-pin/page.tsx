@@ -2,6 +2,8 @@
 
 import Keyboard from "@/components/Keyboard";
 import ProgressBar from "@/components/ProgressBar";
+import generateUserData from "@/lib/getUserData";
+import { createPin } from "@/services/auth";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -36,8 +38,8 @@ export default function CreatePin() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    const user = sessionStorage.getItem("signupAttemptID");
-    if (!user) {
+    const signupAttemptID = sessionStorage.getItem("signupAttemptID");
+    if (!signupAttemptID) {
       router.replace("/auth/signup/start");
       return;
     }
@@ -77,11 +79,16 @@ export default function CreatePin() {
 
   const handleSubmit = async () => {
     if (isDisabled) return;
+
     setIsSubmitting(true);
     setErrors("");
+
     try {
-      // Simulate API complete call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const setupTokenID = sessionStorage.getItem("setupTokenID") || "";
+      if (!setupTokenID) throw new Error();
+      await createPin(setupTokenID, pin);
+
+      await generateUserData();
       router.push("/auth/signup/congratulations");
     } catch (err: any) {
       setErrors(err.message || "Failed to set PIN. Please try again.");
