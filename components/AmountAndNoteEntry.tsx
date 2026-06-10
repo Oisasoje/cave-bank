@@ -45,13 +45,7 @@ export const AmountAndNoteEntry = ({
           </span>
           <div className="bg-[#C4A61A] rounded-[16px] p-4 flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-3.5">
-              {selectedRecipient?.avatarUrl ? (
-                <img
-                  src={selectedRecipient.avatarUrl}
-                  alt={selectedRecipient.name}
-                  className="w-10 h-10 rounded-full object-cover shrink-0 border border-white/20 shadow-xs"
-                />
-              ) : (
+              {
                 <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center text-neutral-800 shrink-0">
                   <svg
                     width="18"
@@ -62,7 +56,7 @@ export const AmountAndNoteEntry = ({
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                   </svg>
                 </div>
-              )}
+              }
               <div>
                 <p className="text-[14px] font-bold text-neutral-900 leading-tight">
                   {selectedRecipient?.name}
@@ -70,7 +64,7 @@ export const AmountAndNoteEntry = ({
                 <p
                   className={`text-[11px] text-neutral-900/80 font-semibold mt-1 ${space_mono.className}`}
                 >
-                  {selectedRecipient?.address}
+                  {selectedRecipient?.walletAddress}
                 </p>
               </div>
             </div>

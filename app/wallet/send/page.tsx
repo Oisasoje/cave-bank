@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Inter, DM_Sans, Space_Mono } from "next/font/google";
+import { Inter, DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import RecipientSelection from "@/components/RecipientSelection";
 import { AmountAndNoteEntry } from "@/components/AmountAndNoteEntry";
@@ -19,34 +19,29 @@ const dm_sans = DM_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const space_mono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-});
-
 export interface Beneficiary {
-  id: string;
-  name: string;
-  address: string;
-  avatarUrl?: string;
-  isSaved?: boolean;
+  accountId: string;
+  name: string | null;
+  walletAddress: string;
+  isSaved: boolean;
 }
 
 export default function SendCoinsPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
-  const [recipientInput, setRecipientInput] = useState("");
+
   const [selectedRecipient, setSelectedRecipient] =
     useState<Beneficiary | null>(null);
+
+  const [selectedRecipientName, setSelectedRecipientName] = useState<
+    string | null
+  >(null);
 
   // Transaction details (Step 2, 3, 4 & 5)
   const [amountDigits, setAmountDigits] = useState("");
   const [description, setDescription] = useState("");
   const [pin, setPin] = useState("");
   const [successDate, setSuccessDate] = useState("");
-
-  // Tab control in Step 1
-  const [activeTab, setActiveTab] = useState<"recents" | "saved">("recents");
 
   // Toast Alert states
   const [showToast, setShowToast] = useState(false);
@@ -57,47 +52,6 @@ export default function SendCoinsPage() {
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
-
-  // Static Beneficiaries list matching mockup names
-  const beneficiaries: Beneficiary[] = [
-    {
-      id: "b1",
-      name: "Catherine Onyeulo",
-      address: "TCB-NG8123456789",
-      avatarUrl: "/catherine_avatar.png",
-      isSaved: false,
-    },
-    {
-      id: "b2",
-      name: "Ohikemota Victor",
-      address: "TCB-NG8123456789",
-      isSaved: false,
-    },
-    {
-      id: "b3",
-      name: "Ayomide Olatunji",
-      address: "TCB-NG81987654321",
-      isSaved: true,
-    },
-    {
-      id: "b4",
-      name: "Nuel Samuel",
-      address: "TCB-NG81564738290",
-      isSaved: true,
-    },
-  ];
-
-  // Filter list based on search/input query (Step 1)
-  const filteredBeneficiaries = beneficiaries.filter((b) => {
-    const isTabMatch = activeTab === "recents" ? !b.isSaved : b.isSaved;
-    if (!recipientInput) return isTabMatch;
-    const query = recipientInput.toLowerCase();
-    return (
-      isTabMatch &&
-      (b.name.toLowerCase().includes(query) ||
-        b.address.toLowerCase().includes(query))
-    );
-  });
 
   // Get formatted timestamp safely on client side
   const getFormattedDate = () => {
@@ -151,36 +105,6 @@ export default function SendCoinsPage() {
     }
   }, [step]);
 
-  // Selection handler (Step 1)
-  const handleBeneficiarySelect = (b: Beneficiary) => {
-    setRecipientInput(b.address);
-    setSelectedRecipient(b);
-    triggerToast(`Selected: ${b.name}`);
-  };
-
-  // Form submit handler (Step 1 -> Step 2 transition)
-  const handleContinue = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!recipientInput.trim()) return;
-
-    const existing = beneficiaries.find(
-      (b) =>
-        b.address.toLowerCase() === recipientInput.trim().toLowerCase() ||
-        b.name.toLowerCase() === recipientInput.trim().toLowerCase(),
-    );
-
-    const recipient = existing || {
-      id: "custom",
-      name: recipientInput.trim(),
-      address: recipientInput.trim().includes("TCB")
-        ? recipientInput.trim()
-        : `TCB-NG${Math.floor(1000000000 + Math.random() * 9000000000)}`,
-    };
-
-    setSelectedRecipient(recipient);
-    setStep(2);
-  };
-
   // Unified Custom Keyboard input router
   const handleKey = (digit: string) => {
     if (step === 2) {
@@ -229,7 +153,6 @@ export default function SendCoinsPage() {
 
   const handleResetFlow = () => {
     setStep(1);
-    setRecipientInput("");
     setSelectedRecipient(null);
     setAmountDigits("");
     setDescription("");
@@ -329,15 +252,10 @@ export default function SendCoinsPage() {
       {step === 1 && (
         /* STEP 1: RECIPIENT SELECTION */
         <RecipientSelection
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          filteredBeneficiaries={filteredBeneficiaries}
-          handleBeneficiarySelect={handleBeneficiarySelect}
-          triggerToast={triggerToast}
-          setRecipientInput={setRecipientInput}
-          recipientInput={recipientInput}
-          handleContinue={handleContinue}
-          setSelectedRecipient={setSelectedRecipient}
+          selectedRecipientName={selectedRecipientName}
+          setSelectedRecipientName={setSelectedRecipientName}
+          setStep={setStep}
+          step={step}
         />
       )}
 
@@ -390,30 +308,6 @@ export default function SendCoinsPage() {
           triggerToast={triggerToast}
         />
       )}
-
-      <style jsx global>{`
-        .animate-fade-in {
-          animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(4px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        @keyframes blink {
-          50% {
-            opacity: 0;
-          }
-        }
-        .animate-blink {
-          animation: blink 1s step-end infinite;
-        }
-      `}</style>
     </div>
   );
 }

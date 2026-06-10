@@ -1,5 +1,14 @@
 import { DM_Sans, Space_Mono } from "next/font/google";
-import React, { Dispatch, SetStateAction } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import useDebounce from "@/lib/hooks/useDebounce";
+import { getUserByWalletAddress } from "@/services/transfer";
+import { Beneficiary } from "@/app/wallet/send/page";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -11,82 +20,128 @@ const space_mono = Space_Mono({
   weight: ["400", "700"],
 });
 
+const beneficiaries: Beneficiary[] = [
+  {
+    accountId: "b1",
+    name: "Catherine Onyeulo",
+    walletAddress: "TCB-NG8123456789",
+    isSaved: true,
+  },
+  {
+    accountId: "b2",
+    name: "Ohikemota Victor",
+    walletAddress: "TCB-NG8123456789",
+    isSaved: true,
+  },
+  {
+    accountId: "b3",
+    name: "Ayomide Olatunji",
+    walletAddress: "TCB-NG81987654321",
+    isSaved: true,
+  },
+  {
+    accountId: "b4",
+    name: "Nuel Samuel",
+    walletAddress: "TCB-NG81564738290",
+    isSaved: true,
+  },
+];
+
 const RecipientSelection = ({
-  activeTab,
-  setActiveTab,
-  filteredBeneficiaries,
-  handleBeneficiarySelect,
-  triggerToast,
-  setRecipientInput,
-  recipientInput,
-  handleContinue,
-
-  setSelectedRecipient,
+  selectedRecipientName,
+  setSelectedRecipientName,
+  setStep,
+  step,
 }: {
-  activeTab: string;
-  setActiveTab: Dispatch<SetStateAction<"recents" | "saved">>;
-  filteredBeneficiaries: any[];
-  handleBeneficiarySelect: (beneficiary: any) => void;
-  triggerToast: (message: string) => void;
-  setRecipientInput: (input: string) => void;
-  recipientInput: string;
-  handleContinue: (e: React.FormEvent) => void;
-
-  setSelectedRecipient: (recipient: any) => void;
+  selectedRecipientName: string | null;
+  setSelectedRecipientName: (recipient: string | null) => void;
+  step: number;
+  setStep: (step: number) => void;
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [activeTab, setActiveTab] = useState<"recents" | "saved">("recents");
+  const [recipientInput, setRecipientInput] = useState<string>("");
+
+  const debouncedWalletAddress = useDebounce(recipientInput, 800);
+
+  useEffect(() => {
+    if (
+      !debouncedWalletAddress.trim() ||
+      debouncedWalletAddress.trim().length < 10
+    ) {
+      setSelectedRecipientName(null);
+      return;
+    }
+    const fetchRecipient = async () => {
+      try {
+        const { user } = await getUserByWalletAddress(debouncedWalletAddress);
+
+        setSelectedRecipientName(user.data.name);
+      } catch (error: any) {
+        setSelectedRecipientName(null);
+      }
+    };
+    fetchRecipient();
+  }, [debouncedWalletAddress]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      inputRef.current?.focus();
+    }, 350);
+    return () => clearTimeout(timer);
+  }, []);
+  const isDisabled =
+    !recipientInput.trim() ||
+    selectedRecipientName === null ||
+    selectedRecipientName === undefined ||
+    selectedRecipientName.trim() === "";
+
   return (
     <div className="animate-fade-in">
-      <form onSubmit={handleContinue} className="flex flex-col px-6 mt-6">
+      <form onSubmit={() => {}} className="flex flex-col px-6 mt-6">
         <div className="flex flex-col">
           <label className="text-[13px] font-bold text-neutral-500 block mb-2">
             Recipient Details
           </label>
           <div className="relative flex items-center">
             <input
+              style={{ zIndex: 9999 }}
               type="text"
-              placeholder="Enter Cave Bank ID/phone number/name"
+              ref={inputRef}
+              placeholder="Enter Cave Bank Wallet Address"
               value={recipientInput}
-              onChange={(e) => setRecipientInput(e.target.value)}
-              className="w-full h-[56px] border border-neutral-200 rounded-[14px] px-4 text-[14px] focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 bg-white placeholder-neutral-400 font-medium transition-all shadow-xs"
+              onChange={(e) => {
+                setRecipientInput(e.target.value);
+                setSelectedRecipientName(null);
+              }}
+              className={`w-full ${space_mono.className} h-[56px] border border-neutral-200 rounded-[14px] px-4 text-[14px] focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 bg-white placeholder-neutral-400 font-medium transition-all shadow-xs`}
             />
-            {recipientInput && (
-              <button
-                type="button"
-                onClick={() => {
-                  setRecipientInput("");
-                  setSelectedRecipient(null);
-                }}
-                className="absolute right-4 text-neutral-400 hover:text-neutral-600 cursor-pointer"
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            )}
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={!recipientInput.trim()}
-          className={`w-full h-[54px] rounded-[14px] font-bold text-[14px] mt-6 flex items-center justify-center transition-all duration-200 ${
-            recipientInput.trim()
-              ? "bg-[#0E1719] text-white hover:bg-[#18262a] active:scale-[0.98] cursor-pointer shadow-md"
-              : "bg-[#EAEAEA] text-neutral-450 cursor-not-allowed"
-          }`}
-        >
-          Continue
-        </button>
+        <div className="h-40 flex flex-col gap-3">
+          <div
+            className={`grainy ${dm_sans.className} flex items-center bg-[#D0BD21]/50 rounded-[14px] border-2 border-neutral-400 font-semibold text-lg transition-all duration-300 ease-out origin-top ${
+              selectedRecipientName
+                ? "h-14 opacity-100 p-4 mt-6 scale-y-100"
+                : "h-0 opacity-0 p-0 border-none mt-0 scale-y-95 pointer-events-none overflow-hidden"
+            }`}
+          >
+            {selectedRecipientName}
+          </div>
+          <button
+            type="submit"
+            disabled={isDisabled}
+            className={`w-full h-20 rounded-[14px] font-bold text-lg flex items-center justify-center transition-all duration-200 ${
+              isDisabled
+                ? "bg-[#EAEAEA] text-neutral-450 cursor-not-allowed"
+                : "bg-[#0E1719] text-white hover:bg-[#18262a] cursor-pointer shadow-md"
+            }`}
+          >
+            Continue
+          </button>
+        </div>
       </form>
 
       <div className="px-6 mt-8">
@@ -131,7 +186,6 @@ const RecipientSelection = ({
 
             <button
               type="button"
-              onClick={() => triggerToast("Viewing all beneficiaries")}
               className="text-[12px] font-bold text-neutral-800 hover:underline flex items-center gap-0.5 cursor-pointer"
             >
               See all
@@ -156,7 +210,7 @@ const RecipientSelection = ({
               filteredBeneficiaries.map((b) => (
                 <div
                   key={b.id}
-                  onClick={() => handleBeneficiarySelect(b)}
+                  onClick={() => {}}
                   className="flex items-center gap-3.5 py-1 hover:bg-neutral-50/50 rounded-xl transition-colors cursor-pointer group active:scale-[0.99] duration-100"
                 >
                   {b.avatarUrl ? (
@@ -200,8 +254,8 @@ const RecipientSelection = ({
         </div>
 
         <div
-          onClick={() => triggerToast("Opening contact sync workflow...")}
-          className="mt-6 bg-[#EBEBEB] border border-neutral-300/60 rounded-[16px] p-4 flex items-center justify-between hover:bg-[#e2e2e2] active:scale-[0.99] transition-all cursor-pointer shadow-xs"
+          onClick={() => {}}
+          className="mt-6 grainy bg-[#EBEBEB] border border-neutral-300/60 rounded-[16px] p-4 flex items-center justify-between hover:bg-[#e2e2e2] active:scale-[0.99] transition-all cursor-pointer shadow-xs"
         >
           <div>
             <p className="text-[13px] font-bold text-neutral-800">

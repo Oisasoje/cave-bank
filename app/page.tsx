@@ -133,58 +133,6 @@ export default function Home() {
           Login
         </button>
       </div>
-
-      {/* Custom Floating Animations */}
-      <style jsx global>{`
-        @keyframes floatSlow {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-10px) rotate(8deg);
-          }
-        }
-        @keyframes floatMedium {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-14px) rotate(-10deg);
-          }
-        }
-        @keyframes floatFast {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-8px) rotate(15deg);
-          }
-        }
-        @keyframes floatSlowReverse {
-          0%,
-          100% {
-            transform: translateY(0px) rotate(0deg);
-          }
-          50% {
-            transform: translateY(-12px) rotate(-6deg);
-          }
-        }
-        .animate-float-slow {
-          animation: floatSlow 7s ease-in-out infinite;
-        }
-        .animate-float-medium {
-          animation: floatMedium 5s ease-in-out infinite 0.5s;
-        }
-        .animate-float-fast {
-          animation: floatFast 4s ease-in-out infinite 1s;
-        }
-        .animate-float-slow-reverse {
-          animation: floatSlowReverse 6s ease-in-out infinite 0.8s;
-        }
-      `}</style>
     </div>
   );
 }
