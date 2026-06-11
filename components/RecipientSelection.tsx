@@ -1,11 +1,5 @@
 import { DM_Sans, Space_Mono } from "next/font/google";
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import useDebounce from "@/lib/hooks/useDebounce";
 import { getUserByWalletAddress } from "@/services/transfer";
 import { Beneficiary } from "@/app/wallet/send/page";
@@ -48,11 +42,14 @@ const beneficiaries: Beneficiary[] = [
 ];
 
 const RecipientSelection = ({
-  selectedRecipientName,
-  setSelectedRecipientName,
+  selectedRecipient,
+  setSelectedRecipient,
+
   setStep,
   step,
 }: {
+  selectedRecipient: Beneficiary | null;
+  setSelectedRecipient: (recipient: Beneficiary | null) => void;
   selectedRecipientName: string | null;
   setSelectedRecipientName: (recipient: string | null) => void;
   step: number;
@@ -65,23 +62,49 @@ const RecipientSelection = ({
 
   const debouncedWalletAddress = useDebounce(recipientInput, 800);
 
+  const handleContinue = () => {
+    setStep(2);
+  };
+
+  const selectedFromList = useRef(false);
+
+  // in your beneficiary onClick:
+  const handleBeneficiaryClick = (b: Beneficiary) => {
+    selectedFromList.current = true;
+    setRecipientInput(b.walletAddress);
+    setSelectedRecipient(b);
+  };
+
+  // in the effect:
   useEffect(() => {
+    if (selectedFromList.current) {
+      selectedFromList.current = false;
+      return; // skip — already set from list click
+    }
+
     if (
       !debouncedWalletAddress.trim() ||
       debouncedWalletAddress.trim().length < 10
     ) {
-      setSelectedRecipientName(null);
+      setSelectedRecipient(null);
       return;
     }
+
     const fetchRecipient = async () => {
       try {
         const { user } = await getUserByWalletAddress(debouncedWalletAddress);
-
-        setSelectedRecipientName(user.data.name);
-      } catch (error: any) {
-        setSelectedRecipientName(null);
+        setSelectedRecipient({
+          accountId: user.data.accountId,
+          name: user.data.name,
+          walletAddress: debouncedWalletAddress,
+          isSaved: false,
+        });
+      } catch {
+        // only clear if user typed this address manually
+        setSelectedRecipient(null);
       }
     };
+
     fetchRecipient();
   }, [debouncedWalletAddress]);
 
@@ -91,11 +114,7 @@ const RecipientSelection = ({
     }, 350);
     return () => clearTimeout(timer);
   }, []);
-  const isDisabled =
-    !recipientInput.trim() ||
-    selectedRecipientName === null ||
-    selectedRecipientName === undefined ||
-    selectedRecipientName.trim() === "";
+  const isDisabled = !selectedRecipient?.name;
 
   return (
     <div className="animate-fade-in">
@@ -113,7 +132,7 @@ const RecipientSelection = ({
               value={recipientInput}
               onChange={(e) => {
                 setRecipientInput(e.target.value);
-                setSelectedRecipientName(null);
+                setSelectedRecipient(null);
               }}
               className={`w-full ${space_mono.className} h-[56px] border border-neutral-200 rounded-[14px] px-4 text-[14px] focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 bg-white placeholder-neutral-400 font-medium transition-all shadow-xs`}
             />
@@ -123,16 +142,17 @@ const RecipientSelection = ({
         <div className="h-40 flex flex-col gap-3">
           <div
             className={`grainy ${dm_sans.className} flex items-center bg-[#D0BD21]/50 rounded-[14px] border-2 border-neutral-400 font-semibold text-lg transition-all duration-300 ease-out origin-top ${
-              selectedRecipientName
+              selectedRecipient?.name
                 ? "h-14 opacity-100 p-4 mt-6 scale-y-100"
                 : "h-0 opacity-0 p-0 border-none mt-0 scale-y-95 pointer-events-none overflow-hidden"
             }`}
           >
-            {selectedRecipientName}
+            {selectedRecipient?.name}
           </div>
           <button
-            type="submit"
+            type="button"
             disabled={isDisabled}
+            onClick={handleContinue}
             className={`w-full h-20 rounded-[14px] font-bold text-lg flex items-center justify-center transition-all duration-200 ${
               isDisabled
                 ? "bg-[#EAEAEA] text-neutral-450 cursor-not-allowed"
@@ -206,32 +226,24 @@ const RecipientSelection = ({
           </div>
 
           <div className="divide-y divide-neutral-100 p-4 space-y-3.5 divide-none">
-            {filteredBeneficiaries.length > 0 ? (
-              filteredBeneficiaries.map((b) => (
+            {beneficiaries.length > 0 ? (
+              beneficiaries.map((b) => (
                 <div
-                  key={b.id}
-                  onClick={() => {}}
+                  key={b.accountId}
+                  onClick={() => handleBeneficiaryClick(b)}
                   className="flex items-center gap-3.5 py-1 hover:bg-neutral-50/50 rounded-xl transition-colors cursor-pointer group active:scale-[0.99] duration-100"
                 >
-                  {b.avatarUrl ? (
-                    <img
-                      src={b.avatarUrl}
-                      alt={b.name}
-                      className="w-10 h-10 rounded-full object-cover shrink-0 border border-neutral-200/50 shadow-xs"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 border border-neutral-250/30">
-                      <svg
-                        width="18"
-                        height="18"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="text-neutral-400 group-hover:text-neutral-500 transition-colors"
-                      >
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                      </svg>
-                    </div>
-                  )}
+                  <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 border border-neutral-250/30">
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="text-neutral-400 group-hover:text-neutral-500 transition-colors"
+                    >
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                  </div>
 
                   <div className="flex-1">
                     <p className="text-[14px] font-bold text-neutral-800 leading-tight group-hover:text-black transition-colors">
@@ -240,7 +252,7 @@ const RecipientSelection = ({
                     <p
                       className={`text-[11px] text-neutral-400 font-semibold mt-1 ${space_mono.className}`}
                     >
-                      {b.address}
+                      {b.walletAddress}
                     </p>
                   </div>
                 </div>

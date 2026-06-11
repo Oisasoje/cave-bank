@@ -252,6 +252,8 @@ export default function SendCoinsPage() {
       {step === 1 && (
         /* STEP 1: RECIPIENT SELECTION */
         <RecipientSelection
+          selectedRecipient={selectedRecipient}
+          setSelectedRecipient={setSelectedRecipient}
           selectedRecipientName={selectedRecipientName}
           setSelectedRecipientName={setSelectedRecipientName}
           setStep={setStep}
@@ -263,6 +265,7 @@ export default function SendCoinsPage() {
         /* STEP 2: AMOUNT & NOTES ENTRY */
         <AmountAndNoteEntry
           selectedRecipient={selectedRecipient}
+          selectedRecipientName={selectedRecipientName}
           handleSendCoins={handleSendCoins}
           setStep={setStep}
           amountDigits={amountDigits}
@@ -290,6 +293,9 @@ export default function SendCoinsPage() {
         /* STEP 4: AUTHORIZE TRANSACTION (PIN ENTRY) */
         <AuthorizeTransaction
           pin={pin}
+          selectedRecipient={selectedRecipient}
+          amount={rawAmount}
+          reason={description}
           handleKey={handleKey}
           handleDelete={handleDelete}
           triggerToast={triggerToast}

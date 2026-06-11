@@ -1,18 +1,21 @@
 import { getUser } from "@/services/auth";
 import { queryClient } from "./queryClient";
+import { getBalance } from "@/services/user";
 
 const generateUserData = async () => {
   await Promise.all([
     queryClient.prefetchQuery({
       queryKey: ["me"],
       queryFn: getUser,
-      staleTime: 10 * 60 * 1000,
-      gcTime: 10 * 60 * 1000,
+      staleTime: Infinity,
+      gcTime: 60 * 60 * 1000,
     }),
+
+    ,
     queryClient.prefetchQuery({
       queryKey: ["balance"],
-      staleTime: 10 * 60 * 1000,
-      gcTime: 10 * 60 * 1000,
+      queryFn: getBalance,
+      staleTime: 60 * 1000,
     }),
     queryClient.prefetchQuery({
       queryKey: ["transactions", { limit: 20 }],

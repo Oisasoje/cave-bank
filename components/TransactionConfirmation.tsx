@@ -35,7 +35,7 @@ const TransactionConfirmation = ({
     <div className="animate-fade-in px-6 mt-6 flex flex-col">
       {/* Total Amount large centered display */}
       <div className="text-center mt-2 mb-6">
-        <span className="text-[13px] font-bold text-neutral-450 tracking-wider block uppercase mb-1">
+        <span className="text-[13px] font-semibold text-neutral-450 tracking-wider block uppercase mb-1">
           Total Amount
         </span>
         <div className="flex items-center justify-center gap-1">
@@ -45,7 +45,7 @@ const TransactionConfirmation = ({
             ₵
           </span>
           <span
-            className={`text-[36px] font-bold text-neutral-850 ${space_mono.className}`}
+            className={`text-[36px] text-neutral-850 ${space_mono.className}`}
           >
             {formattedRawAmount}
           </span>
@@ -58,7 +58,9 @@ const TransactionConfirmation = ({
         <div className="flex items-center justify-between text-[13px]">
           <span className="text-neutral-450 font-bold">Recipient Name</span>
           <span className="text-neutral-800 font-bold text-right">
-            {selectedRecipient?.name}
+            {selectedRecipient?.name && selectedRecipient.name.length > 17
+              ? selectedRecipient.name.slice(0, 17) + "..."
+              : selectedRecipient?.name}
           </span>
         </div>
 
@@ -68,7 +70,7 @@ const TransactionConfirmation = ({
           <span
             className={`text-neutral-800 font-bold text-right ${space_mono.className}`}
           >
-            {selectedRecipient?.address}
+            {selectedRecipient?.walletAddress}
           </span>
         </div>
 
@@ -94,7 +96,7 @@ const TransactionConfirmation = ({
             Description
           </span>
           <div className="bg-[#F3F4F6] text-neutral-600 rounded-[10px] p-3 text-[13px] font-medium leading-relaxed">
-            {description || "Reward for reposting"}
+            {description || "--"}
           </div>
         </div>
       </div>
@@ -104,7 +106,7 @@ const TransactionConfirmation = ({
         <span className="text-[13px] font-bold text-neutral-500 block mb-2">
           Paying From
         </span>
-        <div className="bg-white border border-neutral-200/60 rounded-[16px] p-4 flex flex-col shadow-xs">
+        <div className="bg-[#D0BD21] grainy border border-neutral-200/60 rounded-[16px] p-4 flex flex-col shadow-xs">
           <span className="text-[12px] text-neutral-450 font-bold uppercase tracking-wider">
             Wallet Balance
           </span>

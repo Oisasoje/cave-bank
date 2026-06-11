@@ -1,5 +1,5 @@
 import { DM_Sans, Space_Mono } from "next/font/google";
-import React from "react";
+import React, { useState } from "react";
 import Keyboard from "./Keyboard";
 import { Beneficiary } from "@/app/wallet/send/page";
 
@@ -15,6 +15,7 @@ const space_mono = Space_Mono({
 
 export const AmountAndNoteEntry = ({
   selectedRecipient,
+  selectedRecipientName,
   handleSendCoins,
   setStep,
   description,
@@ -24,6 +25,7 @@ export const AmountAndNoteEntry = ({
   handleKey,
   handleDelete,
 }: {
+  selectedRecipientName: string | null;
   selectedRecipient: Beneficiary | null;
   handleSendCoins: (e: React.FormEvent) => void;
   setStep: (step: number) => void;
@@ -35,34 +37,41 @@ export const AmountAndNoteEntry = ({
   handleKey: (digit: string) => void;
   handleDelete: () => void;
 }) => {
+  const [focus, setFocus] = useState(true);
+
   return (
-    <div className="animate-fade-in flex flex-col flex-1 overflow-y-auto pb-[280px]">
+    <div
+      className="animate-fade-in flex flex-col flex-1"
+      onClick={() => setFocus(false)}
+    >
       <div className="px-6 mt-6 flex flex-col">
         {/* Sending to Recipient card */}
         <div className="mb-2">
           <span className="text-[13px] font-bold text-neutral-500 block mb-2">
             Sending to
           </span>
-          <div className="bg-[#C4A61A] rounded-[16px] p-4 flex items-center justify-between shadow-xs">
+          <div className="bg-[#D0BD21] grainy rounded-[16px] p-4 flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-3.5">
-              {
-                <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center text-neutral-800 shrink-0">
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                  </svg>
-                </div>
-              }
+              <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center text-neutral-800 shrink-0">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+              </div>
               <div>
-                <p className="text-[14px] font-bold text-neutral-900 leading-tight">
-                  {selectedRecipient?.name}
+                <p
+                  className={`text-lg font-bold text-black leading-tight ${dm_sans.className}`}
+                >
+                  {selectedRecipient?.name && selectedRecipient.name.length > 17
+                    ? selectedRecipient.name.slice(0, 17) + "..."
+                    : selectedRecipient?.name}
                 </p>
                 <p
-                  className={`text-[11px] text-neutral-900/80 font-semibold mt-1 ${space_mono.className}`}
+                  className={`text-[16px] text-black/90 font-semibold mt-1 ${space_mono.className}`}
                 >
                   {selectedRecipient?.walletAddress}
                 </p>
@@ -71,8 +80,11 @@ export const AmountAndNoteEntry = ({
 
             <button
               type="button"
-              onClick={() => setStep(1)}
-              className="px-3.5 py-1.5 bg-white border border-neutral-800/10 rounded-[8px] text-[12px] font-bold text-neutral-850 hover:bg-neutral-50 transition-colors shadow-xs active:scale-95 duration-100 cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                setStep(1);
+              }}
+              className={`px-3.5 ${space_mono.className} py-1.5 bg-white border-2 border-neutral-400 rounded-[8px] text-[12px] font-bold text-neutral-850 hover:bg-neutral-50 transition-colors shadow-xs active:scale-95 duration-100 cursor-pointer`}
             >
               Change
             </button>
@@ -84,7 +96,7 @@ export const AmountAndNoteEntry = ({
           <span className="text-[13px] font-bold text-neutral-500 block mb-2">
             From
           </span>
-          <div className="bg-[#EAEAEA] border border-neutral-250/30 rounded-[16px] p-4 flex flex-col shadow-xs">
+          <div className="bg-[#EAEAEA] grainy border border-neutral-250/30 rounded-[16px] p-4 flex flex-col shadow-xs">
             <span className="text-[11px] text-neutral-500 font-bold uppercase tracking-wider">
               Wallet Balance
             </span>
@@ -99,20 +111,38 @@ export const AmountAndNoteEntry = ({
         {/* Amount and Notes Input Box Card */}
         <div className="bg-white border border-neutral-200/60 rounded-[20px] p-5 shadow-sm space-y-4">
           {/* Amount */}
-          <div>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              setFocus(true);
+            }}
+            className="cursor-pointer"
+          >
             <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block mb-2">
               Amount
             </label>
-            <div className="w-full h-[56px] border border-neutral-200 rounded-[14px] px-4 flex items-center bg-white">
+            <div
+              className={`w-full h-[56px] border rounded-[14px] px-4 flex items-center bg-white transition-all ${
+                focus
+                  ? "border-amber-500 shadow-[0_0_0_1px_#F59E0B]"
+                  : "border-neutral-200 hover:border-neutral-300"
+              }`}
+            >
               <span className="text-[14px] font-bold text-neutral-800 mr-1 select-none">
                 ₵
               </span>
               <span
-                className={`text-[14px] font-semibold tracking-tight ${
-                  amountDigits ? "text-neutral-900" : "text-neutral-350"
-                }`}
+                className={`text-[14px] font-semibold tracking-tight flex items-center ${
+                  amountDigits ? "text-neutral-900" : "text-neutral-400"
+                } ${space_mono.className}`}
               >
-                {amountDigits ? formatAmount(amountDigits) : "1.00 - 533.00"}
+                {amountDigits ? formatAmount(amountDigits) : "1.00 - 10000.00"}
+                {focus && (
+                  <span
+                    className="w-[1.5px] h-[16px] bg-neutral-900 ml-0.5"
+                    style={{ animation: "blink 1s step-end infinite" }}
+                  />
+                )}
               </span>
             </div>
           </div>
@@ -128,6 +158,11 @@ export const AmountAndNoteEntry = ({
               placeholder="Add a note (optional)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              onFocus={() => setFocus(false)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setFocus(false);
+              }}
               className="w-full h-[56px] border border-neutral-200 rounded-[14px] px-4 text-[14px] focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 bg-white placeholder-neutral-400 font-medium transition-all shadow-xs"
             />
             <span className="text-[10px] text-neutral-400 font-semibold mt-1.5 block">
@@ -147,12 +182,12 @@ export const AmountAndNoteEntry = ({
               : "bg-[#EAEAEA] text-neutral-450 cursor-not-allowed"
           }`}
         >
-          Send Cave Coins
+          Send
         </button>
       </div>
 
       {/* Fixed Keyboard */}
-      <Keyboard onKey={handleKey} onDelete={handleDelete} />
+      {focus && <Keyboard onKey={handleKey} onDelete={handleDelete} />}
     </div>
   );
 };

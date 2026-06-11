@@ -12,6 +12,7 @@ import QuickSend from "@/components/QuickSend";
 import WalletHomeHeader from "@/components/WalletHomeHeader";
 import HomePageFloatingNav from "@/components/HomePageFloatingNav";
 import WalletPageQuickActions from "@/components/WalletPageQuickActions";
+import { getBalance } from "@/services/user";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -43,12 +44,18 @@ export default function WalletPage() {
   const { data: me, isLoading } = useQuery({
     queryKey: ["me"],
     queryFn: getUser,
-    staleTime: 1000 * 60 * 5,
   });
 
-  const walletAddress = me?.wallet_address;
-  const firstName = me?.user?.name?.split(" ")?.[0] ?? "";
-  const balance = me?.balance?.toFixed(2);
+  const { data: balance } = useQuery({
+    queryKey: ["balance"],
+    queryFn: getBalance,
+  });
+
+  console.log(me?.data.user);
+
+  const walletAddress = me?.data.wallet_address;
+  const firstName = me?.data?.user.name?.split(" ")?.[0] ?? "";
+  const formattedBalance = balance?.data.balance.toFixed(2);
 
   // Authentication & Session Loading
 
@@ -59,7 +66,7 @@ export default function WalletPage() {
   }, []);
 
   // Balance Visibility State
-  const [showBalance, setShowBalance] = useState(true);
+  const [showBalance, setShowBalance] = useState(false);
 
   // Copy ID Clipboard Alert State
   const [copied, setCopied] = useState(false);
@@ -175,7 +182,7 @@ export default function WalletPage() {
           walletAddress={walletAddress!}
           handleCopyId={handleCopyId}
           copied={copied}
-          balance={balance}
+          formattedBalance={formattedBalance}
         />
 
         {/* QUICK ACTION BUTTONS */}

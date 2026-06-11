@@ -1,17 +1,44 @@
 import React from "react";
 import Keyboard from "./Keyboard";
+import { initiateTransfer } from "@/services/transfer";
+import { User } from "lucide-react";
+import { Beneficiary } from "@/app/wallet/send/page";
+import generateUserData from "@/lib/getUserData";
+import { queryClient } from "@/lib/queryClient";
+import { useQuery } from "@tanstack/react-query";
+import { getUser } from "@/services/auth";
 
 const AuthorizeTransaction = ({
   pin,
   handleKey,
   handleDelete,
   triggerToast,
+  selectedRecipient,
+  amount,
+  reason,
 }: {
   pin: string;
   handleKey: (key: string) => void;
   handleDelete: () => void;
   triggerToast: (message: string) => void;
+  selectedRecipient: Beneficiary | null;
+  amount: number;
+  reason: string;
 }) => {
+  if (!selectedRecipient?.accountId) return;
+  const { data: me } = useQuery({
+    queryKey: ["me"],
+    queryFn: getUser,
+  });
+
+  initiateTransfer({
+    pin,
+    fromAccountId: me.account_id,
+    toAccountId: selectedRecipient.accountId,
+    amount,
+    reason,
+  });
+
   return (
     <div className="animate-fade-in flex flex-col flex-1">
       <div className="flex-1 flex flex-col items-center justify-center px-6 pb-[280px]">
