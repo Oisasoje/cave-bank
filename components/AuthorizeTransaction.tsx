@@ -41,19 +41,22 @@ const AuthorizeTransaction = ({
       return;
     }
 
-    try {
-      initiateTransfer({
-        pin,
-        fromAccountId: me.data.accountId,
-        toAccountId: selectedRecipient.accountId,
-        amount,
-        reason,
-      });
+    const run = async () => {
+      try {
+        await initiateTransfer({
+          pin,
+          fromAccountId: me.data.accountId,
+          toAccountId: selectedRecipient.accountId,
+          amount,
+          reason,
+        });
 
-      setStep(5);
-    } catch (error: any) {
-      setError(error);
-    }
+        setStep(5);
+      } catch (error: any) {
+        setError(error.message);
+      }
+    };
+    run();
   }, [pin, me, selectedRecipient, amount, reason]);
 
   return (
@@ -93,11 +96,13 @@ const AuthorizeTransaction = ({
           })}
         </div>
 
+        <span className="h-10 mt-5 text-red-500 text-sm">{error}</span>
+
         {/* Forgot PIN Link */}
         <button
           type="button"
           onClick={() => triggerToast("PIN reset flow requested")}
-          className="text-[#D2B627] hover:underline cursor-pointer font-bold text-[14px] mt-8 mx-auto block text-center bg-transparent border-none outline-none"
+          className="text-[#D2B627] hover:underline cursor-pointer font-bold text-[14px] mt-4 mx-auto block text-center bg-transparent border-none outline-none"
         >
           Forgot PIN?
         </button>

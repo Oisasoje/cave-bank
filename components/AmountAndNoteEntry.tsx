@@ -1,5 +1,7 @@
+"use client";
+
 import { DM_Sans, Space_Mono } from "next/font/google";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Keyboard from "./Keyboard";
 import { Beneficiary } from "@/app/wallet/send/page";
 
@@ -38,6 +40,12 @@ export const AmountAndNoteEntry = ({
   handleDelete: () => void;
 }) => {
   const [focus, setFocus] = useState(true);
+
+  useEffect(() => {
+    const handleScroll = () => setFocus(false);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div
