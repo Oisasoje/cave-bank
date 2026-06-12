@@ -293,6 +293,7 @@ export default function SendCoinsPage() {
       {step === 4 && (
         /* STEP 4: AUTHORIZE TRANSACTION (PIN ENTRY) */
         <AuthorizeTransaction
+          setStep={setStep}
           pin={pin}
           selectedRecipient={selectedRecipient}
           amount={rawAmount}

@@ -43,6 +43,7 @@ export const AmountAndNoteEntry = ({
     <div
       className="animate-fade-in flex flex-col flex-1"
       onClick={() => setFocus(false)}
+      onScroll={() => setFocus(false)}
     >
       <div className="px-6 mt-6 flex flex-col">
         {/* Sending to Recipient card */}
@@ -50,18 +51,8 @@ export const AmountAndNoteEntry = ({
           <span className="text-[13px] font-bold text-neutral-500 block mb-2">
             Sending to
           </span>
-          <div className="bg-[#D0BD21] grainy rounded-[16px] p-4 flex items-center justify-between shadow-xs">
+          <div className="bg-[#D0BD21] w-full grainy rounded-[16px] p-4 flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-3.5">
-              <div className="w-10 h-10 rounded-full bg-black/10 flex items-center justify-center text-neutral-800 shrink-0">
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                </svg>
-              </div>
               <div>
                 <p
                   className={`text-[15px] font-bold text-black leading-tight ${dm_sans.className}`}

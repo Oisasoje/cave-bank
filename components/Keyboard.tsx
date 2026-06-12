@@ -1,7 +1,6 @@
 "use client";
 
 import { Space_Mono } from "next/font/google";
-import React from "react";
 
 const space_mono = Space_Mono({
   subsets: ["latin"],

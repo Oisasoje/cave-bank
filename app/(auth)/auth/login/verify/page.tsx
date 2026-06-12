@@ -65,7 +65,7 @@ const Verify = () => {
         }, 3000);
         throw new Error("You cannot proceed. Please try logging in again.");
       }
-      const response = await loginVerify(loginAttemptID, digits);
+      await loginVerify(loginAttemptID, digits);
 
       await generateUserData();
 

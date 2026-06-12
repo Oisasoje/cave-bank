@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Keyboard from "./Keyboard";
 import { initiateTransfer } from "@/services/transfer";
-import { User } from "lucide-react";
+
 import { Beneficiary } from "@/app/wallet/send/page";
-import generateUserData from "@/lib/getUserData";
-import { queryClient } from "@/lib/queryClient";
+
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/services/auth";
 
@@ -16,6 +15,7 @@ const AuthorizeTransaction = ({
   selectedRecipient,
   amount,
   reason,
+  setStep,
 }: {
   pin: string;
   handleKey: (key: string) => void;
@@ -24,33 +24,36 @@ const AuthorizeTransaction = ({
   selectedRecipient: Beneficiary | null;
   amount: number;
   reason: string;
+  setStep: Dispatch<SetStateAction<number>>;
 }) => {
+  const [error, setError] = useState<string | null>(null);
+
   const { data: me } = useQuery({
     queryKey: ["me"],
     queryFn: getUser,
   });
 
-  console.log(me);
-
   useEffect(() => {
-    console.log("effect running");
     if (pin.length !== 4) {
-      console.log("pin not 4", pin);
       return;
     }
     if (!selectedRecipient?.accountId) {
-      console.log("no recipient");
       return;
     }
 
-    console.log("initiating transfer");
-    initiateTransfer({
-      pin,
-      fromAccountId: me.data.accountId,
-      toAccountId: selectedRecipient.accountId,
-      amount,
-      reason,
-    });
+    try {
+      initiateTransfer({
+        pin,
+        fromAccountId: me.data.accountId,
+        toAccountId: selectedRecipient.accountId,
+        amount,
+        reason,
+      });
+
+      setStep(5);
+    } catch (error: any) {
+      setError(error);
+    }
   }, [pin, me, selectedRecipient, amount, reason]);
 
   return (

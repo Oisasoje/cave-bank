@@ -25,7 +25,14 @@ const api = async (endpoint: String, options: RequestInit = {}) => {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Something went wrong. Please try again.");
+    console.log(data);
+    throw new Error(
+      data.message
+        ? data.message
+        : data.error
+          ? data.error
+          : "Something went wrong. Please try again.",
+    );
   }
 
   return data;
