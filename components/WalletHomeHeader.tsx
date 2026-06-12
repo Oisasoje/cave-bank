@@ -12,7 +12,7 @@ const WalletHomeHeader = ({ firstName }: { firstName: string }) => {
     <div className="pt-6 px-6 flex justify-between items-center bg-neutral-50 sticky top-0 z-30">
       <div>
         <h1
-          className={`text-[20px] font-bold text-neutral-800 tracking-tight ${dm_sans.className}`}
+          className={`text-[16px] font-bold text-neutral-800 tracking-tight ${dm_sans.className}`}
         >
           Good morning, <span className="text-neutral-950">{firstName}</span>
         </h1>

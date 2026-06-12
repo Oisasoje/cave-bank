@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Keyboard from "./Keyboard";
 import { initiateTransfer } from "@/services/transfer";
 import { User } from "lucide-react";
@@ -25,19 +25,33 @@ const AuthorizeTransaction = ({
   amount: number;
   reason: string;
 }) => {
-  if (!selectedRecipient?.accountId) return;
   const { data: me } = useQuery({
     queryKey: ["me"],
     queryFn: getUser,
   });
 
-  initiateTransfer({
-    pin,
-    fromAccountId: me.account_id,
-    toAccountId: selectedRecipient.accountId,
-    amount,
-    reason,
-  });
+  console.log(me);
+
+  useEffect(() => {
+    console.log("effect running");
+    if (pin.length !== 4) {
+      console.log("pin not 4", pin);
+      return;
+    }
+    if (!selectedRecipient?.accountId) {
+      console.log("no recipient");
+      return;
+    }
+
+    console.log("initiating transfer");
+    initiateTransfer({
+      pin,
+      fromAccountId: me.data.accountId,
+      toAccountId: selectedRecipient.accountId,
+      amount,
+      reason,
+    });
+  }, [pin, me, selectedRecipient, amount, reason]);
 
   return (
     <div className="animate-fade-in flex flex-col flex-1">

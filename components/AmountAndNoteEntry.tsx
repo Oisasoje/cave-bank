@@ -15,7 +15,7 @@ const space_mono = Space_Mono({
 
 export const AmountAndNoteEntry = ({
   selectedRecipient,
-  selectedRecipientName,
+  formattedBalance,
   handleSendCoins,
   setStep,
   description,
@@ -25,7 +25,7 @@ export const AmountAndNoteEntry = ({
   handleKey,
   handleDelete,
 }: {
-  selectedRecipientName: string | null;
+  formattedBalance: number;
   selectedRecipient: Beneficiary | null;
   handleSendCoins: (e: React.FormEvent) => void;
   setStep: (step: number) => void;
@@ -64,14 +64,14 @@ export const AmountAndNoteEntry = ({
               </div>
               <div>
                 <p
-                  className={`text-lg font-bold text-black leading-tight ${dm_sans.className}`}
+                  className={`text-[15px] font-bold text-black leading-tight ${dm_sans.className}`}
                 >
                   {selectedRecipient?.name && selectedRecipient.name.length > 17
                     ? selectedRecipient.name.slice(0, 17) + "..."
                     : selectedRecipient?.name}
                 </p>
                 <p
-                  className={`text-[16px] text-black/90 font-semibold mt-1 ${space_mono.className}`}
+                  className={`text-[15px] text-black/90 font-semibold mt-1 ${space_mono.className}`}
                 >
                   {selectedRecipient?.walletAddress}
                 </p>
@@ -103,7 +103,7 @@ export const AmountAndNoteEntry = ({
             <span
               className={`text-[18px] font-bold text-neutral-850 mt-1.5 ${space_mono.className}`}
             >
-              ₵ 500
+              {formattedBalance}
             </span>
           </div>
         </div>
@@ -112,39 +112,48 @@ export const AmountAndNoteEntry = ({
         <div className="bg-white border border-neutral-200/60 rounded-[20px] p-5 shadow-sm space-y-4">
           {/* Amount */}
           <div
+            className={`w-full h-[56px] border rounded-[14px] px-4 flex items-center bg-white transition-all ${
+              focus
+                ? "border-amber-500 shadow-[0_0_0_1px_#F59E0B]"
+                : "border-neutral-200 hover:border-neutral-300"
+            }`}
             onClick={(e) => {
               e.stopPropagation();
               setFocus(true);
             }}
-            className="cursor-pointer"
           >
-            <label className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block mb-2">
-              Amount
-            </label>
-            <div
-              className={`w-full h-[56px] border rounded-[14px] px-4 flex items-center bg-white transition-all ${
-                focus
-                  ? "border-amber-500 shadow-[0_0_0_1px_#F59E0B]"
-                  : "border-neutral-200 hover:border-neutral-300"
-              }`}
-            >
-              <span className="text-[14px] font-bold text-neutral-800 mr-1 select-none">
-                ₵
-              </span>
+            <span className="text-[14px] font-bold text-neutral-800 mr-1 select-none">
+              ₵
+            </span>
+
+            {/* cursor when focused and empty */}
+            {focus && !amountDigits && (
               <span
-                className={`text-[14px] font-semibold tracking-tight flex items-center ${
-                  amountDigits ? "text-neutral-900" : "text-neutral-400"
-                } ${space_mono.className}`}
-              >
-                {amountDigits ? formatAmount(amountDigits) : "1.00 - 10000.00"}
-                {focus && (
-                  <span
-                    className="w-[1.5px] h-[16px] bg-neutral-900 ml-0.5"
-                    style={{ animation: "blink 1s step-end infinite" }}
-                  />
-                )}
-              </span>
-            </div>
+                className="w-[1.5px] h-[16px] bg-neutral-900 shrink-0"
+                style={{ animation: "blink 1s step-end infinite" }}
+              />
+            )}
+
+            <span
+              className={`text-[14px] font-semibold tracking-tight ${
+                amountDigits ? "text-neutral-900" : "text-neutral-400"
+              } ${space_mono.className}`}
+            >
+              {amountDigits ? (
+                <>
+                  {formatAmount(amountDigits)}
+                  {/* cursor after digits when focused */}
+                  {focus && (
+                    <span
+                      className="inline-block w-[1.5px] h-[16px] bg-neutral-900 ml-0.5 shrink-0 align-middle"
+                      style={{ animation: "blink 1s step-end infinite" }}
+                    />
+                  )}
+                </>
+              ) : (
+                <span className="text-neutral-400">1.00 - 10000.00</span>
+              )}
+            </span>
           </div>
 
           {/* Description */}

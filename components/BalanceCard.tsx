@@ -23,7 +23,7 @@ export default function BalanceCard({
   formattedBalance: number;
 }) {
   return (
-    <div className="grainy bg-[#d2b627] rounded-[24px] p-6 text-neutral-900 shadow-md relative overflow-hidden flex flex-col justify-between h-[164px]">
+    <div className="grainy bg-[#ffdf41] rounded-[24px] p-6 text-neutral-900 shadow-md relative overflow-hidden flex flex-col justify-between h-[164px]">
       {/* Top row: balance label & hide toggle */}
       <div className="flex justify-between items-center">
         <span className="text-[11px] text-neutral-900/70 font-semibold uppercase tracking-wider">

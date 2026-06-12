@@ -46,21 +46,19 @@ const RecipientSelection = ({
   setSelectedRecipient,
 
   setStep,
-  step,
 }: {
   selectedRecipient: Beneficiary | null;
   setSelectedRecipient: (recipient: Beneficiary | null) => void;
-  selectedRecipientName: string | null;
-  setSelectedRecipientName: (recipient: string | null) => void;
-  step: number;
+
   setStep: (step: number) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [activeTab, setActiveTab] = useState<"recents" | "saved">("recents");
   const [recipientInput, setRecipientInput] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
-  const debouncedWalletAddress = useDebounce(recipientInput, 800);
+  const debouncedWalletAddress = useDebounce(recipientInput);
 
   const handleContinue = () => {
     setStep(2);
@@ -84,28 +82,41 @@ const RecipientSelection = ({
 
     if (
       !debouncedWalletAddress.trim() ||
-      debouncedWalletAddress.trim().length < 10
+      debouncedWalletAddress.trim().length < 13
     ) {
       setSelectedRecipient(null);
+      setError(null);
+
       return;
     }
 
+    let cancelled = false; // ← add this
     const fetchRecipient = async () => {
       try {
         const { user } = await getUserByWalletAddress(debouncedWalletAddress);
+        if (cancelled) return; // ← stale response, ignore
+        setError(null);
         setSelectedRecipient({
           accountId: user.data.accountId,
           name: user.data.name,
           walletAddress: debouncedWalletAddress,
           isSaved: false,
         });
-      } catch {
-        // only clear if user typed this address manually
+      } catch (err: any) {
+        if (cancelled) return; // ← stale error, ignore
         setSelectedRecipient(null);
+        setError(
+          err.message === "Something went wrong. Please try again."
+            ? null
+            : err.message,
+        );
       }
     };
 
     fetchRecipient();
+    return () => {
+      cancelled = true;
+    };
   }, [debouncedWalletAddress]);
 
   useEffect(() => {
@@ -133,13 +144,22 @@ const RecipientSelection = ({
               onChange={(e) => {
                 setRecipientInput(e.target.value);
                 setSelectedRecipient(null);
+                setError(null);
               }}
               className={`w-full ${space_mono.className} h-[56px] border border-neutral-200 rounded-[14px] px-4 text-[14px] focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 bg-white placeholder-neutral-400 font-medium transition-all shadow-xs`}
             />
           </div>
         </div>
 
-        <div className="h-40 flex flex-col gap-3">
+        <div className="h-50 flex flex-col gap-3">
+          {error && (
+            <div className={`flex items-center mt-2`}>
+              <span className="text-sm font-semibold text-red-500">
+                {error}
+              </span>
+            </div>
+          )}
+
           <div
             className={`grainy ${dm_sans.className} flex items-center bg-[#D0BD21]/50 rounded-[14px] border-2 border-neutral-400 font-semibold text-lg transition-all duration-300 ease-out origin-top ${
               selectedRecipient?.name

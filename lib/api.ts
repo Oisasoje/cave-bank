@@ -1,4 +1,7 @@
-const API_BASE_URL = process.env.NODE_ENV === "production" ? process.env.NEXT_PUBLIC_API_URL : process.env.NEXT_PUBLIC_API_URL_DEV || "http://localhost:8000";
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.NEXT_PUBLIC_API_URL
+    : process.env.NEXT_PUBLIC_API_URL_DEV || "http://localhost:8000";
 const api = async (endpoint: String, options: RequestInit = {}) => {
   if (typeof window !== "undefined" && !window.navigator.onLine) {
     throw new Error("You are offline.");
@@ -15,13 +18,14 @@ const api = async (endpoint: String, options: RequestInit = {}) => {
       },
     });
   } catch (error: any) {
+    console.log(error);
     throw new Error(error.message || "Something went wrong. Please try again.");
   }
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Something went wrong. Please try again.");
+    throw new Error(data.error || "Something went wrong. Please try again.");
   }
 
   return data;

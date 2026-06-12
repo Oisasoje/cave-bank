@@ -8,6 +8,8 @@ import { AmountAndNoteEntry } from "@/components/AmountAndNoteEntry";
 import TransactionConfirmation from "@/components/TransactionConfirmation";
 import AuthorizeTransaction from "@/components/AuthorizeTransaction";
 import TransferSuccess from "@/components/TransferSuccess";
+import { getBalance } from "@/services/user";
+import { useQuery } from "@tanstack/react-query";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -28,14 +30,15 @@ export interface Beneficiary {
 
 export default function SendCoinsPage() {
   const router = useRouter();
+  const { data: balance } = useQuery({
+    queryKey: ["balance"],
+    queryFn: getBalance,
+  });
+  const formattedBalance = balance?.data.balance.toFixed(2);
   const [step, setStep] = useState(1);
 
   const [selectedRecipient, setSelectedRecipient] =
     useState<Beneficiary | null>(null);
-
-  const [selectedRecipientName, setSelectedRecipientName] = useState<
-    string | null
-  >(null);
 
   // Transaction details (Step 2, 3, 4 & 5)
   const [amountDigits, setAmountDigits] = useState("");
@@ -115,9 +118,9 @@ export default function SendCoinsPage() {
       if (pin.length >= 4) return;
       const newPin = pin + digit;
       setPin(newPin);
-      if (newPin.length === 4) {
-        setStep(5); // Go to Step 5 Success screen
-      }
+      // if (newPin.length === 4) {
+      //   setStep(5); // Go to Step 5 Success screen
+      // }
     }
   };
 
@@ -254,10 +257,7 @@ export default function SendCoinsPage() {
         <RecipientSelection
           selectedRecipient={selectedRecipient}
           setSelectedRecipient={setSelectedRecipient}
-          selectedRecipientName={selectedRecipientName}
-          setSelectedRecipientName={setSelectedRecipientName}
           setStep={setStep}
-          step={step}
         />
       )}
 
@@ -265,7 +265,6 @@ export default function SendCoinsPage() {
         /* STEP 2: AMOUNT & NOTES ENTRY */
         <AmountAndNoteEntry
           selectedRecipient={selectedRecipient}
-          selectedRecipientName={selectedRecipientName}
           handleSendCoins={handleSendCoins}
           setStep={setStep}
           amountDigits={amountDigits}
@@ -275,6 +274,7 @@ export default function SendCoinsPage() {
           handleKey={handleKey}
           handleDelete={handleDelete}
           formatAmount={formatAmount}
+          formattedBalance={formattedBalance}
         />
       )}
 
@@ -286,6 +286,7 @@ export default function SendCoinsPage() {
           formattedCharge={formattedCharge}
           description={description}
           setStep={setStep}
+          formattedBalance={formattedBalance}
         />
       )}
 

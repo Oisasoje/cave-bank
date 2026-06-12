@@ -20,6 +20,7 @@ interface TransactionConfirmationProps {
   selectedRecipient: any;
   formattedRawAmount: string;
   formattedCharge: string;
+  formattedBalance: number;
   description: string;
   setStep: (step: number) => void;
 }
@@ -29,6 +30,7 @@ const TransactionConfirmation = ({
   formattedRawAmount,
   formattedCharge,
   description,
+  formattedBalance,
   setStep,
 }: TransactionConfirmationProps) => {
   return (
@@ -70,7 +72,9 @@ const TransactionConfirmation = ({
           <span
             className={`text-neutral-800 font-bold text-right ${space_mono.className}`}
           >
-            {selectedRecipient?.walletAddress}
+            {selectedRecipient?.name && selectedRecipient.name.length > 17
+              ? selectedRecipient.name.slice(0, 17) + "..."
+              : selectedRecipient?.name}
           </span>
         </div>
 
@@ -113,7 +117,7 @@ const TransactionConfirmation = ({
           <span
             className={`text-[16px] font-bold text-neutral-850 mt-1 ${space_mono.className}`}
           >
-            ₵ 500
+            {"₵" + formattedBalance}
           </span>
         </div>
       </div>
