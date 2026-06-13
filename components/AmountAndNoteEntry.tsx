@@ -40,12 +40,27 @@ export const AmountAndNoteEntry = ({
   handleDelete: () => void;
 }) => {
   const [focus, setFocus] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setFocus(false);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const digits = amountDigits.replace(/,/g, "");
+    if (!digits) {
+      setError("Enter Amount");
+    } else if (Number(digits) < 1) {
+      setError("Amount must be at least 1");
+    } else if (Number(digits) > Number(formattedBalance)) {
+      console.log(Number(digits), Number(formattedBalance));
+      setError("Insufficient balance");
+    } else {
+      setError(null);
+    }
+  }, [amountDigits]);
 
   return (
     <div
@@ -108,7 +123,7 @@ export const AmountAndNoteEntry = ({
         </div>
 
         {/* Amount and Notes Input Box Card */}
-        <div className="bg-white border border-neutral-200/60 rounded-[20px] p-5 shadow-sm space-y-4">
+        <div className="bg-white border border-neutral-200/60 rounded-[20px] p-5 shadow-sm flex flex-col  space-y-4">
           {/* Amount */}
           <div
             className={`w-full h-[56px] border rounded-[14px] px-4 flex items-center bg-white transition-all ${
@@ -121,7 +136,9 @@ export const AmountAndNoteEntry = ({
               setFocus(true);
             }}
           >
-            <span className="text-[14px] font-bold text-neutral-800 mr-1 select-none">
+            <span
+              className={`text-[14px] font-bold text-neutral-800 mr-1 select-none ${space_mono.className}`}
+            >
               ₵
             </span>
 
@@ -154,6 +171,9 @@ export const AmountAndNoteEntry = ({
               )}
             </span>
           </div>
+          <span className="h-4 text-red-500 text-sm font-semibold">
+            {error}
+          </span>
 
           {/* Description */}
           <div>
@@ -183,9 +203,9 @@ export const AmountAndNoteEntry = ({
         <button
           type="button"
           onClick={handleSendCoins}
-          disabled={!amountDigits}
+          disabled={!amountDigits || error !== null}
           className={`w-full h-[54px] rounded-[14px] font-bold text-[14px] mt-6 mb-4 flex items-center justify-center transition-all duration-200 ${
-            amountDigits
+            amountDigits && error === null
               ? "bg-[#0E1719] text-white hover:bg-[#18262a] active:scale-[0.98] cursor-pointer shadow-md"
               : "bg-[#EAEAEA] text-neutral-450 cursor-not-allowed"
           }`}

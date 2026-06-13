@@ -151,19 +151,23 @@ const RecipientSelection = ({
           </div>
         </div>
 
-        <div className="h-50 flex flex-col gap-3">
-          {error && (
-            <div className={`flex items-center mt-2`}>
-              <span className="text-sm font-semibold text-red-500">
-                {error}
-              </span>
-            </div>
-          )}
+        <div className="h-50 flex flex-col gap-2">
+          <div
+            className={` ${selectedRecipient ? "h-0" : "h-4 transition-all duration-300 ease-out mt-1"}   `}
+          >
+            {error && (
+              <div className={`flex items-center`}>
+                <span className="text-sm font-semibold text-red-500">
+                  {error}
+                </span>
+              </div>
+            )}
+          </div>
 
           <div
             className={`grainy ${dm_sans.className} flex items-center bg-[#D0BD21]/50 rounded-[14px] border-2 border-neutral-400 font-semibold text-lg transition-all duration-300 ease-out origin-top ${
               selectedRecipient?.name
-                ? "h-14 opacity-100 p-4 mt-6 scale-y-100"
+                ? "h-14 opacity-100 p-4 mt-2 scale-y-100"
                 : "h-0 opacity-0 p-0 border-none mt-0 scale-y-95 pointer-events-none overflow-hidden"
             }`}
           >

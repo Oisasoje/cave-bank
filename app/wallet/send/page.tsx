@@ -135,7 +135,7 @@ export default function SendCoinsPage() {
   // Format digit string into ATM-style currency format (e.g. 500 becomes 5.00)
   const formatAmount = (digits: string) => {
     if (!digits) return "0.00";
-    const value = parseInt(digits, 10) / 100;
+    const value = parseInt(digits, 10);
     return value.toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -145,7 +145,7 @@ export default function SendCoinsPage() {
   // Get raw float value of the entered amount
   const getRawAmountValue = () => {
     if (!amountDigits) return 0;
-    return parseInt(amountDigits, 10) / 100;
+    return parseInt(amountDigits, 10);
   };
 
   const handleSendCoins = (e: React.FormEvent) => {
@@ -181,7 +181,7 @@ export default function SendCoinsPage() {
 
   // Dynamic calculations for Step 3 & 5
   const rawAmount = getRawAmountValue();
-  const transactionCharge = rawAmount * 0.01; // 1% charge
+  const transactionCharge = rawAmount * 0.0; // 0% charge
 
   // Formatting displays
   const formattedRawAmount = rawAmount.toLocaleString("en-US", {

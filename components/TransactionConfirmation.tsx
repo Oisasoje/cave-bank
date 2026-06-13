@@ -68,13 +68,11 @@ const TransactionConfirmation = ({
 
         {/* Account Number */}
         <div className="flex items-center justify-between text-[13px]">
-          <span className="text-neutral-450 font-bold">Account Number</span>
+          <span className="text-neutral-450 font-bold">Wallet Address</span>
           <span
             className={`text-neutral-800 font-bold text-right ${space_mono.className}`}
           >
-            {selectedRecipient?.name && selectedRecipient.name.length > 17
-              ? selectedRecipient.name.slice(0, 17) + "..."
-              : selectedRecipient?.name}
+            {selectedRecipient?.walletAddress}
           </span>
         </div>
 
@@ -82,7 +80,7 @@ const TransactionConfirmation = ({
         <div className="flex items-center justify-between text-[13px]">
           <span className="text-neutral-450 font-bold">Amount</span>
           <span className="text-neutral-800 font-bold text-right">
-            {formattedRawAmount}
+            {Number(formattedRawAmount)?.toFixed(2)}
           </span>
         </div>
 
