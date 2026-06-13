@@ -171,7 +171,7 @@ export default function SendCoinsPage() {
 
       {/* HEADER SECTION */}
       <div
-        className={`${step === 6 ? "pt-0" : "pt-6"} px-6 flex items-center justify-between bg-[#F9F9F9] sticky top-0 z-30`}
+        className={`${step === 6 ? "pt-0" : "pt-6"} px-6 flex items-center justify-between bg-[#F9F9F9] sticky top-0`}
       >
         {step !== 6 && (
           <button

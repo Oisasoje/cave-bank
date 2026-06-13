@@ -1,6 +1,7 @@
 "use client";
 
 import Keyboard from "@/components/Keyboard";
+import Loading from "@/components/Loading";
 import ProgressBar from "@/components/ProgressBar";
 import generateUserData from "@/lib/getUserData";
 import { createPin } from "@/services/auth";
@@ -97,6 +98,9 @@ export default function CreatePin() {
     }
   };
 
+  if (isSubmitting) {
+    return <Loading />;
+  }
   if (!hydrated) return null;
 
   return (

@@ -10,6 +10,7 @@ import { AsYouType, isValidPhoneNumber } from "libphonenumber-js";
 import { useRouter } from "next/navigation";
 import Keyboard from "@/components/Keyboard";
 import { allCountryFlags, CountryCode, SquareFlag } from "react-square-flags";
+import Loading from "@/components/Loading";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -106,7 +107,9 @@ export default function EnterPhonePage() {
       setIsSubmitting(false);
     }
   };
-
+  if (isSubmitting) {
+    return <Loading />;
+  }
   return (
     <div
       className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-screen relative pb-10 ${inter.className}`}

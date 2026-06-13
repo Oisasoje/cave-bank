@@ -8,6 +8,7 @@ import { useState } from "react";
 import { AsYouType, isValidPhoneNumber } from "libphonenumber-js";
 import { allCountryFlags, CountryCode, SquareFlag } from "react-square-flags";
 import { useRouter } from "next/navigation";
+import Loading from "@/components/Loading";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -86,6 +87,10 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (isSubmitting) {
+    return <Loading />;
+  }
 
   return (
     <div
@@ -203,7 +208,7 @@ export default function LoginPage() {
       </div>
 
       {/* Keyboard */}
-      <Keyboard onKey={handleKey} onDelete={handleDelete} />
+      {focus && <Keyboard onKey={handleKey} onDelete={handleDelete} />}
 
       {/* Country Selector Modal */}
       {showCountrySelector && (

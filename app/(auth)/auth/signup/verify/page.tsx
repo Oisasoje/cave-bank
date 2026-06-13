@@ -6,6 +6,7 @@ import { signupVerify, sendOTP } from "@/services/auth";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Loading from "@/components/Loading";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -109,6 +110,9 @@ export default function VerifySignup() {
       setIsSubmitting(false);
     }
   };
+  if (isSubmitting) {
+    return <Loading />;
+  }
   if (!hydrated) return null;
   return (
     <div
@@ -314,7 +318,7 @@ export default function VerifySignup() {
           </div>
 
           {/* Keyboard Keys Grid */}
-          <Keyboard onKey={handleKey} onDelete={handleDelete} />
+          {focus && <Keyboard onKey={handleKey} onDelete={handleDelete} />}
         </div>
       )}
     </div>

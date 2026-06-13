@@ -6,6 +6,7 @@ import { Beneficiary } from "@/app/wallet/send/page";
 
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/services/auth";
+import Loading from "./Loading";
 
 const AuthorizeTransaction = ({
   pin,
@@ -29,6 +30,7 @@ const AuthorizeTransaction = ({
   setTransactionResult: Dispatch<SetStateAction<any>>;
 }) => {
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const { data: me } = useQuery({
     queryKey: ["me"],
@@ -45,6 +47,7 @@ const AuthorizeTransaction = ({
 
     const run = async () => {
       try {
+        setLoading(true);
         const transactionResult = await initiateTransfer({
           pin,
           fromAccountId: me.data.accountId,
@@ -57,11 +60,16 @@ const AuthorizeTransaction = ({
         setStep(5);
       } catch (error: any) {
         setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
     run();
   }, [pin, me, selectedRecipient, amount, reason]);
 
+  if (loading) {
+    return <Loading />;
+  }
   return (
     <div className="animate-fade-in flex flex-col flex-1">
       <div className="flex-1 flex flex-col items-center justify-center px-6 pb-[280px]">

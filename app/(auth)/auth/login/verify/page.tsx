@@ -1,5 +1,6 @@
 "use client";
 import Keyboard from "@/components/Keyboard";
+import Loading from "@/components/Loading";
 import generateUserData from "@/lib/getUserData";
 import { loginVerify } from "@/services/auth";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
@@ -77,6 +78,10 @@ const Verify = () => {
       setFocus(true);
     }
   };
+
+  if (isSubmitting) {
+    return <Loading />;
+  }
 
   return (
     <div
@@ -220,7 +225,7 @@ const Verify = () => {
       </div>
 
       {/* Full-width Keyboard at bottom */}
-      <Keyboard onKey={handleKey} onDelete={handleDelete} />
+      {focus && <Keyboard onKey={handleKey} onDelete={handleDelete} />}
     </div>
   );
 };

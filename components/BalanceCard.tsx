@@ -75,7 +75,7 @@ export default function BalanceCard({
                 </svg>
               </span>
               <span className="text-4xl font-bold tracking-tight text-neutral-900">
-                {formattedBalance}
+                {formattedBalance.toFixed(2)}
               </span>
             </div>
           </>

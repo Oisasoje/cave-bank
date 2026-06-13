@@ -1,8 +1,8 @@
 import React from "react";
 import WalletSkeleton from "@/components/WalletSkeleton";
 
-const Loading = () => {
+const LoadingSkeleton = () => {
   return <WalletSkeleton />;
 };
 
-export default Loading;
+export default LoadingSkeleton;
