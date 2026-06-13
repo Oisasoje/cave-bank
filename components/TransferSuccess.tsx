@@ -1,6 +1,8 @@
 import { Beneficiary } from "@/app/wallet/send/page";
 import { DM_Sans } from "next/font/google";
 import React from "react";
+import ConfettiAnimation from "./Confetti";
+import { useRouter } from "next/navigation";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -24,15 +26,25 @@ const TransferSuccess = ({
   handleResetFlow: () => void;
   triggerToast: (message: string) => void;
 }) => {
+  const router = useRouter();
+
+  const formattedDate = new Date(successDate).toLocaleString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+  });
+  // → "Saturday, June 13, 2026 at 4:01 AM"
+
   return (
     <div className="animate-fade-in px-6 mt-6 flex flex-col flex-1">
+      <ConfettiAnimation />
       <div className="flex-1 flex flex-col items-center justify-center">
         {/* Animated Concentric Rings & Sparkles Illustration */}
         <div className="relative w-36 h-36 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border border-neutral-200/40 animate-pulse" />
-          <div className="absolute inset-3 rounded-full border border-neutral-200/70" />
-          <div className="absolute inset-6 rounded-full border border-neutral-300/60" />
-
           {/* Green circle with checkmark */}
           <div className="relative w-20 h-20 rounded-full bg-[#7CA88D] flex items-center justify-center shadow-md">
             <svg
@@ -101,7 +113,7 @@ const TransferSuccess = ({
 
         {/* Dynamic safe timestamp */}
         <p className="text-[11px] text-neutral-450 font-semibold mt-4">
-          {successDate}
+          {formattedDate}
         </p>
       </div>
 
@@ -109,14 +121,19 @@ const TransferSuccess = ({
       <div className="space-y-3 w-full pb-8 pt-6 shrink-0">
         <button
           type="button"
-          onClick={() => triggerToast("Receipt sharing opened")}
+          onClick={() => {
+            setStep(6);
+          }}
           className="w-full h-[54px] rounded-[14px] bg-[#0E1719] text-white hover:bg-[#18262a] active:scale-[0.98] font-bold text-[14px] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md"
         >
           Share Receipt
         </button>
         <button
           type="button"
-          onClick={handleResetFlow}
+          onClick={() => {
+            handleResetFlow();
+            router.push("/wallet");
+          }}
           className="w-full h-[54px] rounded-[14px] bg-white border border-neutral-300 text-neutral-800 hover:bg-neutral-50 active:scale-[0.98] font-bold text-[14px] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs"
         >
           Done

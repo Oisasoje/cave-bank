@@ -16,6 +16,7 @@ const AuthorizeTransaction = ({
   amount,
   reason,
   setStep,
+  setTransactionResult,
 }: {
   pin: string;
   handleKey: (key: string) => void;
@@ -25,6 +26,7 @@ const AuthorizeTransaction = ({
   amount: number;
   reason: string;
   setStep: Dispatch<SetStateAction<number>>;
+  setTransactionResult: Dispatch<SetStateAction<any>>;
 }) => {
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +45,7 @@ const AuthorizeTransaction = ({
 
     const run = async () => {
       try {
-        await initiateTransfer({
+        const transactionResult = await initiateTransfer({
           pin,
           fromAccountId: me.data.accountId,
           toAccountId: selectedRecipient.accountId,
@@ -51,6 +53,7 @@ const AuthorizeTransaction = ({
           reason,
         });
 
+        setTransactionResult(transactionResult.data);
         setStep(5);
       } catch (error: any) {
         setError(error.message);

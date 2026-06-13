@@ -10,6 +10,7 @@ import AuthorizeTransaction from "@/components/AuthorizeTransaction";
 import TransferSuccess from "@/components/TransferSuccess";
 import { getBalance } from "@/services/user";
 import { useQuery } from "@tanstack/react-query";
+import Receipt from "@/components/Receipt";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -44,7 +45,7 @@ export default function SendCoinsPage() {
   const [amountDigits, setAmountDigits] = useState("");
   const [description, setDescription] = useState("");
   const [pin, setPin] = useState("");
-  const [successDate, setSuccessDate] = useState("");
+  const [transactionResult, setTransactionResult] = useState<any>(null);
 
   // Toast Alert states
   const [showToast, setShowToast] = useState(false);
@@ -55,58 +56,6 @@ export default function SendCoinsPage() {
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
-
-  // Get formatted timestamp safely on client side
-  const getFormattedDate = () => {
-    const now = new Date();
-
-    // Time part: e.g. "11:08 AM"
-    let hours = now.getHours();
-    const minutes = now.getMinutes().toString().padStart(2, "0");
-    const ampm = hours >= 12 ? "PM" : "AM";
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const timeStr = `${hours}:${minutes} ${ampm}`;
-
-    // Date part: e.g. "Friday, May 15, 2026"
-    const weekdays = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    const dayName = weekdays[now.getDay()];
-    const monthName = months[now.getMonth()];
-    const dateNum = now.getDate();
-    const year = now.getFullYear();
-
-    return `${timeStr}, ${dayName}, ${monthName} ${dateNum}, ${year}`;
-  };
-
-  // Populate dynamic success date when Step 5 is reached
-  useEffect(() => {
-    if (step === 5) {
-      setSuccessDate(getFormattedDate());
-    }
-  }, [step]);
 
   // Unified Custom Keyboard input router
   const handleKey = (digit: string) => {
@@ -160,7 +109,7 @@ export default function SendCoinsPage() {
     setAmountDigits("");
     setDescription("");
     setPin("");
-    setSuccessDate("");
+    setTransactionResult(null);
     router.push("/wallet");
   };
 
@@ -248,7 +197,9 @@ export default function SendCoinsPage() {
             ? "Authorize Transaction"
             : step === 3
               ? "Confirm Transaction"
-              : "Send Cave Coins"}
+              : step === 6
+                ? "Receipt"
+                : "Send Cave Coins"}
         </h1>
         <div className="w-[42px]" /> {/* Spacer to center the header title */}
       </div>
@@ -300,6 +251,7 @@ export default function SendCoinsPage() {
           amount={rawAmount}
           reason={description}
           handleKey={handleKey}
+          setTransactionResult={setTransactionResult}
           handleDelete={handleDelete}
           triggerToast={triggerToast}
         />
@@ -313,9 +265,14 @@ export default function SendCoinsPage() {
           description={description}
           setStep={setStep}
           handleResetFlow={handleResetFlow}
-          successDate={successDate}
+          successDate={transactionResult.transaction.created_at}
           triggerToast={triggerToast}
         />
+      )}
+
+      {step === 6 && (
+        /* STEP 6: RECEIPT */
+        <Receipt transactionResult={transactionResult} />
       )}
     </div>
   );

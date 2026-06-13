@@ -1,7 +1,8 @@
 "use client";
+import ConfettiAnimation from "@/components/Confetti";
 import ProgressBar from "@/components/ProgressBar";
 import { Inter, DM_Sans } from "next/font/google";
-import Image from "next/image";
+
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -15,151 +16,7 @@ const dm_sans = DM_Sans({
   weight: ["400", "500", "700"],
 });
 
-// Confetti piece component
-function ConfettiPiece({
-  color,
-  left,
-  top,
-  size,
-  rotation,
-  delay,
-  shape,
-}: {
-  color: string;
-  left: string;
-  top: string;
-  size: number;
-  rotation: number;
-  delay: number;
-  shape: "square" | "rect" | "circle";
-}) {
-  const style: React.CSSProperties = {
-    position: "absolute",
-    left,
-    top,
-    width: shape === "rect" ? size * 2.5 : size,
-    height: shape === "circle" ? size : size,
-    backgroundColor: color,
-    borderRadius: shape === "circle" ? "50%" : shape === "rect" ? "2px" : "1px",
-    transform: `rotate(${rotation}deg)`,
-    animation: `confettiFall 3s ease-in-out ${delay}s infinite`,
-    opacity: 0.9,
-  };
-  return <span style={style} />;
-}
-
-const confettiPieces = [
-  {
-    color: "#3B82F6",
-    left: "10%",
-    top: "2%",
-    size: 6,
-    rotation: 45,
-    delay: 0,
-    shape: "square" as const,
-  },
-  {
-    color: "#F59E0B",
-    left: "20%",
-    top: "5%",
-    size: 5,
-    rotation: 120,
-    delay: 0.2,
-    shape: "rect" as const,
-  },
-  {
-    color: "#EC4899",
-    left: "75%",
-    top: "1%",
-    size: 7,
-    rotation: 30,
-    delay: 0.4,
-    shape: "square" as const,
-  },
-  {
-    color: "#10B981",
-    left: "85%",
-    top: "4%",
-    size: 5,
-    rotation: 90,
-    delay: 0.1,
-    shape: "circle" as const,
-  },
-  {
-    color: "#8B5CF6",
-    left: "30%",
-    top: "0%",
-    size: 4,
-    rotation: 160,
-    delay: 0.3,
-    shape: "rect" as const,
-  },
-  {
-    color: "#F59E0B",
-    left: "65%",
-    top: "3%",
-    size: 6,
-    rotation: 75,
-    delay: 0.5,
-    shape: "square" as const,
-  },
-  {
-    color: "#EC4899",
-    left: "45%",
-    top: "1%",
-    size: 5,
-    rotation: 200,
-    delay: 0.15,
-    shape: "circle" as const,
-  },
-  {
-    color: "#3B82F6",
-    left: "55%",
-    top: "6%",
-    size: 4,
-    rotation: 300,
-    delay: 0.35,
-    shape: "rect" as const,
-  },
-  {
-    color: "#10B981",
-    left: "15%",
-    top: "7%",
-    size: 5,
-    rotation: 15,
-    delay: 0.25,
-    shape: "square" as const,
-  },
-  {
-    color: "#8B5CF6",
-    left: "90%",
-    top: "2%",
-    size: 6,
-    rotation: 250,
-    delay: 0.45,
-    shape: "circle" as const,
-  },
-  {
-    color: "#F59E0B",
-    left: "5%",
-    top: "8%",
-    size: 4,
-    rotation: 180,
-    delay: 0.55,
-    shape: "rect" as const,
-  },
-  {
-    color: "#EC4899",
-    left: "40%",
-    top: "5%",
-    size: 5,
-    rotation: 60,
-    delay: 0.6,
-    shape: "square" as const,
-  },
-];
-
-export default function Congratulations() {
+export default function CongratulationsPage() {
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
   const [countdown, setCountdown] = useState(10);
@@ -201,6 +58,7 @@ export default function Congratulations() {
       className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-screen relative ${inter.className} select-none`}
     >
       <div className="pt-6 px-6 mt-2">
+        <ConfettiAnimation />
         <ProgressBar currentStep={4} />
       </div>
 
@@ -208,9 +66,6 @@ export default function Congratulations() {
       <div className="flex-1 flex flex-col items-center justify-center px-6">
         {/* Confetti area */}
         <div className="relative w-full h-[120px] mb-2">
-          {confettiPieces.map((piece, i) => (
-            <ConfettiPiece key={i} {...piece} />
-          ))}
           {/* Clapping hands GIF */}
           <div className="absolute inset-0 flex items-center justify-center">
             <img

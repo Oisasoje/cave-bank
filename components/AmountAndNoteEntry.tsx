@@ -122,7 +122,7 @@ export const AmountAndNoteEntry = ({
         <div className="bg-white border border-neutral-200/60 rounded-[20px] p-5 shadow-sm flex flex-col  space-y-4">
           {/* Amount */}
           <div
-            className={`w-full h-[56px] border rounded-[14px] px-4 flex items-center bg-white transition-all ${
+            className={`w-full h-[56px] mb-[7px] border rounded-[14px] px-4 flex items-center bg-white transition-all ${
               focus
                 ? "border-amber-500 shadow-[0_0_0_1px_#F59E0B]"
                 : "border-neutral-200 hover:border-neutral-300"

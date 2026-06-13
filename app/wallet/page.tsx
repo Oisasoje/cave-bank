@@ -12,7 +12,7 @@ import QuickSend from "@/components/QuickSend";
 import WalletHomeHeader from "@/components/WalletHomeHeader";
 import HomePageFloatingNav from "@/components/HomePageFloatingNav";
 import WalletPageQuickActions from "@/components/WalletPageQuickActions";
-import { getBalance } from "@/services/user";
+import { getBalance, getRecentTransactions } from "@/services/user";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -50,12 +50,16 @@ export default function WalletPage() {
     queryKey: ["balance"],
     queryFn: getBalance,
   });
-
-  console.log(me?.data.user);
+  const { data: recentTransactions } = useQuery({
+    queryKey: ["transactions", { limit: 10 }],
+    queryFn: getRecentTransactions,
+  });
 
   const walletAddress = me?.data.wallet_address;
   const firstName = me?.data?.user.name?.split(" ")?.[0] ?? "";
   const formattedBalance = balance?.data.balance.toFixed(2);
+
+  const recentTransactionsData = recentTransactions.data;
 
   // Authentication & Session Loading
 
@@ -192,7 +196,7 @@ export default function WalletPage() {
         <QuickSend contacts={contacts} />
 
         {/* RECENT TRANSACTIONS */}
-        <RecentTransactions transactions={transactions} />
+        <RecentTransactions transactions={recentTransactionsData} />
       </div>
 
       {/* FLOATING BOTTOM NAVIGATION BAR */}

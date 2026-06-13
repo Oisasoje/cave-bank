@@ -5,3 +5,9 @@ export const getBalance = () => {
     method: "GET",
   });
 };
+
+export const getRecentTransactions = () => {
+  return api("/user/getRecentTransactions", {
+    method: "GET",
+  });
+};

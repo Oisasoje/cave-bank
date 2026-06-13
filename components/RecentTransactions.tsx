@@ -9,6 +9,7 @@ const dm_sans = DM_Sans({
 
 const RecentTransactions = ({ transactions }: { transactions: any }) => {
   const router = useRouter();
+  console.log(transactions);
   return (
     <div className="mt-8 flex-1 flex flex-col min-h-0">
       <div className="flex justify-between items-center mb-3">
@@ -40,82 +41,90 @@ const RecentTransactions = ({ transactions }: { transactions: any }) => {
 
       {/* List */}
       <div className="space-y-3.5 pb-6">
-        {transactions.slice(0, 5).map((tx: any) => (
-          <div
-            key={tx.id}
-            className="bg-white border border-neutral-200/60 p-3.5 rounded-[18px] flex items-center justify-between shadow-xs hover:border-neutral-300 transition-colors cursor-pointer"
-          >
-            <div className="flex items-center gap-3">
-              <div
-                className={`w-[40px] h-[40px] rounded-full flex items-center justify-center shrink-0 ${
-                  tx.type === "send"
-                    ? "bg-neutral-100 text-neutral-600"
-                    : "bg-neutral-100 text-neutral-600"
-                }`}
-              >
-                {tx.type === "send" ? (
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="7" y1="17" x2="17" y2="7" />
-                    <polyline points="7 7 17 7 17 17" />
-                  </svg>
-                ) : (
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="17" y1="7" x2="7" y2="17" />
-                    <polyline points="17 17 7 17 7 7" />
-                  </svg>
-                )}
+        {transactions.map((tx: any) => {
+          const formattedDate = new Date(tx.created_at)
+            .toLocaleString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            })
+            .replace(" at ", ", ");
+          return (
+            <div
+              key={tx.id}
+              className="bg-white border border-neutral-200/60 p-3.5 rounded-[18px] flex items-center justify-between shadow-xs hover:border-neutral-300 transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-[40px] h-[40px] rounded-full flex items-center justify-center shrink-0 ${
+                    tx.type === "debit"
+                      ? "bg-neutral-100 text-neutral-600"
+                      : "bg-neutral-100 text-neutral-600"
+                  }`}
+                >
+                  {tx.type === "debit" ? (
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="7" y1="17" x2="17" y2="7" />
+                      <polyline points="7 7 17 7 17 17" />
+                    </svg>
+                  ) : (
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="17" y1="7" x2="7" y2="17" />
+                      <polyline points="17 17 7 17 7 7" />
+                    </svg>
+                  )}
+                </div>
+                <div>
+                  <p className="text-[13px] font-bold text-neutral-800 tracking-tight leading-tight">
+                    {`Transfer ${tx.type === "debit" ? ` to ${tx.accounts_to.users.name.slice(0, 12)}...` : ` from ${tx.accounts_from.users.name.slice(0, 12)}...`}`}
+                  </p>
+                  <p className="text-[11px] text-neutral-400 font-semibold mt-1">
+                    {formattedDate}
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="text-[13px] font-bold text-neutral-800 tracking-tight leading-tight">
-                  {tx.title}
-                </p>
-                <p className="text-[11px] text-neutral-400 font-semibold mt-1">
-                  {tx.date}
-                </p>
-              </div>
-            </div>
 
-            <div className="text-right">
-              <span
-                className={`text-[13px] font-bold tracking-tight block ${
-                  tx.type === "send" ? "text-neutral-800" : "text-neutral-800"
-                }`}
-              >
-                {tx.type === "send" ? "-" : "+"}₵
-                {Math.abs(tx.amount).toFixed(0)}
-              </span>
-              <span
-                className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-[6px] mt-1 ${
-                  tx.status === "Pending"
-                    ? "bg-[#FFF7ED] text-[#EA580C]"
-                    : tx.status === "Successful"
-                      ? "bg-[#F0FDF4] text-[#16A34A]"
-                      : "bg-red-50 text-red-600"
-                }`}
-              >
-                {tx.status}
-              </span>
+              <div className="text-right">
+                <span
+                  className={`text-[13px] font-bold tracking-tight block ${
+                    tx.type === "debit"
+                      ? "text-neutral-800"
+                      : "text-neutral-800"
+                  }`}
+                >
+                  {tx.type === "debit" ? "-" : "+"}₵
+                  {Math.abs(tx.amount).toFixed(0)}
+                </span>
+                <span
+                  className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-[6px] mt-1 ${"bg-[#F0FDF4] text-[#16A34A]"}`}
+                >
+                  Successful
+                </span>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
