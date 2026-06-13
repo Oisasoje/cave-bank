@@ -55,11 +55,11 @@ export default function WalletPage() {
     queryFn: getRecentTransactions,
   });
 
-  const walletAddress = me?.data.wallet_address;
-  const firstName = me?.data?.user.name?.split(" ")?.[0] ?? "";
-  const formattedBalance = balance?.data.balance.toFixed(2);
+  const walletAddress = me?.data?.wallet_address ?? "";
+  const firstName = me?.data?.user?.name?.split(" ")?.[0] ?? "";
+  const formattedBalance = balance?.data?.balance ?? 0;
 
-  const recentTransactionsData = recentTransactions.data;
+  const recentTransactionsData = recentTransactions?.data ?? [];
 
   // Authentication & Session Loading
 
