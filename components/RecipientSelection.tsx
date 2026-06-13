@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import useDebounce from "@/lib/hooks/useDebounce";
 import { getUserByWalletAddress } from "@/services/transfer";
 import { Beneficiary } from "@/app/wallet/send/page";
+import { useQuery } from "@tanstack/react-query";
+import { getRecentTransactions } from "@/services/user";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -13,33 +15,6 @@ const space_mono = Space_Mono({
   subsets: ["latin"],
   weight: ["400", "700"],
 });
-
-const beneficiaries: Beneficiary[] = [
-  {
-    accountId: "b1",
-    name: "Catherine Onyeulo",
-    walletAddress: "TCB-NG8123456789",
-    isSaved: true,
-  },
-  {
-    accountId: "b2",
-    name: "Ohikemota Victor",
-    walletAddress: "TCB-NG8123456789",
-    isSaved: true,
-  },
-  {
-    accountId: "b3",
-    name: "Ayomide Olatunji",
-    walletAddress: "TCB-NG81987654321",
-    isSaved: true,
-  },
-  {
-    accountId: "b4",
-    name: "Nuel Samuel",
-    walletAddress: "TCB-NG81564738290",
-    isSaved: true,
-  },
-];
 
 const RecipientSelection = ({
   selectedRecipient,
@@ -53,7 +28,10 @@ const RecipientSelection = ({
   setStep: (step: number) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const { data: recentTransactions } = useQuery({
+    queryKey: ["transactions", { limit: 5 }],
+    queryFn: getRecentTransactions,
+  });
   const [activeTab, setActiveTab] = useState<"recents" | "saved">("recents");
   const [recipientInput, setRecipientInput] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -66,11 +44,14 @@ const RecipientSelection = ({
 
   const selectedFromList = useRef(false);
 
-  // in your beneficiary onClick:
-  const handleBeneficiaryClick = (b: Beneficiary) => {
+  const handleBeneficiaryClick = (b: any) => {
     selectedFromList.current = true;
-    setRecipientInput(b.walletAddress);
-    setSelectedRecipient(b);
+    setRecipientInput(b.displayAddress);
+    setSelectedRecipient({
+      accountId: b.accountId,
+      name: b.displayName,
+      walletAddress: b.displayAddress,
+    });
   };
 
   // in the effect:
@@ -99,7 +80,6 @@ const RecipientSelection = ({
           accountId: user.data.accountId,
           name: user.data.name,
           walletAddress: debouncedWalletAddress,
-          isSaved: false,
         });
       } catch (err: any) {
         if (cancelled) return; // ← stale error, ignore
@@ -124,6 +104,26 @@ const RecipientSelection = ({
     }, 350);
     return () => clearTimeout(timer);
   }, []);
+
+  const recentReceipients = recentTransactions?.data.map((tx: any) => ({
+    displayName:
+      tx.type === "credit"
+        ? tx.accounts_from.users.name
+        : tx.accounts_to.users.name,
+    displayAddress:
+      tx.type === "credit" ? tx.accounts_from.address : tx.accounts_to.address,
+    accountId: tx.type === "credit" ? tx.accounts_from.id : tx.accounts_to.id,
+    isSaved: true,
+  }));
+
+  const uniqueRecentReceipients = recentReceipients?.filter(
+    (item: any, index: number) =>
+      index ===
+      recentReceipients.findIndex(
+        (t: any) => t.displayAccount === item.displayAccount,
+      ),
+  );
+
   const isDisabled = !selectedRecipient?.name;
 
   return (
@@ -195,7 +195,7 @@ const RecipientSelection = ({
         </div>
       </form>
 
-      <div className="px-6 mt-8">
+      <div className="px-6 mt-4">
         <h3
           className={`text-[15px] font-bold text-neutral-800 mb-3 ${dm_sans.className}`}
         >
@@ -257,11 +257,13 @@ const RecipientSelection = ({
           </div>
 
           <div className="divide-y divide-neutral-100 p-4 space-y-3.5 divide-none">
-            {beneficiaries.length > 0 ? (
-              beneficiaries.map((b) => (
+            {uniqueRecentReceipients?.length > 0 ? (
+              uniqueRecentReceipients.map((b: any) => (
                 <div
                   key={b.accountId}
-                  onClick={() => handleBeneficiaryClick(b)}
+                  onClick={() => {
+                    handleBeneficiaryClick(b);
+                  }}
                   className="flex items-center gap-3.5 py-1 hover:bg-neutral-50/50 rounded-xl transition-colors cursor-pointer group active:scale-[0.99] duration-100"
                 >
                   <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 border border-neutral-250/30">
@@ -278,12 +280,12 @@ const RecipientSelection = ({
 
                   <div className="flex-1">
                     <p className="text-[14px] font-bold text-neutral-800 leading-tight group-hover:text-black transition-colors">
-                      {b.name}
+                      {b.displayName}
                     </p>
                     <p
                       className={`text-[11px] text-neutral-400 font-semibold mt-1 ${space_mono.className}`}
                     >
-                      {b.walletAddress}
+                      {b.displayAccount}
                     </p>
                   </div>
                 </div>

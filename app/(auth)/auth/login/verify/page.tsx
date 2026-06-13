@@ -201,7 +201,7 @@ const Verify = () => {
           onClick={handleSubmit}
           className={`w-full h-[54px] ${dm_sans.className} ${
             isDisabled
-              ? "bg-[#0E1B1B] text-white opacity-50 cursor-not-allowed"
+              ? "bg-neutral-200 text-neutral-400 opacity-50 cursor-not-allowed"
               : "bg-black text-white cursor-pointer"
           } rounded-[10px] font-semibold text-[15px] flex items-center justify-center mt-3 select-none transition-colors`}
         >

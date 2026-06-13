@@ -1,8 +1,11 @@
 "use client";
 
 import { DM_Sans, Space_Mono } from "next/font/google";
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
+import { toPng } from "html-to-image";
+import jsPDF from "jspdf";
+import { useRouter } from "next/navigation";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -26,6 +29,8 @@ const Receipt = ({
   onShareImage = () => console.log("Share as image clicked"),
   onSharePdf = () => console.log("Share as PDF clicked"),
 }: ReceiptProps) => {
+  const router = useRouter();
+
   const formattedDate = new Date(transactionResult.transaction.created_at)
     .toLocaleString("en-US", {
       weekday: "long",
@@ -39,46 +44,55 @@ const Receipt = ({
     .replace(" at ", ", ");
   // → "Saturday, June 13, 2026, 4:01 AM"
 
+  const receiptRef = useRef<HTMLDivElement>(null);
+
+  const shareAsImage = async () => {
+    if (!receiptRef.current) return;
+
+    const dataUrl = await toPng(receiptRef.current, { cacheBust: true });
+
+    const link = document.createElement("a");
+    link.download = `receipt-${transactionResult.transaction.reference}.png`;
+    link.href = dataUrl;
+    link.click();
+  };
+
+  const shareAsPDF = async () => {
+    if (!receiptRef.current) return;
+
+    const dataUrl = await toPng(receiptRef.current, { cacheBust: true });
+
+    const pdf = new jsPDF({ format: "a4", unit: "px" });
+    const width = pdf.internal.pageSize.getWidth();
+    const height =
+      (receiptRef.current.offsetHeight * width) /
+      receiptRef.current.offsetWidth;
+
+    pdf.addImage(dataUrl, "PNG", 0, 0, width, height);
+    pdf.save(`receipt-${transactionResult.transaction.reference}.pdf`);
+  };
+
   return (
     <div
-      className={`max-w-md mx-auto bg-[#F5F6F6] flex flex-col w-full min-h-screen relative select-none overflow-y-auto pb-8 ${dm_sans.className}`}
+      ref={receiptRef}
+      className={`max-w-md mx-auto bg-[#F5F6F6] flex flex-col w-full relative select-none overflow-y-auto max-h-dvh pb-8 ${dm_sans.className}`}
     >
       {/* 1. TOP HEADER BAR */}
-      <div className="w-full h-14 bg-white border-b border-neutral-100 flex items-center justify-between px-6 shrink-0 sticky top-0 z-30">
-        <div className="w-10" /> {/* Spacer to center the header title */}
-      </div>
 
       {/* RECEIPT MAIN CONTENT WRAPPER */}
       <div className="flex-1 flex flex-col bg-white">
         {/* 2. THE CAVE BANK BANNER */}
-        <div className="w-full bg-[#0E1719] grainy px-6 py-4.5 flex items-center justify-between text-white shrink-0 shadow-sm">
+        <div className="w-full fixed top-0 bg-[#0D1B1E] grainy px-6 py-4.5 flex items-center justify-between text-white shrink-0 shadow-sm">
           {/* Logo & Name */}
           <div className="flex items-center gap-2">
             {/* Styled Cave Bank Logo Mark */}
-            <div className="relative w-6 h-6 flex items-center justify-center text-[#D2B627] select-none shrink-0">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                />
-                <circle
-                  cx="12"
-                  cy="12"
-                  r="6"
-                  stroke="currentColor"
-                  strokeWidth="1"
-                  strokeDasharray="2 2"
-                />
-                <path
-                  d="M14 9a2.5 2.5 0 1 0 0 6"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                />
-              </svg>
+            <div className="relative w-6 h-6 rounded-full flex items-center justify-center border-2 border-[#D2B627] select-none shrink-0">
+              <Image
+                src="/cave-coin-symbol-yellow.png"
+                alt="Cave Bank Logo"
+                width={40}
+                height={40}
+              />
             </div>
             <span className="text-[15px] font-bold tracking-tight">
               The <span className="text-[#D2B627]">Cave</span> Bank
@@ -157,7 +171,7 @@ const Receipt = ({
               <span
                 className={`text-[38px] font-bold text-[#D2B627] tracking-tight leading-none ${space_mono.className}`}
               >
-                C
+                C {transactionResult.transaction.amount}
               </span>
               <span
                 className={`text-[38px] font-bold text-[#D2B627] tracking-tight leading-none ml-0.5 ${space_mono.className}`}
@@ -257,18 +271,39 @@ const Receipt = ({
       <div className="bg-[#F5F6F6] px-6 pt-5 pb-8 flex flex-col gap-3.5 shrink-0 z-20">
         <button
           type="button"
-          onClick={onShareImage}
+          onClick={shareAsImage}
           className="w-full h-[54px] rounded-[14px] bg-[#0E1719] text-white hover:bg-[#18262a] active:scale-[0.98] font-bold text-[14px] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md"
         >
           Share as image
         </button>
         <button
           type="button"
-          onClick={onSharePdf}
+          onClick={shareAsPDF}
           className="w-full h-[54px] rounded-[14px] bg-white border border-neutral-300 text-neutral-800 hover:bg-neutral-50 active:scale-[0.98] font-bold text-[14px] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs"
         >
           Share as PDF
         </button>
+        <div className="flex justify-end w-full ">
+          <button
+            type="button"
+            onClick={() => router.replace("/wallet")}
+            className="w-full h-[54px] rounded-[14px] border border-neutral-200 bg-transparent text-neutral-600 hover:text-neutral-900 hover:border-neutral-400 active:scale-[0.98] font-bold text-[14px] flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Go to Wallet
+          </button>
+        </div>
       </div>
     </div>
   );

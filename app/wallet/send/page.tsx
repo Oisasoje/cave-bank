@@ -26,7 +26,6 @@ export interface Beneficiary {
   accountId: string;
   name: string | null;
   walletAddress: string;
-  isSaved: boolean;
 }
 
 export default function SendCoinsPage() {
@@ -171,25 +170,27 @@ export default function SendCoinsPage() {
       )}
 
       {/* HEADER SECTION */}
-      <div className="pt-6 px-6 flex items-center justify-between bg-[#F9F9F9] sticky top-0 z-30">
-        <button
-          onClick={handleBack}
-          className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors shadow-xs cursor-pointer active:scale-95 duration-100"
-          aria-label="Go back"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#1F2937"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+      <div className="px-6 flex items-center justify-between bg-[#F9F9F9] sticky top-0 z-30">
+        {step !== 6 && (
+          <button
+            onClick={handleBack}
+            className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors shadow-xs cursor-pointer active:scale-95 duration-100"
+            aria-label="Go back"
           >
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
-        </button>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#1F2937"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
+        )}
         <h1
           className={`text-[18px] font-bold text-neutral-850 tracking-tight ${dm_sans.className}`}
         >
@@ -197,9 +198,7 @@ export default function SendCoinsPage() {
             ? "Authorize Transaction"
             : step === 3
               ? "Confirm Transaction"
-              : step === 6
-                ? "Receipt"
-                : "Send Cave Coins"}
+              : step !== 6 && "Send Cave Coins"}
         </h1>
         <div className="w-[42px]" /> {/* Spacer to center the header title */}
       </div>
