@@ -85,7 +85,6 @@ const RecipientSelection = ({
       debouncedWalletAddress.trim().length < 13
     ) {
       setSelectedRecipient(null);
-      setError(null);
 
       return;
     }
@@ -142,11 +141,19 @@ const RecipientSelection = ({
               placeholder="Enter Cave Bank Wallet Address"
               value={recipientInput}
               onChange={(e) => {
-                setRecipientInput(e.target.value);
+                const value = e.target.value;
+                setRecipientInput(value);
                 setSelectedRecipient(null);
-                setError(null);
+
+                if (value.length === 0) {
+                  setError(null); // cleared when empty
+                } else if (!value.startsWith("TCB")) {
+                  setError("Wallet address must start with TCB");
+                } else {
+                  setError(null); // valid prefix, clear error and let debounce handle the rest
+                }
               }}
-              className={`w-full ${space_mono.className} h-[56px] border border-neutral-200 rounded-[14px] px-4 text-[14px] focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 bg-white placeholder-neutral-400 font-medium transition-all shadow-xs`}
+              className={`w-full ${space_mono.className} h-[56px] border ${error ? "border-red-500" : "border-neutral-200"} rounded-[14px] px-4 text-[14px] focus:outline-none focus:ring-1 focus:ring-amber-500 bg-white placeholder-neutral-400 font-medium transition-all shadow-xs`}
             />
           </div>
         </div>

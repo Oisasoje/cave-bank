@@ -174,6 +174,7 @@ export default function SendCoinsPage() {
       setStep(2);
     } else if (step === 2) {
       setStep(1);
+      setAmountDigits("");
     } else {
       router.push("/wallet");
     }

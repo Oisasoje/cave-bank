@@ -50,11 +50,7 @@ export const AmountAndNoteEntry = ({
 
   useEffect(() => {
     const digits = amountDigits.replace(/,/g, "");
-    if (!digits) {
-      setError("Enter Amount");
-    } else if (Number(digits) < 1) {
-      setError("Amount must be at least 1");
-    } else if (Number(digits) > Number(formattedBalance)) {
+    if (Number(digits) > Number(formattedBalance)) {
       console.log(Number(digits), Number(formattedBalance));
       setError("Insufficient balance");
     } else {
@@ -215,7 +211,14 @@ export const AmountAndNoteEntry = ({
       </div>
 
       {/* Fixed Keyboard */}
-      {focus && <Keyboard onKey={handleKey} onDelete={handleDelete} />}
+      {focus && (
+        <Keyboard
+          setError={setError}
+          digits={amountDigits}
+          onKey={handleKey}
+          onDelete={handleDelete}
+        />
+      )}
     </div>
   );
 };

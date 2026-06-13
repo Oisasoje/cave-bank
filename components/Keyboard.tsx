@@ -8,11 +8,15 @@ const space_mono = Space_Mono({
 });
 
 const Keyboard = ({
+  digits = "",
   onKey,
   onDelete,
+  setError = () => {},
 }: {
+  digits?: string;
   onKey: (digit: string) => void;
   onDelete: () => void;
+  setError?: React.Dispatch<React.SetStateAction<string | null>>;
 }) => {
   return (
     <div
@@ -159,6 +163,9 @@ const Keyboard = ({
             className="h-[52px] rounded-[5px] flex items-center justify-center text-black cursor-pointer active:bg-neutral-300/40 transition-colors"
             onClick={(e) => {
               e.stopPropagation();
+              if (digits.length === 0) setError("Enter Amount");
+              else if (Number(digits) < 1)
+                setError("Amount must be at least 1");
               onDelete();
             }}
           >
