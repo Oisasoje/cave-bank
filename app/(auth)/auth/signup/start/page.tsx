@@ -100,11 +100,12 @@ export default function EnterPhonePage() {
 
       sessionStorage.setItem("signupAttemptID", id);
       sessionStorage.setItem("userEmail", email);
+
       router.push("/auth/signup/verify");
+      // ✅ isSubmitting stays true during navigation
     } catch (error: any) {
       setErrors(error.message || "Failed to search for Cave profile.");
-    } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // ✅ only reset on failure
     }
   };
   if (isSubmitting) {
@@ -112,7 +113,7 @@ export default function EnterPhonePage() {
   }
   return (
     <div
-      className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-screen relative pb-10 ${inter.className}`}
+      className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-dvh relative pb-10 ${inter.className}`}
       onClick={() => {
         setFocus(false);
         setToggleKeyboard(false);

@@ -63,7 +63,6 @@ export const AmountAndNoteEntry = ({
     <div
       className="animate-fade-in flex flex-col flex-1"
       onClick={() => setFocus(false)}
-      onScroll={() => setFocus(false)}
     >
       <div className="px-6 mt-6 flex flex-col">
         {/* Sending to Recipient card */}

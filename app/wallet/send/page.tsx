@@ -144,7 +144,7 @@ export default function SendCoinsPage() {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-[#F9F9F9] flex flex-col w-full h-screen relative ${
+      className={`max-w-md mx-auto bg-[#F9F9F9] flex flex-col w-full h-dvh relative ${
         inter.className
       } select-none overflow-x-hidden ${
         step === 2 || step === 4 ? "overflow-hidden" : "overflow-y-auto pb-8"

@@ -55,7 +55,7 @@ export default function CongratulationsPage() {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-screen relative ${inter.className} select-none`}
+      className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-dvh relative ${inter.className} select-none`}
     >
       <div className="pt-6 px-6 mt-2">
         <ConfettiAnimation />

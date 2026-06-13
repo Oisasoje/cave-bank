@@ -86,15 +86,21 @@ export default function CreatePin() {
 
     try {
       const setupTokenID = sessionStorage.getItem("setupTokenID") || "";
-      if (!setupTokenID) throw new Error();
-      await createPin(setupTokenID, pin);
+      if (!setupTokenID)
+        throw new Error("Setup token not found. Please try again.");
 
+      await createPin(setupTokenID, pin);
       await generateUserData();
+
       router.push("/auth/signup/congratulations");
+      // ✅ isSubmitting stays true during navigation
     } catch (err: any) {
       setErrors(err.message || "Failed to set PIN. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false); // ✅ always reset on any error
+
+      if (!sessionStorage.getItem("setupTokenID")) {
+        router.replace("/auth/signup/start");
+      }
     }
   };
 
@@ -105,7 +111,7 @@ export default function CreatePin() {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-screen relative pb-10 ${inter.className} select-none`}
+      className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-dvh relative pb-10 ${inter.className} select-none`}
       onClick={() => setFocus(false)}
     >
       <div className="flex-1 pt-6 px-6 flex flex-col">

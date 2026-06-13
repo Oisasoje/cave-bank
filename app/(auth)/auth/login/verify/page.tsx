@@ -61,21 +61,20 @@ const Verify = () => {
     try {
       const loginAttemptID = sessionStorage.getItem("loginAttemptID");
       if (!loginAttemptID) {
-        setTimeout(() => {
-          router.push("/auth/start");
-        }, 3000);
         throw new Error("You cannot proceed. Please try logging in again.");
       }
-      await loginVerify(loginAttemptID, digits);
 
+      await loginVerify(loginAttemptID, digits);
       await generateUserData();
 
       router.push("/wallet");
     } catch (error: any) {
       setErrors(error.message);
-    } finally {
       setIsSubmitting(false);
       setFocus(true);
+      if (!sessionStorage.getItem("loginAttemptID")) {
+        setTimeout(() => router.push("/auth/login/start"), 3000);
+      }
     }
   };
 
@@ -85,7 +84,7 @@ const Verify = () => {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-screen ${inter.className}`}
+      className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-dvh ${inter.className}`}
       onClick={() => setFocus(false)}
     >
       <div className="flex-1 pt-10 px-6 flex flex-col">

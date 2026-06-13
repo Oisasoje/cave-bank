@@ -116,7 +116,7 @@ export default function VerifySignup() {
   if (!hydrated) return null;
   return (
     <div
-      className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-screen relative pb-10 ${inter.className} select-none`}
+      className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-dvh relative pb-10 ${inter.className} select-none`}
       onClick={() => setFocus(false)}
     >
       <div className="flex-1 pt-6 px-6 flex flex-col">

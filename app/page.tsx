@@ -19,7 +19,7 @@ export default function Home() {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-[#FCFBF7] flex flex-col justify-between w-full min-h-screen relative px-6 py-12 ${inter.className} select-none overflow-hidden`}
+      className={`max-w-md mx-auto bg-[#FCFBF7] flex flex-col justify-between w-full min-h-dvh relative px-6 py-12 ${inter.className} select-none overflow-hidden`}
     >
       {/* FLOATING COIN LOGO ILLUSTRATIONS */}
       <div className="absolute inset-0 pointer-events-none z-10">

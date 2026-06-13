@@ -124,7 +124,7 @@ export default function WalletPage() {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-neutral-50 flex flex-col w-full min-h-screen relative ${inter.className} select-none pb-24 overflow-x-hidden`}
+      className={`max-w-md mx-auto bg-neutral-50 flex flex-col w-full min-h-dvh relative ${inter.className} select-none pb-24 overflow-x-hidden`}
     >
       {/* Toast Alert popup */}
       {showToast && (

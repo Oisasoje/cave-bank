@@ -29,7 +29,7 @@ function Shimmer({
 export default function WalletSkeleton() {
   return (
     <div
-      className={`max-w-md mx-auto bg-neutral-50 flex flex-col w-full min-h-screen relative ${inter.className} select-none pb-24 overflow-x-hidden`}
+      className={`max-w-md mx-auto bg-neutral-50 flex flex-col w-full min-h-dvh relative ${inter.className} select-none pb-24 overflow-x-hidden`}
     >
       {/* HEADER */}
       <div className="pt-6 px-6 flex justify-between items-center bg-neutral-50 sticky top-0 z-30">
