@@ -1,30 +1,34 @@
 import { Beneficiary } from "@/app/wallet/send/page";
-import { DM_Sans } from "next/font/google";
+import { DM_Sans, Space_Mono } from "next/font/google";
 import React from "react";
 import ConfettiAnimation from "./Confetti";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
+const space_mono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 const TransferSuccess = ({
   selectedRecipient,
   formattedRawAmount,
-  description,
+
   setStep,
   successDate,
   handleResetFlow,
-  triggerToast,
 }: {
   selectedRecipient: Beneficiary | null;
   formattedRawAmount: string;
-  description: string;
+
   setStep: (step: number) => void;
   successDate: string;
   handleResetFlow: () => void;
-  triggerToast: (message: string) => void;
 }) => {
   const router = useRouter();
 
@@ -102,13 +106,21 @@ const TransferSuccess = ({
         {/* Detailed description */}
         <p className="text-[13px] text-neutral-600 text-center max-w-[280px] leading-relaxed">
           You have successfully transferred{" "}
-          <strong className="text-neutral-800 font-bold">
-            ₵{formattedRawAmount}
-          </strong>{" "}
+          <span
+            className={`font-bold text-neutral-850 text-[16px] inline-flex items-center gap-1 ${space_mono.className}`}
+          >
+            <Image
+              src="/cave-coin-symbol-black.png"
+              alt="cave-coin"
+              width={9}
+              height={9}
+            />
+            {formattedRawAmount}
+          </span>{" "}
           to{" "}
-          <strong className="text-neutral-800 font-bold uppercase">
+          <span className="text-neutral-800 font-bold uppercase">
             {selectedRecipient?.name}
-          </strong>
+          </span>
         </p>
 
         {/* Dynamic safe timestamp */}

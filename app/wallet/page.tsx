@@ -118,34 +118,6 @@ export default function WalletPage() {
     },
   ]);
 
-  // Transaction History State
-  const [transactions, setTransactions] = useState<Transaction[]>([
-    {
-      id: "t1",
-      type: "send",
-      title: "Transfer to Catherine On...",
-      date: "May 10th, 10:04",
-      amount: -20,
-      status: "Pending",
-    },
-    {
-      id: "t2",
-      type: "send",
-      title: "Transfer to Catherine On...",
-      date: "May 10th, 10:04",
-      amount: -20,
-      status: "Pending",
-    },
-    {
-      id: "t3",
-      type: "receive",
-      title: "Transfer from Catherine On...",
-      date: "May 10th, 10:04",
-      amount: 20,
-      status: "Successful",
-    },
-  ]);
-
   if (!hydrated || !me) {
     return <WalletSkeleton />;
   }

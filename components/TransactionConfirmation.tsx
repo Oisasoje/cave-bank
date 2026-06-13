@@ -1,5 +1,6 @@
 import React from "react";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
+import Image from "next/image";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -42,9 +43,14 @@ const TransactionConfirmation = ({
         </span>
         <div className="flex items-center justify-center gap-1">
           <span
-            className={`text-[36px] font-bold text-neutral-850 ${space_mono.className}`}
+            className={`text-[14px] font-bold text-neutral-800 mr-1 select-none ${space_mono.className}`}
           >
-            ₵
+            <Image
+              src="/cave-coin-symbol-black.png"
+              alt="cave-coin"
+              width={20}
+              height={20}
+            />
           </span>
           <span
             className={`text-[36px] text-neutral-850 ${space_mono.className}`}
@@ -112,11 +118,23 @@ const TransactionConfirmation = ({
           <span className="text-[12px] text-neutral-450 font-bold uppercase tracking-wider">
             Wallet Balance
           </span>
-          <span
-            className={`text-[16px] font-bold text-neutral-850 mt-1 ${space_mono.className}`}
-          >
-            {"₵" + formattedBalance}
-          </span>
+          <div className="flex items-center mt-1">
+            <span
+              className={`text-[5px] font-bold text-neutral-800 mr-1 select-none ${space_mono.className}`}
+            >
+              <Image
+                src="/cave-coin-symbol-black.png"
+                alt="cave-coin"
+                width={12}
+                height={12}
+              />
+            </span>
+            <span
+              className={`font-bold text-neutral-850 text-[16px] ${space_mono.className}`}
+            >
+              {formattedBalance}
+            </span>
+          </div>
         </div>
       </div>
 

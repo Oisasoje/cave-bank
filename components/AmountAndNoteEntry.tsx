@@ -4,6 +4,7 @@ import { DM_Sans, Space_Mono } from "next/font/google";
 import React, { useEffect, useState } from "react";
 import Keyboard from "./Keyboard";
 import { Beneficiary } from "@/app/wallet/send/page";
+import Image from "next/image";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -133,9 +134,14 @@ export const AmountAndNoteEntry = ({
             }}
           >
             <span
-              className={`text-[14px] font-bold text-neutral-800 mr-1 select-none ${space_mono.className}`}
+              className={`text-[5px] font-bold text-neutral-800 mr-1 select-none ${space_mono.className}`}
             >
-              ₵
+              <Image
+                src="/cave-coin-symbol-black.png"
+                alt="cave-coin"
+                width={8}
+                height={5}
+              />
             </span>
 
             {/* cursor when focused and empty */}

@@ -83,9 +83,7 @@ const Receipt = ({
       <div className="flex-1 flex flex-col bg-white">
         {/* 2. THE CAVE BANK BANNER */}
         <div className="w-full fixed top-0 bg-[#0D1B1E] grainy px-6 py-4.5 flex items-center justify-between text-white shrink-0 shadow-sm">
-          {/* Logo & Name */}
           <div className="flex items-center gap-2">
-            {/* Styled Cave Bank Logo Mark */}
             <div className="relative w-6 h-6 rounded-full flex items-center justify-center border-2 border-[#D2B627] select-none shrink-0">
               <Image
                 src="/cave-coin-symbol-yellow.png"
@@ -107,71 +105,20 @@ const Receipt = ({
         {/* 3. RECEIPT BODY CARD (WHITE WITH FLOATING WATERMARKS) */}
         <div className="flex-1 relative px-6 pt-8 pb-10 flex flex-col overflow-hidden">
           {/* Floating Yellow Watermark Coins matching the mockup layout */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-            {/* Top-Left Coin - small, slow float */}
-            <div className="absolute top-[8%] left-[6%] animate-float-slow opacity-[0.06] rotate-12">
-              <Image
-                src="/cave-coin-symbol-yellow.png"
-                alt="Cave Coin"
-                width={32}
-                height={32}
-                className="object-contain"
-              />
-            </div>
-
-            {/* Top-Right Coin - medium, offset */}
-            <div className="absolute top-[12%] right-[10%] animate-float-medium opacity-[0.06] -rotate-12">
-              <Image
-                src="/cave-coin-symbol-yellow.png"
-                alt="Cave Coin"
-                width={26}
-                height={26}
-                className="object-contain"
-              />
-            </div>
-
-            {/* Center-Left Coin */}
-            <div className="absolute top-[48%] left-[8%] animate-float-fast opacity-[0.05] rotate-45">
-              <Image
-                src="/cave-coin-symbol-yellow.png"
-                alt="Cave Coin"
-                width={30}
-                height={30}
-                className="object-contain"
-              />
-            </div>
-
-            {/* Mid-Right Coin */}
-            <div className="absolute top-[52%] right-[8%] animate-float-slow-reverse opacity-[0.05] -rotate-45">
-              <Image
-                src="/cave-coin-symbol-yellow.png"
-                alt="Cave Coin"
-                width={34}
-                height={34}
-                className="object-contain"
-              />
-            </div>
-
-            {/* Bottom-Left Coin */}
-            <div className="absolute bottom-[20%] left-[22%] animate-float-medium opacity-[0.05] rotate-12">
-              <Image
-                src="/cave-coin-symbol-yellow.png"
-                alt="Cave Coin"
-                width={24}
-                height={24}
-                className="object-contain"
-              />
-            </div>
-          </div>
 
           {/* Amount and Timestamp */}
           <div className="flex flex-col items-center z-10">
-            {/* Large Amount */}
             <div className="flex items-center justify-center mt-2 select-text">
               <span
-                className={`text-[38px] font-bold text-[#D2B627] tracking-tight leading-none ${space_mono.className}`}
+                className={`text-[38px] font-bold text-[#D2B627] tracking-tightest leading-none inline-flex items-center gap-0.5 ${space_mono.className}`}
               >
-                C {transactionResult.transaction.amount}
+                <Image
+                  src="/cave-coin-symbol-yellow.png"
+                  alt="cave-coin"
+                  width={40}
+                  height={40}
+                />
+                {transactionResult.transaction.amount}
               </span>
               <span
                 className={`text-[38px] font-bold text-[#D2B627] tracking-tight leading-none ml-0.5 ${space_mono.className}`}

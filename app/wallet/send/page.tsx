@@ -170,7 +170,9 @@ export default function SendCoinsPage() {
       )}
 
       {/* HEADER SECTION */}
-      <div className="px-6 flex items-center justify-between bg-[#F9F9F9] sticky top-0 z-30">
+      <div
+        className={`${step === 6 ? "pt-0" : "pt-6"} px-6 flex items-center justify-between bg-[#F9F9F9] sticky top-0 z-30`}
+      >
         {step !== 6 && (
           <button
             onClick={handleBack}
@@ -261,11 +263,9 @@ export default function SendCoinsPage() {
         <TransferSuccess
           selectedRecipient={selectedRecipient}
           formattedRawAmount={formattedRawAmount}
-          description={description}
           setStep={setStep}
           handleResetFlow={handleResetFlow}
           successDate={transactionResult.transaction.created_at}
-          triggerToast={triggerToast}
         />
       )}
 
