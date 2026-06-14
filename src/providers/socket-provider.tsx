@@ -20,12 +20,21 @@ export default function SocketProvider({
     socket.connect();
 
     socket.on("wallet:updated", ({ type, amount }) => {
-      queryClient.setQueryData(["balance"], (old: number = 0) => {
-        if (type === "credit") return old + amount;
-        if (type === "debit") return old - amount;
-        return old;
+      queryClient.setQueryData(["balance"], (old: any) => {
+        if (!old) return old;
+        const current = old.data.balance;
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            balance: type === "credit" ? current + amount : current - amount,
+          },
+        };
       });
     });
+
+    socket.on("connect", () => console.log("✅ connected:", socket.id));
+    socket.on("connect_error", (err) => console.log("❌ error:", err.message));
 
     return () => {
       socket.disconnect();

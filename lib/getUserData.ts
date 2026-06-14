@@ -15,7 +15,7 @@ const generateUserData = async () => {
     queryClient.prefetchQuery({
       queryKey: ["balance"],
       queryFn: getBalance,
-      staleTime: 60 * 1000,
+      staleTime: Infinity,
     }),
     queryClient.prefetchQuery({
       queryKey: ["transactions", { limit: 10 }],

@@ -7,6 +7,7 @@ import { Beneficiary } from "@/app/wallet/send/page";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/services/auth";
 import Loading from "./Loading";
+import { queryClient } from "@/lib/queryClient";
 
 const AuthorizeTransaction = ({
   pin,

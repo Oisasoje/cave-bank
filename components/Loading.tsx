@@ -11,7 +11,7 @@ const dmSans = DM_Sans({
 export default function Loading() {
   return (
     <div
-      className={`max-w-md mx-auto bg-[#071111] flex flex-col z-99 fixed items-center justify-center w-full min-h-dvh overflow-hidden select-none`}
+      className={` mx-auto bg-[#071111] flex flex-col z-99 fixed items-center justify-center w-full min-h-dvh overflow-hidden select-none`}
       style={{
         backgroundImage: `
           radial-gradient(circle at center, rgba(234, 179, 8, 0.09) 0%, transparent 65%),
