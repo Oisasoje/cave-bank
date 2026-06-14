@@ -30,7 +30,7 @@ const RecipientSelection = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const { data: recentTransactions, isLoading } = useQuery({
     queryKey: ["transactions", { limit: 5 }],
-    queryFn: getRecentTransactions,
+    queryFn: () => getRecentTransactions(),
   });
   const [activeTab, setActiveTab] = useState<"recents" | "saved">("recents");
   const [recipientInput, setRecipientInput] = useState<string>("");
