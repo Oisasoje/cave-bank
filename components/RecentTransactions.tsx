@@ -1,15 +1,37 @@
 import { DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import React from "react";
+import TransactionSkeleton from "./TransactionsSkeleton";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-const RecentTransactions = ({ transactions }: { transactions: any }) => {
+const RecentTransactions = ({
+  transactions,
+  isLoading,
+}: {
+  transactions: any;
+  isLoading: boolean;
+}) => {
   const router = useRouter();
-  console.log(transactions);
+
+  if (isLoading)
+    return (
+      <div className="mt-8 flex-1 flex flex-col min-h-0">
+        <div className="flex justify-between items-center mb-3">
+          <div className="h-[13px] w-[140px] rounded bg-neutral-100 animate-pulse" />
+          <div className="h-[13px] w-[48px] rounded bg-neutral-100 animate-pulse" />
+        </div>
+        <div className="space-y-3.5">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <TransactionSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    );
+
   return (
     <div className="mt-8 flex-1 flex flex-col min-h-0">
       <div className="flex justify-between items-center mb-3">
@@ -41,7 +63,7 @@ const RecentTransactions = ({ transactions }: { transactions: any }) => {
 
       {/* List */}
       <div className="space-y-3.5 pb-6">
-        {transactions.map((tx: any) => {
+        {transactions?.map((tx: any) => {
           const formattedDate = new Date(tx.created_at)
             .toLocaleString("en-US", {
               year: "numeric",

@@ -41,7 +41,7 @@ interface Transaction {
 }
 
 export default function WalletPage() {
-  const { data: me, isLoading } = useQuery({
+  const { data: me } = useQuery({
     queryKey: ["me"],
     queryFn: getUser,
   });
@@ -50,7 +50,7 @@ export default function WalletPage() {
     queryKey: ["balance"],
     queryFn: getBalance,
   });
-  const { data: recentTransactions } = useQuery({
+  const { data: recentTransactions, isLoading } = useQuery({
     queryKey: ["transactions", { limit: 10 }],
     queryFn: getRecentTransactions,
   });
@@ -168,7 +168,10 @@ export default function WalletPage() {
         <QuickSend contacts={contacts} />
 
         {/* RECENT TRANSACTIONS */}
-        <RecentTransactions transactions={recentTransactionsData} />
+        <RecentTransactions
+          transactions={recentTransactionsData}
+          isLoading={isLoading}
+        />
       </div>
 
       {/* FLOATING BOTTOM NAVIGATION BAR */}

@@ -25,7 +25,6 @@ const api = async (endpoint: String, options: RequestInit = {}) => {
   const data = await response.json();
 
   if (!response.ok) {
-    console.log(data);
     throw new Error(
       data.message
         ? data.message

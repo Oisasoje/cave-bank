@@ -144,7 +144,6 @@ const TransferSuccess = ({
           type="button"
           onClick={() => {
             handleResetFlow();
-            router.push("/wallet");
           }}
           className="w-full h-[54px] rounded-[14px] bg-white border border-neutral-300 text-neutral-800 hover:bg-neutral-50 active:scale-[0.98] font-bold text-[14px] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs"
         >

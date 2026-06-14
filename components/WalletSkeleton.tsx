@@ -1,6 +1,7 @@
 "use client";
 
 import { Inter, DM_Sans } from "next/font/google";
+import TransactionSkeleton from "./TransactionsSkeleton";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -101,32 +102,7 @@ export default function WalletSkeleton() {
         </div>
 
         {/* RECENT TRANSACTIONS */}
-        <div className="mt-8">
-          <div className="flex justify-between items-center mb-3">
-            <Shimmer className="h-[11px] w-[130px] rounded" />
-            <Shimmer className="h-[11px] w-[48px] rounded" />
-          </div>
-          <div className="space-y-3.5">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div
-                key={i}
-                className="bg-white border border-neutral-200/60 p-3.5 rounded-[18px] flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <Shimmer className="w-[40px] h-[40px] rounded-full shrink-0" />
-                  <div className="flex flex-col gap-1.5">
-                    <Shimmer className="w-[130px] h-[12px] rounded" />
-                    <Shimmer className="w-[80px] h-[10px] rounded" />
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-1.5">
-                  <Shimmer className="w-[40px] h-[12px] rounded" />
-                  <Shimmer className="w-[56px] h-[18px] rounded-[6px]" />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <TransactionSkeleton />
       </div>
 
       {/* BOTTOM NAV */}

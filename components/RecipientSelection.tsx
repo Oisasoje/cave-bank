@@ -28,7 +28,7 @@ const RecipientSelection = ({
   setStep: (step: number) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { data: recentTransactions } = useQuery({
+  const { data: recentTransactions, isLoading } = useQuery({
     queryKey: ["transactions", { limit: 5 }],
     queryFn: getRecentTransactions,
   });
@@ -257,7 +257,20 @@ const RecipientSelection = ({
           </div>
 
           <div className="divide-y divide-neutral-100 p-4 space-y-3.5 divide-none">
-            {uniqueRecentReceipients?.length > 0 ? (
+            {isLoading ? (
+              Array.from({ length: 3 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3.5 py-1 animate-pulse"
+                >
+                  <div className="w-10 h-10 rounded-full bg-neutral-100 shrink-0" />
+                  <div>
+                    <div className="h-[13px] w-[110px] rounded bg-neutral-100 mb-2" />
+                    <div className="h-[11px] w-[150px] rounded bg-neutral-100" />
+                  </div>
+                </div>
+              ))
+            ) : uniqueRecentReceipients?.length > 0 ? (
               uniqueRecentReceipients.map((b: any) => (
                 <div
                   key={b.accountId}

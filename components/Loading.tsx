@@ -112,9 +112,6 @@ export default function Loading() {
           The Cave Bank
         </h1>
       </div>
-
-      {/* iOS style home indicator bar placeholder for mobile look */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-white/20 rounded-full pointer-events-none" />
     </div>
   );
 }

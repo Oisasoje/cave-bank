@@ -103,13 +103,13 @@ export default function SendCoinsPage() {
   };
 
   const handleResetFlow = () => {
-    setStep(1);
+    router.push("/wallet");
     setSelectedRecipient(null);
     setAmountDigits("");
     setDescription("");
     setPin("");
     setTransactionResult(null);
-    router.push("/wallet");
+    setStep(1);
   };
 
   const handleBack = () => {
