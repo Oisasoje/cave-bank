@@ -26,6 +26,7 @@
     "react-phone-number-input": "^3.4.16",
     "react-square-flags": "^1.0.0",
     "react-use": "^17.6.1",
+    "socket.io-client": "^4.8.3",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

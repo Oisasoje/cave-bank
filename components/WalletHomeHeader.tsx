@@ -1,5 +1,4 @@
 import { DM_Sans } from "next/font/google";
-import React from "react";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -7,7 +6,6 @@ const dm_sans = DM_Sans({
 });
 
 const WalletHomeHeader = ({ firstName }: { firstName: string }) => {
-  console.log("firstname from header", firstName);
   return (
     <div className="pt-6 px-6 flex justify-between items-center bg-neutral-50 sticky top-0 z-30">
       <div>
