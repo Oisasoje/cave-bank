@@ -44,15 +44,13 @@ async function getUser() {
   return json.data.user; // ← drill into the right path
 }
 
-// then in layout:
-const user = await getUser();
-const userId = user?.id;
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const user = await getUser();
+  const userId = user?.id;
   return (
     <html
       lang="en"
