@@ -179,8 +179,6 @@ export default function TransactionsPage() {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  console.log(transactions);
-
   const [activeTab, setActiveTab] = useState<FilterTab>("All");
   const [selectedMonth, setSelectedMonth] = useState("May");
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);

@@ -20,7 +20,6 @@ export default function SocketProvider({
     socket.connect();
 
     socket.on("wallet:updated", ({ type, amount }) => {
-      // update balance
       queryClient.setQueryData(["balance"], (old: any) => {
         if (!old) return old;
         const current = old.data.balance;
@@ -33,7 +32,6 @@ export default function SocketProvider({
         };
       });
 
-      // invalidate transactions so it refetches
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
     });
 
@@ -42,6 +40,5 @@ export default function SocketProvider({
       socket.off("wallet:updated");
     };
   }, [userId, queryClient]);
-
   return children;
 }

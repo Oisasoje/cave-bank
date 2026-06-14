@@ -52,7 +52,6 @@ export const AmountAndNoteEntry = ({
   useEffect(() => {
     const digits = amountDigits.replace(/,/g, "");
     if (Number(digits) > Number(formattedBalance)) {
-      console.log(Number(digits), Number(formattedBalance));
       setError("Insufficient balance");
     } else {
       setError(null);
