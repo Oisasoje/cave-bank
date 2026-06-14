@@ -114,7 +114,6 @@ const TransferSuccess = ({
               alt="cave-coin"
               width={9}
               height={9}
-              className="w-auto"
             />
             {formattedRawAmount}
           </span>{" "}

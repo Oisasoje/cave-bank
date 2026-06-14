@@ -50,7 +50,6 @@ const TransactionConfirmation = ({
               alt="cave-coin"
               width={20}
               height={20}
-              className="w-auto"
             />
           </span>
           <span
@@ -128,7 +127,6 @@ const TransactionConfirmation = ({
                 alt="cave-coin"
                 width={12}
                 height={12}
-                className="w-auto"
               />
             </span>
             <span

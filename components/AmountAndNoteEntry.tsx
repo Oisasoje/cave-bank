@@ -140,7 +140,6 @@ export const AmountAndNoteEntry = ({
                 alt="cave-coin"
                 width={8}
                 height={5}
-                className="w-auto"
               />
             </span>
 
