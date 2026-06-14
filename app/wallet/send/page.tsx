@@ -34,7 +34,7 @@ export default function SendCoinsPage() {
     queryKey: ["balance"],
     queryFn: getBalance,
   });
-  const formattedBalance = balance?.data.balance.toFixed(2);
+  const formattedBalance = balance?.data?.balance?.toFixed(2);
   const [step, setStep] = useState(1);
 
   const [selectedRecipient, setSelectedRecipient] =

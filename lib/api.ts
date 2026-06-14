@@ -18,7 +18,6 @@ const api = async (endpoint: String, options: RequestInit = {}) => {
       },
     });
   } catch (error: any) {
-    console.log(error);
     throw new Error(error.message || "Something went wrong. Please try again.");
   }
 

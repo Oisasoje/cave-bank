@@ -24,11 +24,7 @@ export interface ReceiptProps {
   onSharePdf?: () => void;
 }
 
-const Receipt = ({
-  transactionResult,
-  onShareImage = () => console.log("Share as image clicked"),
-  onSharePdf = () => console.log("Share as PDF clicked"),
-}: ReceiptProps) => {
+const Receipt = ({ transactionResult }: ReceiptProps) => {
   const router = useRouter();
 
   const formattedDate = new Date(transactionResult.transaction.created_at)
