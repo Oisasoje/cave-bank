@@ -2,7 +2,6 @@
 
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import { Providers } from "@/components/Providers";
 import SocketProvider from "@/src/providers/socket-provider";
 
 export function ClientProviders({
@@ -14,9 +13,7 @@ export function ClientProviders({
 }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <Providers>
-        <SocketProvider userId={userId}>{children}</SocketProvider>
-      </Providers>
+      <SocketProvider userId={userId}>{children}</SocketProvider>
     </QueryClientProvider>
   );
 }

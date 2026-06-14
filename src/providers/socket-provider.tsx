@@ -37,9 +37,6 @@ export default function SocketProvider({
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
     });
 
-    socket.on("connect", () => console.log("✅ connected:", socket.id));
-    socket.on("connect_error", (err) => console.log("❌ error:", err.message));
-
     return () => {
       socket.disconnect();
       socket.off("wallet:updated");

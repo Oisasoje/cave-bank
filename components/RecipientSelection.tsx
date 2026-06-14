@@ -30,7 +30,7 @@ const RecipientSelection = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const { data: recentTransactions, isLoading } = useQuery({
     queryKey: ["transactions", { limit: 5 }],
-    queryFn: () => getRecentTransactions(),
+    queryFn: () => getRecentTransactions(5),
   });
   const [activeTab, setActiveTab] = useState<"recents" | "saved">("recents");
   const [recipientInput, setRecipientInput] = useState<string>("");
@@ -120,7 +120,7 @@ const RecipientSelection = ({
     (item: any, index: number) =>
       index ===
       recentReceipients.findIndex(
-        (t: any) => t.displayAccount === item.displayAccount,
+        (t: any) => t.displayAddress === item.displayAddress,
       ),
   );
 
@@ -298,7 +298,7 @@ const RecipientSelection = ({
                     <p
                       className={`text-[11px] text-neutral-400 font-semibold mt-1 ${space_mono.className}`}
                     >
-                      {b.displayAccount}
+                      {b.displayAddress}
                     </p>
                   </div>
                 </div>

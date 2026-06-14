@@ -133,13 +133,14 @@ export const AmountAndNoteEntry = ({
             }}
           >
             <span
-              className={`text-[5px] font-bold text-neutral-800 mr-1 select-none ${space_mono.className}`}
+              className={`text-[5px] font-bold  text-neutral-800 mr-1 select-none ${space_mono.className}`}
             >
               <Image
                 src="/cave-coin-symbol-black.png"
                 alt="cave-coin"
                 width={8}
                 height={5}
+                className="w-auto"
               />
             </span>
 

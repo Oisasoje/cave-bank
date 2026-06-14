@@ -58,6 +58,9 @@ const AuthorizeTransaction = ({
         });
 
         setTransactionResult(transactionResult.data);
+        queryClient.invalidateQueries({ queryKey: ["balance"] });
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
+
         setStep(5);
       } catch (error: any) {
         setError(error.message);
