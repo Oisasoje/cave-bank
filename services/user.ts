@@ -6,8 +6,23 @@ export const getBalance = () => {
   });
 };
 
-export const getRecentTransactions = () => {
-  return api("/user/getRecentTransactions", {
+export const getTransactions = ({
+  pageParam,
+  limit = 20,
+}: {
+  pageParam?: string;
+  limit?: number;
+}) => {
+  const params = new URLSearchParams({ limit: String(limit) });
+  if (pageParam) params.set("cursor", pageParam);
+
+  return api(`/user/transactions?${params}`, {
+    method: "GET",
+  });
+};
+
+export const getRecentTransactions = async (limit = 10) => {
+  return api(`/user/transactions?limit=${limit}`, {
     method: "GET",
   });
 };

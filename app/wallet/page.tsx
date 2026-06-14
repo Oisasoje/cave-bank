@@ -52,7 +52,7 @@ export default function WalletPage() {
   });
   const { data: recentTransactions, isLoading } = useQuery({
     queryKey: ["transactions", { limit: 10 }],
-    queryFn: getRecentTransactions,
+    queryFn: () => getRecentTransactions(),
   });
 
   const walletAddress = me?.data?.wallet_address ?? "";

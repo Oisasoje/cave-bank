@@ -1,6 +1,5 @@
 import { DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
-import React from "react";
 import TransactionSkeleton from "./TransactionsSkeleton";
 
 const dm_sans = DM_Sans({
@@ -41,7 +40,7 @@ const RecentTransactions = ({
           Recent Transactions
         </h3>
         <button
-          onClick={() => router.push("/wallet/transactions")}
+          onClick={() => router.push("/transactions")}
           className="text-xs font-bold text-neutral-800 hover:text-black flex items-center gap-0.5 cursor-pointer"
         >
           See all
@@ -119,7 +118,7 @@ const RecentTransactions = ({
                 </div>
                 <div>
                   <p className="text-[13px] font-bold text-neutral-800 tracking-tight leading-tight">
-                    {`Transfer ${tx.type === "debit" ? ` to ${tx.accounts_to.users.name.slice(0, 12)}...` : ` from ${tx.accounts_from.users.name.slice(0, 12)}...`}`}
+                    {`Transfer ${tx.type === "debit" ? ` to ${tx.accounts_to.users.name.slice(0, 12)}...` : ` from ${tx.accounts_from.users.name.slice(0, 10)}...`}`}
                   </p>
                   <p className="text-[11px] text-neutral-400 font-semibold mt-1">
                     {formattedDate}
