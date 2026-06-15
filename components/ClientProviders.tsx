@@ -11,6 +11,7 @@ export function ClientProviders({
   children: React.ReactNode;
   userId: string;
 }) {
+  console.log("user", userId);
   return (
     <QueryClientProvider client={queryClient}>
       <SocketProvider userId={userId}>{children}</SocketProvider>

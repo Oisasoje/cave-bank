@@ -50,7 +50,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const user = await getUser();
-  console.log("user", user?.id);
+
   const userId = user?.id;
   return (
     <html
