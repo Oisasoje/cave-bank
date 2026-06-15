@@ -22,25 +22,13 @@ export default function SocketProvider({
 
     const channel = pusher.subscribe(`user-${userId}`);
 
+    // unbind first before binding to prevent duplicates
+    channel.unbind("wallet:updated");
     channel.bind(
       "wallet:updated",
       ({ type, amount }: { type: string; amount: number }) => {
         console.log("💸 wallet updated:", type, amount);
-
-        queryClient.setQueryData(["balance"], (old: any) => {
-          if (!old) return old;
-          const current = old.data.balance;
-          const newBalance =
-            type === "credit"
-              ? current + Number(amount)
-              : current - Number(amount);
-          console.log("💰 updating balance:", current, "→", newBalance);
-          return {
-            ...old,
-            data: { ...old.data, balance: newBalance },
-          };
-        });
-
+        queryClient.invalidateQueries({ queryKey: ["balance"] });
         queryClient.invalidateQueries({ queryKey: ["transactions"] });
       },
     );

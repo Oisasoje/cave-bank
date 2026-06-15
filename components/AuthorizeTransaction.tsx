@@ -7,7 +7,6 @@ import { Beneficiary } from "@/app/wallet/send/page";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/services/auth";
 import Loading from "./Loading";
-import { queryClient } from "@/lib/queryClient";
 
 const AuthorizeTransaction = ({
   pin,
@@ -44,6 +43,10 @@ const AuthorizeTransaction = ({
     }
     if (!selectedRecipient?.accountId) {
       return;
+    }
+
+    if (!me?.data?.accountId) {
+      throw new Error("Account not found. Please try again.");
     }
 
     const run = async () => {
