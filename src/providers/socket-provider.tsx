@@ -4,6 +4,11 @@ import { useEffect } from "react";
 import Pusher from "pusher-js";
 import { useQueryClient } from "@tanstack/react-query";
 
+console.log("🔑 Pusher config:", {
+  key: process.env.NEXT_PUBLIC_PUSHER_KEY,
+  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
+});
+
 export default function SocketProvider({
   userId,
   children,
@@ -15,6 +20,7 @@ export default function SocketProvider({
 
   useEffect(() => {
     if (!userId) return;
+    console.log("📡 subscribing to channel:", `user-${userId}`);
 
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
