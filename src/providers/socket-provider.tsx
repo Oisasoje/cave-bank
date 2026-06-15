@@ -19,26 +19,15 @@ export default function SocketProvider({
     socket.auth = { userId };
     socket.connect();
 
-    socket.on("connect", () => console.log("✅ connected:", socket.id));
-    socket.on("connect_error", (err) => console.log("❌ error:", err.message));
-
     socket.on("wallet:updated", ({ type, amount }) => {
-      console.log("💸 wallet updated:", type, amount);
-      console.log(
-        "🗂 all cache keys:",
-        queryClient
-          .getQueryCache()
-          .getAll()
-          .map((q) => q.queryKey),
-      );
-
       queryClient.setQueryData(["balance"], (old: any) => {
-        console.log("📦 current cache:", old);
         if (!old) return old;
         const current = old.data.balance;
         const newBalance =
-          type === "credit" ? current + amount : current - amount;
-        console.log("💰 updating balance:", current, "→", newBalance);
+          type === "credit"
+            ? current + Number(amount)
+            : current - Number(amount);
+
         return {
           ...old,
           data: {
