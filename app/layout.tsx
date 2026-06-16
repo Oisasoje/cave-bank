@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 
 import { ClientProviders } from "@/components/ClientProviders";
 import { API_BASE_URL } from "@/lib/api";
+import Script from "next/script";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -52,13 +53,23 @@ export default async function RootLayout({
   const user = await getUser();
 
   const userId = user?.id;
+
   return (
     <html
       lang="en"
       className={`h-full antialiased ${dmSans.variable} ${spaceMono.variable} font-sans ${geist.variable}`}
     >
       <ClientProviders userId={userId}>
-        <body className="min-h-full flex flex-col">{children}</body>
+        <body className="min-h-full flex flex-col">
+          {children}
+          <Script
+            src="//cdn.jsdelivr.net/npm/eruda"
+            strategy="afterInteractive"
+            onLoad={() => {
+              (window as any).eruda.init();
+            }}
+          />
+        </body>
       </ClientProviders>
     </html>
   );

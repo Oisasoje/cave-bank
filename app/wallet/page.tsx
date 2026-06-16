@@ -41,7 +41,7 @@ interface Transaction {
 }
 
 export default function WalletPage() {
-  const { data: me } = useQuery({
+  const { data: me, isError: meError } = useQuery({
     queryKey: ["me"],
     queryFn: getUser,
   });
@@ -118,64 +118,68 @@ export default function WalletPage() {
     },
   ]);
 
-  if (!hydrated || !me) {
-    return <WalletSkeleton />;
-  }
+  if (meError) {
+    console.log("me error");
 
-  return (
-    <div
-      className={`max-w-md mx-auto bg-neutral-50 flex flex-col w-full min-h-dvh relative ${inter.className} select-none pb-24 overflow-x-hidden`}
-    >
-      {/* Toast Alert popup */}
-      {showToast && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-neutral-900 text-white text-[13px] px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 border border-neutral-800 transition-all animate-bounce">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#EAB308"
-            strokeWidth="2.5"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>{toastMessage}</span>
+    if (!hydrated || !me) {
+      return <WalletSkeleton />;
+    }
+
+    return (
+      <div
+        className={`max-w-md mx-auto bg-neutral-50 flex flex-col w-full min-h-dvh relative ${inter.className} select-none pb-24 overflow-x-hidden`}
+      >
+        {/* Toast Alert popup */}
+        {showToast && (
+          <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-neutral-900 text-white text-[13px] px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 border border-neutral-800 transition-all animate-bounce">
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#EAB308"
+              strokeWidth="2.5"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+            <span>{toastMessage}</span>
+          </div>
+        )}
+
+        {/* HEADER SECTION */}
+        <WalletHomeHeader firstName={firstName} />
+
+        {/* MAIN HOME VIEW */}
+
+        <div className="flex flex-col flex-1 px-6 mt-4">
+          {/* BALANCE CARD */}
+          <BalanceCard
+            showBalance={showBalance}
+            setShowBalance={setShowBalance}
+            walletAddress={walletAddress!}
+            handleCopyId={handleCopyId}
+            copied={copied}
+            formattedBalance={formattedBalance}
+          />
+
+          {/* QUICK ACTION BUTTONS */}
+          <WalletPageQuickActions />
+
+          {/* QUICK SEND SECTION */}
+          <QuickSend contacts={contacts} />
+
+          {/* RECENT TRANSACTIONS */}
+          <RecentTransactions
+            transactions={recentTransactionsData}
+            isLoading={isLoading}
+          />
         </div>
-      )}
 
-      {/* HEADER SECTION */}
-      <WalletHomeHeader firstName={firstName} />
-
-      {/* MAIN HOME VIEW */}
-
-      <div className="flex flex-col flex-1 px-6 mt-4">
-        {/* BALANCE CARD */}
-        <BalanceCard
-          showBalance={showBalance}
-          setShowBalance={setShowBalance}
-          walletAddress={walletAddress!}
-          handleCopyId={handleCopyId}
-          copied={copied}
-          formattedBalance={formattedBalance}
-        />
-
-        {/* QUICK ACTION BUTTONS */}
-        <WalletPageQuickActions />
-
-        {/* QUICK SEND SECTION */}
-        <QuickSend contacts={contacts} />
-
-        {/* RECENT TRANSACTIONS */}
-        <RecentTransactions
-          transactions={recentTransactionsData}
-          isLoading={isLoading}
-        />
+        {/* FLOATING BOTTOM NAVIGATION BAR */}
+        <HomePageFloatingNav />
       </div>
-
-      {/* FLOATING BOTTOM NAVIGATION BAR */}
-      <HomePageFloatingNav />
-    </div>
-  );
+    );
+  }
 }
