@@ -119,7 +119,7 @@ export default function WalletPage() {
   ]);
 
   if (meError) {
-    console.log("me error");
+    console.log("me error", meError);
 
     if (!hydrated || !me) {
       return <WalletSkeleton />;
