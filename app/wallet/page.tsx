@@ -10,7 +10,6 @@ import WalletSkeleton from "@/components/WalletSkeleton";
 import RecentTransactions from "@/components/RecentTransactions";
 import QuickSend from "@/components/QuickSend";
 import WalletHomeHeader from "@/components/WalletHomeHeader";
-import HomePageFloatingNav from "@/components/HomePageFloatingNav";
 import WalletPageQuickActions from "@/components/WalletPageQuickActions";
 import { getBalance, getRecentTransactions } from "@/services/user";
 
@@ -181,9 +180,6 @@ export default function WalletPage() {
           isLoading={isLoading}
         />
       </div>
-
-      {/* FLOATING BOTTOM NAVIGATION BAR */}
-      <HomePageFloatingNav />
     </div>
   );
 }

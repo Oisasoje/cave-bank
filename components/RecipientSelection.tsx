@@ -184,7 +184,7 @@ const RecipientSelection = ({
             type="button"
             disabled={isDisabled}
             onClick={handleContinue}
-            className={`w-full h-20 rounded-[14px] font-bold text-lg flex items-center justify-center transition-all duration-200 ${
+            className={`w-full h-15 rounded-[14px] font-bold text-lg flex items-center justify-center transition-all duration-200 ${
               isDisabled
                 ? "bg-[#EAEAEA] text-neutral-450 cursor-not-allowed"
                 : "bg-[#0E1719] text-white hover:bg-[#18262a] cursor-pointer shadow-md"

@@ -1,13 +1,30 @@
+"use client";
+
 import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const HomePageFloatingNav = () => {
+  const pathname = usePathname();
+
+  // Helper to determine if a route is active
+  const isActive = (path: string) => pathname === path;
+
+  // Show the navbar only on main dashboard pages
+  const showNav =
+    isActive("/wallet") ||
+    isActive("/transactions") ||
+    isActive("/account");
+
+  if (!showNav) return null;
+
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#12161A] text-white rounded-[24px] p-2 flex items-center gap-1.5 shadow-xl w-[calc(100%-48px)] max-w-[380px]">
       {/* Home Tab */}
-      <button
-        onClick={() => {}}
+      <Link
+        href="/wallet"
         className={`flex-1 flex flex-col items-center justify-center py-2 px-1.5 rounded-[18px] transition-all cursor-pointer ${
-          true
+          isActive("/wallet")
             ? "bg-neutral-800 text-yellow-400 font-bold"
             : "text-neutral-400 font-semibold"
         }`}
@@ -25,13 +42,13 @@ const HomePageFloatingNav = () => {
           <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
         <span className="text-[10px]">Home</span>
-      </button>
+      </Link>
 
       {/* Transactions Tab */}
-      <button
-        onClick={() => {}}
+      <Link
+        href="/transactions"
         className={`flex-1 flex flex-col items-center justify-center py-2 px-1.5 rounded-[18px] transition-all cursor-pointer ${
-          true
+          isActive("/transactions")
             ? "bg-neutral-800 text-yellow-400 font-bold"
             : "text-neutral-400 font-semibold"
         }`}
@@ -50,13 +67,13 @@ const HomePageFloatingNav = () => {
           <polyline points="2 12 12 17 22 12" />
         </svg>
         <span className="text-[10px]">Transactions</span>
-      </button>
+      </Link>
 
       {/* Account Tab */}
-      <button
-        onClick={() => {}}
+      <Link
+        href="/account"
         className={`flex-1 flex flex-col items-center justify-center py-2 px-1.5 rounded-[18px] transition-all cursor-pointer ${
-          true
+          isActive("/account")
             ? "bg-neutral-800 text-yellow-400 font-bold"
             : "text-neutral-400 font-semibold"
         }`}
@@ -74,7 +91,7 @@ const HomePageFloatingNav = () => {
           <circle cx="12" cy="7" r="4" />
         </svg>
         <span className="text-[10px]">Account</span>
-      </button>
+      </Link>
     </div>
   );
 };

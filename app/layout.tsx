@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 
 import { ClientProviders } from "@/components/ClientProviders";
 import { API_BASE_URL } from "@/lib/api";
+import HomePageFloatingNav from "@/components/HomePageFloatingNav";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -61,6 +62,7 @@ export default async function RootLayout({
       <ClientProviders userId={userId}>
         <body className="min-h-full flex flex-col">
           {children}
+          <HomePageFloatingNav />
         </body>
       </ClientProviders>
     </html>
