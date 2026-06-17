@@ -86,7 +86,7 @@ const RecentTransactions = ({
       </div>
 
       {/* List */}
-      <div className="space-y-3.5 pb-6">
+      <div className="space-y-3.5 pb-6 min-w-0">
         {transactions?.map((tx: any) => {
           const formattedDate = new Date(tx.created_at)
             .toLocaleString("en-US", {
@@ -103,7 +103,7 @@ const RecentTransactions = ({
               key={tx.id}
               className="bg-white border border-neutral-200/60 p-3.5 rounded-[18px] flex items-center justify-between shadow-xs hover:border-neutral-300 transition-colors cursor-pointer"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0">
                 <div
                   className={`w-[40px] h-[40px] rounded-full flex items-center justify-center shrink-0 ${
                     tx.type === "debit"
@@ -141,11 +141,15 @@ const RecentTransactions = ({
                     </svg>
                   )}
                 </div>
-                <div>
-                  <p className="text-[13px] font-bold text-neutral-800 tracking-tight leading-tight">
-                    {`Transfer ${tx.type === "debit" ? ` to ${tx.accounts_to.users.name.slice(0, 12)}...` : ` from ${tx.accounts_from.users.name.slice(0, 10)}...`}`}
+                <div className="min-w-0">
+                  <p className="text-[13px] font-bold text-neutral-800 tracking-tight leading-tight min-w-0 truncate">
+                    {`Transfer ${
+                      tx.type === "debit"
+                        ? `to ${tx.accounts_to.users.name}`
+                        : `from ${tx.accounts_from.users.name}`
+                    }`}
                   </p>
-                  <p className="text-[11px] text-neutral-400 font-semibold mt-1">
+                  <p className="text-[11px] text-neutral-400 font-semibold mt-1 min-w-0 truncate">
                     {formattedDate}
                   </p>
                 </div>

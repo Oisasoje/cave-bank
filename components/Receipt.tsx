@@ -70,13 +70,12 @@ const Receipt = ({ transactionResult }: ReceiptProps) => {
 
   return (
     <div
-      ref={receiptRef}
       className={`max-w-md mx-auto bg-[#F5F6F6] flex flex-col w-full relative select-none overflow-y-auto max-h-dvh pb-8 ${dm_sans.className}`}
     >
       {/* 1. TOP HEADER BAR */}
 
       {/* RECEIPT MAIN CONTENT WRAPPER */}
-      <div className="flex-1 flex flex-col bg-white">
+      <div ref={receiptRef} className="flex-1 flex flex-col bg-white">
         {/* 2. THE CAVE BANK BANNER */}
         <div className="w-full fixed top-0 bg-[#0D1B1E] grainy px-6 py-4.5 flex items-center justify-between text-white shrink-0 shadow-sm">
           <div className="flex items-center gap-2">

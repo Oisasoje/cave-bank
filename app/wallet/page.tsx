@@ -70,7 +70,7 @@ export default function WalletPage() {
   }, []);
 
   // Balance Visibility State
-  const [showBalance, setShowBalance] = useState(true);
+  const [showBalance, setShowBalance] = useState(false);
 
   // Copy ID Clipboard Alert State
   const [copied, setCopied] = useState(false);
