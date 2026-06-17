@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Inter, DM_Sans } from "next/font/google";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { getTransactions } from "@/services/user";
+import TransactionSkeleton from "@/components/TransactionsSkeleton";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -154,7 +155,7 @@ function groupByDate(
 export default function TransactionsPage() {
   const router = useRouter();
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
     useInfiniteQuery({
       queryKey: ["transactions", "infinite"],
       queryFn: ({ pageParam }) => getTransactions({ pageParam, limit: 20 }),
@@ -318,7 +319,14 @@ export default function TransactionsPage() {
 
       {/* ──── TRANSACTION LIST ──── */}
       <div className="flex-1 px-5 pt-5 pb-8">
-        {transactions.length === 0 ? (
+        {isLoading ? (
+          <div className="space-y-6">
+            <TransactionSkeleton
+              style={"mt-0"}
+              number={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+            />
+          </div>
+        ) : transactions.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 rounded-full bg-neutral-100 flex items-center justify-center mb-4">
               <svg
@@ -364,13 +372,7 @@ export default function TransactionsPage() {
                   className="bg-white border border-neutral-200/60 p-3.5 rounded-[18px] flex items-center justify-between shadow-xs hover:border-neutral-300 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
-                    <div
-                      className={`w-[40px] h-[40px] rounded-full flex items-center justify-center shrink-0 ${
-                        tx.type === "debit"
-                          ? "bg-neutral-100 text-neutral-600"
-                          : "bg-neutral-100 text-neutral-600"
-                      }`}
-                    >
+                    <div className="w-[40px] h-[40px] rounded-full flex items-center justify-center shrink-0 bg-neutral-100 text-neutral-600">
                       {tx.type === "debit" ? (
                         <svg
                           width="16"
@@ -412,19 +414,11 @@ export default function TransactionsPage() {
                   </div>
 
                   <div className="text-right">
-                    <span
-                      className={`text-[13px] font-bold tracking-tight block ${
-                        tx.type === "debit"
-                          ? "text-neutral-800"
-                          : "text-neutral-800"
-                      }`}
-                    >
+                    <span className="text-[13px] font-bold tracking-tight block text-neutral-800">
                       {tx.type === "debit" ? "-" : "+"}₵
                       {Math.abs(tx.amount).toFixed(0)}
                     </span>
-                    <span
-                      className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-[6px] mt-1 ${"bg-[#F0FDF4] text-[#16A34A]"}`}
-                    >
+                    <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-[6px] mt-1 bg-[#F0FDF4] text-[#16A34A]">
                       Successful
                     </span>
                   </div>
@@ -433,6 +427,7 @@ export default function TransactionsPage() {
             })}
           </div>
         )}
+
         <div ref={bottomRef} className="h-1" />
 
         {isFetchingNextPage && (

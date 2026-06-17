@@ -5,11 +5,6 @@ import Pusher from "pusher-js";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getUser } from "@/services/auth";
 
-console.log("🔑 Pusher config:", {
-  key: process.env.NEXT_PUBLIC_PUSHER_KEY,
-  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER,
-});
-
 export default function SocketProvider({
   children,
 }: {
@@ -25,7 +20,6 @@ export default function SocketProvider({
   const userId = me?.data?.user?.id;
   useEffect(() => {
     if (!userId) return;
-    console.log("📡 subscribing to channel:", `user-${userId}`);
 
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
@@ -38,7 +32,6 @@ export default function SocketProvider({
     channel.bind(
       "wallet:updated",
       ({ type, amount }: { type: string; amount: number }) => {
-        console.log("💸 wallet updated:", type, amount);
         queryClient.invalidateQueries({ queryKey: ["balance"] });
         queryClient.invalidateQueries({ queryKey: ["transactions"] });
       },

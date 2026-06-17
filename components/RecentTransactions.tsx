@@ -2,6 +2,21 @@ import { DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import TransactionSkeleton from "./TransactionsSkeleton";
 
+function Shimmer({
+  className = "",
+  style = {},
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <div
+      className={`animate-pulse bg-neutral-200 ${className}`}
+      style={style}
+    />
+  );
+}
+
 const dm_sans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -18,13 +33,15 @@ const RecentTransactions = ({
 }) => {
   const router = useRouter();
 
-  console.log(transactions);
-
-  if (isLoading)
+  if (isLoading && showBalance) {
     return (
       <div
         className={`${showBalance ? "mt-8 flex-1 flex flex-col min-h-0 opacity-100" : "h-0 overflow-hidden opacity-0"} transition-all duration-300`}
       >
+        <div className="flex justify-between items-center mb-3">
+          <Shimmer className="h-[11px] w-[130px] rounded" />
+          <Shimmer className="h-[11px] w-[48px] rounded" />
+        </div>
         <div className="flex justify-between items-center mb-3">
           <div className="h-[13px] w-[140px] rounded bg-neutral-100 animate-pulse" />
           <div className="h-[13px] w-[48px] rounded bg-neutral-100 animate-pulse" />
@@ -36,7 +53,7 @@ const RecentTransactions = ({
         </div>
       </div>
     );
-
+  }
   return (
     <div
       className={`${showBalance ? "flex-1 flex flex-col h-full opacity-100" : "h-0 overflow-hidden opacity-0"} mt-8 transition-all duration-300`}

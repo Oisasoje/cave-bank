@@ -70,7 +70,7 @@ export default function WalletPage() {
   }, []);
 
   // Balance Visibility State
-  const [showBalance, setShowBalance] = useState(false);
+  const [showBalance, setShowBalance] = useState(true);
 
   // Copy ID Clipboard Alert State
   const [copied, setCopied] = useState(false);
@@ -120,7 +120,6 @@ export default function WalletPage() {
 
   useEffect(() => {
     if (meError) {
-      console.log("me error", meError);
       router.push("/auth/login/start");
     }
   }, [meError, router]);

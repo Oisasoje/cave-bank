@@ -102,6 +102,10 @@ export default function WalletSkeleton() {
         </div>
 
         {/* RECENT TRANSACTIONS */}
+        <div className="flex justify-between items-center mb-3">
+          <Shimmer className="h-[11px] w-[130px] rounded" />
+          <Shimmer className="h-[11px] w-[48px] rounded" />
+        </div>
         <TransactionSkeleton />
       </div>
 

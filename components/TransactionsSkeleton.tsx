@@ -13,14 +13,16 @@ function Shimmer({
   );
 }
 
-const TransactionSkeleton = () => (
-  <div className="mt-12">
-    <div className="flex justify-between items-center mb-3">
-      <Shimmer className="h-[11px] w-[130px] rounded" />
-      <Shimmer className="h-[11px] w-[48px] rounded" />
-    </div>
+const TransactionSkeleton = ({
+  style,
+  number = [1, 2, 3, 4, 5],
+}: {
+  style?: string;
+  number?: number[];
+}) => (
+  <div className={`${style ? style : "mt-12"} `}>
     <div className="space-y-3.5">
-      {[1, 2, 3, 4, 5].map((i) => (
+      {[...number].map((i) => (
         <div
           key={i}
           className="bg-white border border-neutral-200/60 p-3.5 rounded-[18px] flex items-center justify-between"
