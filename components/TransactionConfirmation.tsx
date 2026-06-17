@@ -63,12 +63,12 @@ const TransactionConfirmation = ({
       {/* Confirmation Details Card */}
       <div className="bg-white border border-neutral-200/60 rounded-[20px] p-5 shadow-sm space-y-4">
         {/* Recipient Name */}
-        <div className="flex items-center justify-between text-[13px]">
-          <span className="text-neutral-450 font-bold">Recipient Name</span>
-          <span className="text-neutral-800 font-bold text-right">
-            {selectedRecipient?.name && selectedRecipient.name.length > 17
-              ? selectedRecipient.name.slice(0, 17) + "..."
-              : selectedRecipient?.name}
+        <div className="flex items-center min-w-0 justify-between text-[13px]">
+          <span className="text-neutral-450 font-bold shrink-0">
+            Recipient Name
+          </span>
+          <span className="text-neutral-800 font-bold text-right min-w-0 truncate">
+            {selectedRecipient?.name}
           </span>
         </div>
 

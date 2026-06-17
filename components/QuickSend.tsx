@@ -42,7 +42,7 @@ const QuickSend = ({ contacts }: { contacts: any[] }) => {
         {contacts.map((contact) => (
           <div
             key={contact.id}
-            className="flex flex-col items-center shrink-0 snap-start group cursor-pointer"
+            className="flex flex-col items-center min-w-0 shrink-0 snap-start group cursor-pointer"
             onClick={() => {}}
           >
             <div
@@ -50,10 +50,8 @@ const QuickSend = ({ contacts }: { contacts: any[] }) => {
             >
               {contact.initials}
             </div>
-            <span className="text-[12px] text-neutral-600 font-semibold mt-2 group-hover:text-neutral-900 transition-colors">
-              {contact.name.length > 9
-                ? `${contact.name.slice(0, 8)}.`
-                : contact.name}
+            <span className="text-[12px] text-neutral-600 truncate w-[58px] font-semibold mt-2 group-hover:text-neutral-900 transition-colors">
+              {contact.name}
             </span>
           </div>
         ))}
