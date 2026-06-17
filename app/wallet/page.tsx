@@ -51,8 +51,8 @@ export default function WalletPage() {
     queryFn: getBalance,
   });
   const { data: recentTransactions, isLoading } = useQuery({
-    queryKey: ["transactions", { limit: 10 }],
-    queryFn: () => getRecentTransactions(),
+    queryKey: ["transactions", { limit: 5 }],
+    queryFn: () => getRecentTransactions(5),
   });
 
   const walletAddress = me?.data?.wallet_address ?? "";
@@ -80,7 +80,7 @@ export default function WalletPage() {
   const handleCopyId = () => {
     navigator.clipboard.writeText(walletAddress!);
     setCopied(true);
-    triggerToast("Account ID copied to clipboard!");
+
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -176,6 +176,7 @@ export default function WalletPage() {
 
         {/* RECENT TRANSACTIONS */}
         <RecentTransactions
+          showBalance={showBalance}
           transactions={recentTransactionsData}
           isLoading={isLoading}
         />

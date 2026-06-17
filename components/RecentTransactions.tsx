@@ -8,17 +8,23 @@ const dm_sans = DM_Sans({
 });
 
 const RecentTransactions = ({
+  showBalance,
   transactions,
   isLoading,
 }: {
+  showBalance: boolean;
   transactions: any;
   isLoading: boolean;
 }) => {
   const router = useRouter();
 
+  console.log(transactions);
+
   if (isLoading)
     return (
-      <div className="mt-8 flex-1 flex flex-col min-h-0">
+      <div
+        className={`${showBalance ? "mt-8 flex-1 flex flex-col min-h-0 opacity-100" : "h-0 overflow-hidden opacity-0"} transition-all duration-300`}
+      >
         <div className="flex justify-between items-center mb-3">
           <div className="h-[13px] w-[140px] rounded bg-neutral-100 animate-pulse" />
           <div className="h-[13px] w-[48px] rounded bg-neutral-100 animate-pulse" />
@@ -32,7 +38,9 @@ const RecentTransactions = ({
     );
 
   return (
-    <div className="mt-8 flex-1 flex flex-col min-h-0">
+    <div
+      className={`${showBalance ? "flex-1 flex flex-col h-full opacity-100" : "h-0 overflow-hidden opacity-0"} mt-8 transition-all duration-300`}
+    >
       <div className="flex justify-between items-center mb-3">
         <h3
           className={`text-[13px] text-neutral-400 font-bold uppercase tracking-wider ${dm_sans.className}`}

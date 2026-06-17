@@ -2,7 +2,8 @@
 
 import { useEffect } from "react";
 import Pusher from "pusher-js";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUser } from "@/services/auth";
 
 console.log("🔑 Pusher config:", {
   key: process.env.NEXT_PUBLIC_PUSHER_KEY,
@@ -10,14 +11,18 @@ console.log("🔑 Pusher config:", {
 });
 
 export default function SocketProvider({
-  userId,
   children,
 }: {
-  userId: string;
   children: React.ReactNode;
 }) {
   const queryClient = useQueryClient();
 
+  const { data: me } = useQuery({
+    queryKey: ["me"],
+    queryFn: getUser,
+  });
+
+  const userId = me?.data?.user?.id;
   useEffect(() => {
     if (!userId) return;
     console.log("📡 subscribing to channel:", `user-${userId}`);
@@ -44,6 +49,7 @@ export default function SocketProvider({
       pusher.unsubscribe(`user-${userId}`);
       pusher.disconnect();
     };
+    // ... existing Pusher subscription logic ...
   }, [userId, queryClient]);
 
   return children;

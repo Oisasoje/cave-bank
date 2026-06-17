@@ -7,14 +7,10 @@ import { usePathname } from "next/navigation";
 const HomePageFloatingNav = () => {
   const pathname = usePathname();
 
-  // Helper to determine if a route is active
   const isActive = (path: string) => pathname === path;
 
-  // Show the navbar only on main dashboard pages
   const showNav =
-    isActive("/wallet") ||
-    isActive("/transactions") ||
-    isActive("/account");
+    isActive("/wallet") || isActive("/transactions") || isActive("/account");
 
   if (!showNav) return null;
 

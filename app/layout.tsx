@@ -50,16 +50,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getUser();
-
-  const userId = user?.id;
-
   return (
     <html
       lang="en"
       className={`h-full antialiased ${dmSans.variable} ${spaceMono.variable} font-sans ${geist.variable}`}
     >
-      <ClientProviders userId={userId}>
+      <ClientProviders>
         <body className="min-h-full flex flex-col">
           {children}
           <HomePageFloatingNav />

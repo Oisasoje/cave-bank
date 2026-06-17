@@ -18,8 +18,8 @@ const generateUserData = async () => {
       staleTime: Infinity,
     }),
     queryClient.prefetchQuery({
-      queryKey: ["transactions", { limit: 10 }],
-      queryFn: () => getRecentTransactions(10),
+      queryKey: ["transactions", { limit: 5 }],
+      queryFn: () => getRecentTransactions(5),
       staleTime: Infinity,
     }),
   ]);
