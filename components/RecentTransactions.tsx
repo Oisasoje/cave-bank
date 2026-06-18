@@ -1,6 +1,7 @@
 import { DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import TransactionSkeleton from "./TransactionsSkeleton";
+import { formatDate } from "@/lib/formatDate";
 
 function Shimmer({
   className = "",
@@ -88,19 +89,11 @@ const RecentTransactions = ({
       {/* List */}
       <div className="space-y-3.5 pb-6 min-w-0">
         {transactions?.map((tx: any) => {
-          const formattedDate = new Date(tx.created_at)
-            .toLocaleString("en-US", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "numeric",
-              minute: "2-digit",
-              hour12: true,
-            })
-            .replace(" at ", ", ");
+          const formattedDate = formatDate(tx.created_at, "short");
           return (
             <div
               key={tx.id}
+              onClick={() => router.push(`/transactions/${tx.id}`)}
               className="bg-white border border-neutral-200/60 p-3.5 rounded-[18px] flex items-center justify-between shadow-xs hover:border-neutral-300 transition-colors cursor-pointer"
             >
               <div className="flex items-center gap-3 min-w-0">

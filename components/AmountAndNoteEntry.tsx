@@ -58,6 +58,12 @@ export const AmountAndNoteEntry = ({
     }
   }, [amountDigits]);
 
+  const handleError = () => {
+    const digits = amountDigits.replace(/,/g, "");
+    if (digits.length === 0) setError("Enter Amount");
+    else if (Number(digits) < 1) setError("Amount must be at least 1");
+  };
+
   return (
     <div
       className="animate-fade-in flex flex-col flex-1"
@@ -215,7 +221,7 @@ export const AmountAndNoteEntry = ({
       {/* Fixed Keyboard */}
       {focus && (
         <Keyboard
-          setError={setError}
+          handleError={handleError}
           digits={amountDigits}
           onKey={handleKey}
           onDelete={handleDelete}

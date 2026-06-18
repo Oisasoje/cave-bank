@@ -4,6 +4,7 @@ import React from "react";
 import ConfettiAnimation from "./Confetti";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { formatDate } from "@/lib/formatDate";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -32,16 +33,7 @@ const TransferSuccess = ({
 }) => {
   const router = useRouter();
 
-  const formattedDate = new Date(successDate).toLocaleString("en-US", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-    hour12: true,
-  });
-  // → "Saturday, June 13, 2026 at 4:01 AM"
+  const formattedDate = formatDate(successDate);
 
   return (
     <div className="animate-fade-in px-6 mt-6 flex flex-col flex-1">

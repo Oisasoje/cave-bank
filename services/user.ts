@@ -26,3 +26,9 @@ export const getRecentTransactions = async (limit = 10) => {
     method: "GET",
   });
 };
+
+export const getTransactionById = (transactionId: string) => {
+  return api(`/user/transactions/${transactionId}`, {
+    method: "GET",
+  });
+};

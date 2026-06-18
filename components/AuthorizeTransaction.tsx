@@ -125,12 +125,7 @@ const AuthorizeTransaction = ({
       </div>
 
       {/* Fixed Keyboard */}
-      <Keyboard
-        onKey={handleKey}
-        onDelete={handleDelete}
-        setError={setError}
-        digits={pin}
-      />
+      <Keyboard onKey={handleKey} onDelete={handleDelete} digits={pin} />
     </div>
   );
 };

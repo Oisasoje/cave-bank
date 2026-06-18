@@ -197,7 +197,7 @@ export default function LoginPage() {
         <div
           className={`mt-5 text-center text-[13px] ${dm_sans.className} text-neutral-500 font-normal`}
         >
-          Don&apos;t have a Cave Bank account?
+          Don&apos;t have a Cave Bank account?{" "}
           <span
             onClick={() => router.push("/auth/signup/start")}
             className="text-neutral-900 font-semibold cursor-pointer hover:underline"

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { toPng } from "html-to-image";
 import jsPDF from "jspdf";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/lib/formatDate";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -27,18 +28,7 @@ export interface ReceiptProps {
 const Receipt = ({ transactionResult }: ReceiptProps) => {
   const router = useRouter();
 
-  const formattedDate = new Date(transactionResult.transaction.created_at)
-    .toLocaleString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    })
-    .replace(" at ", ", ");
-  // → "Saturday, June 13, 2026, 4:01 AM"
+  const formattedDate = formatDate(transactionResult.transaction.created_at);
 
   const receiptRef = useRef<HTMLDivElement>(null);
 
@@ -114,11 +104,6 @@ const Receipt = ({ transactionResult }: ReceiptProps) => {
                   height={40}
                 />
                 {transactionResult.transaction.amount}
-              </span>
-              <span
-                className={`text-[38px] font-bold text-[#D2B627] tracking-tight leading-none ml-0.5 ${space_mono.className}`}
-              >
-                {transactionResult.amount}
               </span>
             </div>
 

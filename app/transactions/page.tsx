@@ -8,6 +8,7 @@ import { getTransactions } from "@/services/user";
 import TransactionSkeleton from "@/components/TransactionsSkeleton";
 import enrichTxns from "@/lib/enrichTransactions";
 import buildIndex from "@/lib/buildTransactionsIndex";
+import { formatDate } from "@/lib/formatDate";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -22,15 +23,16 @@ const dm_sans = DM_Sans({
 type TransactionType = "debit" | "credit";
 type FilterTab = "All" | "Sent" | "Received";
 
-interface TransactionUser {
+export interface TransactionUser {
   name: string;
 }
 
 interface TransactionAccount {
   users: TransactionUser;
+  address: string;
 }
 
-interface DBTransaction {
+export interface DBTransaction {
   id: string;
   type: TransactionType;
   amount: number;
@@ -351,16 +353,7 @@ export default function TransactionsPage() {
                   </h2>
                   <div className="space-y-3">
                     {txns.map((tx) => {
-                      const formattedDate = new Date(tx.created_at)
-                        .toLocaleString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                          day: "numeric",
-                          hour: "numeric",
-                          minute: "2-digit",
-                          hour12: true,
-                        })
-                        .replace(" at ", ", ");
+                      const formattedDate = formatDate(tx.created_at, "short");
                       const otherPartyName =
                         tx.type === "debit"
                           ? tx.accounts_to?.users?.name || "Unknown"
@@ -374,6 +367,7 @@ export default function TransactionsPage() {
                       return (
                         <div
                           key={tx.id}
+                          onClick={() => router.push(`/transactions/${tx.id}`)}
                           className="bg-white border border-neutral-200/60 p-3.5 rounded-[18px] flex items-center justify-between shadow-xs hover:border-neutral-300 transition-colors cursor-pointer min-w-0"
                         >
                           <div className="flex items-center gap-3 min-w-0">
