@@ -199,7 +199,7 @@ export default function LoginPage() {
         >
           Don&apos;t have a Cave Bank account?
           <span
-            onClick={() => router.push("/auth/enter-phone")}
+            onClick={() => router.push("/auth/signup/start")}
             className="text-neutral-900 font-semibold cursor-pointer hover:underline"
           >
             Sign Up
