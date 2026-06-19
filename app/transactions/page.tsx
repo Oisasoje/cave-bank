@@ -193,7 +193,7 @@ export default function TransactionsPage() {
                       type: tabType,
                     }))
                   }
-                  className={`px-4 py-[7px] rounded-[6px] ${dm_sans.className} text-[14px] transition-all duration-200 cursor-pointer ${
+                  className={`px-4 py-[10px] rounded-[6px] ${dm_sans.className} text-[14px] transition-all duration-200 cursor-pointer ${
                     isActive
                       ? "bg-[#D0BD21] text-black border-[1.2px] border-black shadow-sm"
                       : "text-neutral-500 hover:text-neutral-700"
@@ -210,7 +210,7 @@ export default function TransactionsPage() {
             <button
               id="transactions-month-selector"
               onClick={() => setShowMonthDropdown(!showMonthDropdown)}
-              className="flex items-center gap-1.5 text-[12px] font-bold text-neutral-600 bg-white border border-neutral-200 px-3.5 py-[7px] rounded-[10px] hover:bg-neutral-100 transition-colors cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 text-[12px] font-bold text-neutral-600 bg-white border border-neutral-200 px-4 py-[12px] rounded-[10px] hover:bg-neutral-100 transition-colors cursor-pointer shadow-xs"
             >
               {formatMonthKey(filter.month)}
               <svg

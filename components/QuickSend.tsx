@@ -6,7 +6,7 @@ const dm_sans = DM_Sans({
   weight: ["400", "500", "600", "700"],
 });
 
-const QuickSend = ({ contacts }: { contacts: any[] }) => {
+const QuickSend = ({ contacts, onAddClick }: { contacts: any[]; onAddClick?: () => void }) => {
   return (
     <div className="mt-7">
       <h3
@@ -18,7 +18,7 @@ const QuickSend = ({ contacts }: { contacts: any[] }) => {
         {/* Add contact button */}
         <div className="flex flex-col items-center shrink-0 snap-start">
           <button
-            onClick={() => {}}
+            onClick={() => onAddClick?.()}
             className="w-[58px] h-[58px] rounded-full border-[1.5px] border-dashed border-neutral-300 flex items-center justify-center hover:border-neutral-500 transition-colors cursor-pointer bg-white active:scale-95 duration-150"
           >
             <svg

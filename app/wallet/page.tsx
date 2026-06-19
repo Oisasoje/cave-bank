@@ -9,6 +9,7 @@ import BalanceCard from "@/components/BalanceCard";
 import WalletSkeleton from "@/components/WalletSkeleton";
 import RecentTransactions from "@/components/RecentTransactions";
 import QuickSend from "@/components/QuickSend";
+import AddQuickSendModal from "@/components/AddQuickSendModal";
 import WalletHomeHeader from "@/components/WalletHomeHeader";
 import WalletPageQuickActions from "@/components/WalletPageQuickActions";
 import { getBalance, getRecentTransactions } from "@/services/user";
@@ -70,24 +71,19 @@ export default function WalletPage() {
   }, []);
 
   // Balance Visibility State
-  const [showBalance, setShowBalance] = useState(false);
+  const [showBalance, setShowBalance] = useState(true);
 
   // Copy ID Clipboard Alert State
   const [copied, setCopied] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const handleCopyId = () => {
     navigator.clipboard.writeText(walletAddress!);
     setCopied(true);
 
     setTimeout(() => setCopied(false), 2000);
-  };
-
-  const triggerToast = (msg: string) => {
-    setToastMessage(msg);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
   };
 
   // Contacts List State
@@ -117,6 +113,43 @@ export default function WalletPage() {
       color: "bg-amber-100 text-amber-700 border-amber-200",
     },
   ]);
+
+  // Trigger toast helper
+  const triggerToast = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2500);
+  };
+
+  // Handle contacts added from modal
+  const handleAddContacts = (newContacts: { id: string; name: string; walletAddress: string; interactionType: string }[]) => {
+    const colorPool = [
+      "bg-rose-100 text-rose-700 border-rose-200",
+      "bg-blue-100 text-blue-700 border-blue-200",
+      "bg-emerald-100 text-emerald-700 border-emerald-200",
+      "bg-amber-100 text-amber-700 border-amber-200",
+      "bg-violet-100 text-violet-700 border-violet-200",
+      "bg-cyan-100 text-cyan-700 border-cyan-200",
+      "bg-pink-100 text-pink-700 border-pink-200",
+      "bg-lime-100 text-lime-700 border-lime-200",
+    ];
+
+    const mapped = newContacts.map((c, i) => {
+      const parts = c.name.trim().split(/\s+/);
+      const initials = parts.length >= 2
+        ? (parts[0][0] + parts[1][0]).toUpperCase()
+        : c.name.slice(0, 2).toUpperCase();
+      return {
+        id: c.id,
+        name: c.name.split(" ")[0],
+        initials,
+        color: colorPool[(contacts.length + i) % colorPool.length],
+      };
+    });
+
+    setContacts((prev) => [...prev, ...mapped]);
+    triggerToast(`${mapped.length} contact${mapped.length > 1 ? "s" : ""} added`);
+  };
 
   useEffect(() => {
     if (meError) {
@@ -171,7 +204,7 @@ export default function WalletPage() {
         <WalletPageQuickActions />
 
         {/* QUICK SEND SECTION */}
-        <QuickSend contacts={contacts} />
+        <QuickSend contacts={contacts} onAddClick={() => setIsAddModalOpen(true)} />
 
         {/* RECENT TRANSACTIONS */}
         <RecentTransactions
@@ -180,6 +213,14 @@ export default function WalletPage() {
           isLoading={isLoading}
         />
       </div>
+
+      {/* Quick Send Add Modal */}
+      <AddQuickSendModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAddContacts={handleAddContacts}
+        existingContactNames={contacts.map((c) => c.name)}
+      />
     </div>
   );
 }

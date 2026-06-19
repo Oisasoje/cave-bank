@@ -64,27 +64,29 @@ export default function TransactionDetailsPage({
     >
       {/* ──── STICKY HEADER ──── */}
       <div className="sticky top-0 z-30 bg-neutral-50 px-5 pt-6 pb-4 flex items-center justify-between">
-        <button
-          onClick={() => router.back()}
-          className="flex items-center gap-2 text-[16px] font-medium text-neutral-500 hover:text-neutral-900 cursor-pointer duration-100"
-          aria-label="Go back"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => router.back()}
+            className="text-[16px] font-medium text-neutral-500 hover:text-neutral-900 cursor-pointer duration-100"
+            aria-label="Go back"
           >
-            <polyline points="15 18 9 12 15 6" />
-          </svg>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </button>
           <span className="text-[17px] font-bold text-neutral-800 -ml-1">
             Transaction Details
           </span>
-        </button>
+        </div>
       </div>
 
       {/* ──── MAIN CONTENT ──── */}
