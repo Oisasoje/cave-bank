@@ -177,7 +177,7 @@ export default function TransactionsPage() {
         </div>
 
         {/* Filter tabs + Month selector */}
-        <div className="flex items-center justify-between px-5 pb-4">
+        <div className="flex items-center justify-between gap-3 px-5 pb-4">
           {/* Tabs */}
           <div className="flex bg-white border border-neutral-200 rounded-[12px] p-[3px] shadow-xs">
             {tabs.map((tab) => {
@@ -193,7 +193,7 @@ export default function TransactionsPage() {
                       type: tabType,
                     }))
                   }
-                  className={`px-4 py-[10px] rounded-[6px] ${dm_sans.className} text-[14px] transition-all duration-200 cursor-pointer ${
+                  className={`px-2.5 py-[10px] rounded-[6px] ${dm_sans.className} text-[14px] transition-all duration-200 cursor-pointer ${
                     isActive
                       ? "bg-[#D0BD21] text-black border-[1.2px] border-black shadow-sm"
                       : "text-neutral-500 hover:text-neutral-700"
