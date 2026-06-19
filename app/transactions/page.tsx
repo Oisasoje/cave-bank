@@ -210,7 +210,7 @@ export default function TransactionsPage() {
             <button
               id="transactions-month-selector"
               onClick={() => setShowMonthDropdown(!showMonthDropdown)}
-              className="flex items-center gap-1.5 text-[12px] font-bold text-neutral-600 bg-white border border-neutral-200 px-4 py-[12px] rounded-[10px] hover:bg-neutral-100 transition-colors cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 text-[12px] font-bold text-neutral-600 bg-white border border-neutral-200 px-4 py-[6px] rounded-[10px] hover:bg-neutral-100 transition-colors cursor-pointer shadow-xs"
             >
               {formatMonthKey(filter.month)}
               <svg

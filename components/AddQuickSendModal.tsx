@@ -102,9 +102,7 @@ const AddQuickSendModal = ({
     const lowerExisting = existingContactNames.map((n) => n.toLowerCase());
     return interactedContacts
       .filter((c) => !lowerExisting.includes(c.name.toLowerCase()))
-      .filter((c) =>
-        c.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      .filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [interactedContacts, searchQuery, existingContactNames]);
 
   // Toggle selection
@@ -319,8 +317,7 @@ const AddQuickSendModal = ({
             <div className="space-y-1">
               {filteredContacts.map((contact, index) => {
                 const isSelected = selectedIds.has(contact.id);
-                const colorClass =
-                  avatarColors[index % avatarColors.length];
+                const colorClass = avatarColors[index % avatarColors.length];
                 return (
                   <button
                     key={contact.id}
@@ -384,7 +381,7 @@ const AddQuickSendModal = ({
 
                     {/* Selection indicator */}
                     <div
-                      className={`w-[24px] h-[24px] rounded-full border-[2px] flex items-center justify-center shrink-0 transition-all duration-200 ${
+                      className={`w-[24px] h-[24px] rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
                         isSelected
                           ? "bg-[#0E1719] border-[#0E1719]"
                           : "border-neutral-300 bg-white group-hover:border-neutral-400"
