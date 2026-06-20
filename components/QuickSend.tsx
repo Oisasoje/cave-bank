@@ -1,12 +1,19 @@
 import { DM_Sans } from "next/font/google";
 import React from "react";
+import { getInitials, getColorClass } from "@/lib/avatar";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-const QuickSend = ({ contacts, onAddClick }: { contacts: any[]; onAddClick?: () => void }) => {
+const QuickSend = ({
+  contacts,
+  onAddClick,
+}: {
+  contacts: any[];
+  onAddClick?: () => void;
+}) => {
   return (
     <div className="mt-7">
       <h3
@@ -39,22 +46,30 @@ const QuickSend = ({ contacts, onAddClick }: { contacts: any[]; onAddClick?: () 
         </div>
 
         {/* Contacts Slider */}
-        {contacts.map((contact) => (
-          <div
-            key={contact.id}
-            className="flex flex-col items-center min-w-0 shrink-0 snap-start group cursor-pointer"
-            onClick={() => {}}
-          >
+        {contacts?.map((contact) => {
+          const id = contact.id || contact.userId || contact.accountId;
+          const fullName = contact.displayName || contact.name || "Unknown";
+          const firstName = fullName.split(" ")[0];
+          const initials = contact.initials || getInitials(fullName);
+          const colorClass = contact.color || getColorClass(String(id || fullName));
+
+          return (
             <div
-              className={`w-[58px] h-[58px] rounded-full border border-neutral-300/40 flex items-center justify-center font-bold text-[15px] shadow-sm select-none transition-all group-hover:scale-105 active:scale-95 ${contact.color}`}
+              key={id}
+              className="flex flex-col items-center min-w-0 shrink-0 snap-start group cursor-pointer"
+              onClick={() => {}}
             >
-              {contact.initials}
+              <div
+                className={`w-[58px] h-[58px] rounded-full border flex items-center justify-center font-bold text-[15px] shadow-sm select-none transition-all group-hover:scale-105 active:scale-95 ${colorClass}`}
+              >
+                {initials}
+              </div>
+              <span className="text-[12px] text-neutral-600 truncate w-[58px] text-center font-semibold mt-2 group-hover:text-neutral-900 transition-colors">
+                {firstName}
+              </span>
             </div>
-            <span className="text-[12px] text-neutral-600 truncate w-[58px] font-semibold mt-2 group-hover:text-neutral-900 transition-colors">
-              {contact.name}
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

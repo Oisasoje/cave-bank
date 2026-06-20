@@ -1,61 +1,49 @@
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from "react";
-import { DM_Sans, Space_Mono } from "next/font/google";
+import { useEffect, useState } from "react";
+import { DM_Sans } from "next/font/google";
 import { useQuery } from "@tanstack/react-query";
-import { getRecentCounterparties } from "@/services/user";
+import { addFavorites, getRecentCounterparties } from "@/services/user";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
 
-const space_mono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-});
-
-interface InteractedContact {
-  id: string;
-  name: string;
-  walletAddress: string;
-  interactionType: "sent" | "received";
-}
-
-// Color palette that rotates through contacts
-const avatarColors = [
-  "bg-rose-100 text-rose-700",
-  "bg-blue-100 text-blue-700",
-  "bg-emerald-100 text-emerald-700",
-  "bg-amber-100 text-amber-700",
-  "bg-violet-100 text-violet-700",
-  "bg-cyan-100 text-cyan-700",
-  "bg-pink-100 text-pink-700",
-  "bg-lime-100 text-lime-700",
-];
-
-function getInitials(name: string): string {
-  const parts = name.trim().split(/\s+/);
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase();
-  }
-  return name.slice(0, 2).toUpperCase();
-}
+import { getInitials, getColorClass } from "@/lib/avatar";
+import { queryClient } from "@/lib/queryClient";
+import { toast } from "sonner";
 
 const AddQuickSendModal = ({
   isOpen,
   onClose,
-  onAddContacts,
-  existingContactNames,
+
+  favorites,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onAddContacts: (contacts: InteractedContact[]) => void;
-  existingContactNames: string[];
+
+  favorites: any;
 }) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isClosing, setIsClosing] = useState(false);
+  const handleAddFavorites = async (ids: string[]) => {
+    if (!ids.length) return;
 
+    try {
+      await addFavorites(ids);
+      toast.success(
+        `${ids.length} favorite${ids.length > 1 ? "s" : ""} added successfully`,
+      );
+
+      queryClient.invalidateQueries({
+        queryKey: ["favorites"],
+      });
+      setSelectedIds(new Set());
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // Extract unique interacted contacts from transactions
   const { data: uniqueRecentRecipients, isLoading: favoritesLoading } =
     useQuery({
@@ -64,15 +52,13 @@ const AddQuickSendModal = ({
       staleTime: Infinity,
     });
 
-  console.log(uniqueRecentRecipients);
-
   // Toggle selection
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
-      } else {
+      } else if (selectedCount < 5) {
         next.add(id);
       }
       return next;
@@ -89,6 +75,26 @@ const AddQuickSendModal = ({
       onClose();
     }, 250);
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    const originalPaddingRight = document.body.style.paddingRight;
+
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.paddingRight = originalPaddingRight;
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -175,88 +181,131 @@ const AddQuickSendModal = ({
             <div className="space-y-1">
               {uniqueRecentRecipients?.data?.map(
                 (contact: any, index: number) => {
-                  const isSelected = selectedIds.has(contact.accountId);
-                  const colorClass = avatarColors[index % avatarColors.length];
+                  const isSelected = selectedIds.has(contact.userId);
+                  const isDisabled = favorites.find(
+                    (f: any) => f.id === contact.userId,
+                  );
+                  const colorClass = getColorClass(
+                    contact.userId || contact.displayName,
+                  );
                   return (
                     <button
-                      key={contact.accountId}
+                      key={contact.userId}
+                      disabled={isDisabled}
                       type="button"
-                      onClick={() => toggleSelect(contact.accountId)}
-                      className={`w-full flex items-center gap-3.5 py-2.5 px-3 rounded-[16px] transition-all duration-150 cursor-pointer group active:scale-[0.98] ${
-                        isSelected
-                          ? "bg-[#D0BD21]/10 border border-[#D0BD21]/30"
-                          : "bg-transparent border border-transparent hover:bg-neutral-100/60"
+                      onClick={() => {
+                        toggleSelect(contact.userId);
+                      }}
+                      className={`w-full flex items-center gap-3.5 py-2.5 px-3 rounded-[16px] transition-all duration-150 group active:scale-[0.98] ${
+                        isDisabled
+                          ? "bg-neutral-100/40 border border-transparent cursor-not-allowed opacity-60"
+                          : isSelected
+                            ? "bg-[#D0BD21]/10 border border-[#D0BD21]/30 cursor-pointer"
+                            : "bg-transparent border border-transparent hover:bg-neutral-100/60 cursor-pointer"
                       }`}
                     >
                       {/* Avatar */}
                       <div
-                        className={`w-[46px] h-[46px] rounded-full flex items-center justify-center font-bold text-[14px] shrink-0 select-none transition-transform group-hover:scale-105 ${colorClass}`}
+                        className={`w-[46px] h-[46px] rounded-full border flex items-center justify-center font-bold text-[14px] shrink-0 select-none transition-transform ${
+                          isDisabled ? "" : "group-hover:scale-105"
+                        } ${colorClass}`}
                       >
                         {getInitials(contact.displayName)}
                       </div>
 
                       {/* Name & interaction badge */}
                       <div className="flex-1 text-left min-w-0">
-                        <p className="text-[14px] font-bold text-neutral-800 leading-tight truncate">
+                        <p
+                          className={`text-[14px] font-bold leading-tight truncate ${
+                            isDisabled ? "text-neutral-400" : "text-neutral-800"
+                          }`}
+                        >
                           {contact.displayName}
                         </p>
                         <div className="flex items-center gap-1.5 mt-1">
-                          {contact.direction === "sent" ? (
-                            <svg
-                              width="11"
-                              height="11"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#6B7280"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <line x1="7" y1="17" x2="17" y2="7" />
-                              <polyline points="7 7 17 7 17 17" />
-                            </svg>
+                          {isDisabled ? (
+                            <span className="text-[11px] text-neutral-400 font-semibold">
+                              Already a favorite
+                            </span>
                           ) : (
-                            <svg
-                              width="11"
-                              height="11"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="#6B7280"
-                              strokeWidth="2.5"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            >
-                              <line x1="17" y1="7" x2="7" y2="17" />
-                              <polyline points="17 17 7 17 7 7" />
-                            </svg>
+                            <>
+                              {contact.direction === "sent" ? (
+                                <svg
+                                  width="11"
+                                  height="11"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="#6B7280"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <line x1="7" y1="17" x2="17" y2="7" />
+                                  <polyline points="7 7 17 7 17 17" />
+                                </svg>
+                              ) : (
+                                <svg
+                                  width="11"
+                                  height="11"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="#6B7280"
+                                  strokeWidth="2.5"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <line x1="17" y1="7" x2="7" y2="17" />
+                                  <polyline points="17 17 7 17 7 7" />
+                                </svg>
+                              )}
+                              <span className="text-[11px] text-neutral-400 font-semibold">
+                                {contact.direction === "sent"
+                                  ? "Sent"
+                                  : "Received"}
+                              </span>
+                            </>
                           )}
-                          <span className="text-[11px] text-neutral-400 font-semibold">
-                            {contact.direction === "sent" ? `Sent` : `Received`}
-                          </span>
                         </div>
                       </div>
 
                       {/* Selection indicator */}
                       <div
                         className={`w-[24px] h-[24px] rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
-                          isSelected
-                            ? "bg-[#0E1719] border-[#0E1719]"
-                            : "border-neutral-300 bg-white group-hover:border-neutral-400"
+                          isDisabled
+                            ? "bg-neutral-200 border-neutral-200"
+                            : isSelected
+                              ? "bg-[#0E1719] border-[#0E1719]"
+                              : "border-neutral-300 bg-white group-hover:border-neutral-400"
                         }`}
                       >
-                        {isSelected && (
+                        {isDisabled ? (
                           <svg
                             width="12"
                             height="12"
                             viewBox="0 0 24 24"
                             fill="none"
-                            stroke="white"
+                            stroke="#9CA3AF"
                             strokeWidth="3"
                             strokeLinecap="round"
                             strokeLinejoin="round"
                           >
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
+                        ) : (
+                          isSelected && (
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="white"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                          )
                         )}
                       </div>
                     </button>
@@ -272,7 +321,7 @@ const AddQuickSendModal = ({
           <button
             type="button"
             disabled={selectedCount === 0}
-            // onClick={handleAdd}
+            onClick={() => handleAddFavorites(Array.from(selectedIds))}
             className={`w-full h-[54px] rounded-[14px] font-bold text-[15px] flex items-center justify-center gap-2 transition-all duration-200 ${
               selectedCount > 0
                 ? "bg-[#0E1719] text-white hover:bg-[#18262a] cursor-pointer shadow-md active:scale-[0.98]"
@@ -282,11 +331,11 @@ const AddQuickSendModal = ({
             {selectedCount === 0
               ? "Select Contacts"
               : selectedCount === 1
-                ? "Add Contact"
+                ? "Add 1 Contact"
                 : `Add ${selectedCount} Contacts`}
             {selectedCount > 0 && (
-              <span className="w-[22px] h-[22px] rounded-full bg-white/20 flex items-center justify-center text-[11px] font-bold">
-                {selectedCount}
+              <span className="w-[22px] h-[22px] rounded-full bg-white/20 flex items-center p-[12px] justify-center text-[11px] font-bold">
+                {selectedCount}/5
               </span>
             )}
           </button>

@@ -38,15 +38,15 @@ export const getRecentCounterparties = () => {
   });
 };
 
-export const postFavorites = (userIds: string[]) => {
-  return api("/user/favorites", {
-    method: "POST",
-    body: JSON.stringify(userIds),
+export const getFavorites = () => {
+  return api("/user/get-favorites", {
+    method: "GET",
   });
 };
 
-export const getFavorites = () => {
-  return api("/user/favorites", {
-    method: "GET",
+export const addFavorites = (favoriteUserIds: string[]) => {
+  return api("/user/add-favorites", {
+    method: "POST",
+    body: JSON.stringify({ favoriteUserIds }),
   });
 };

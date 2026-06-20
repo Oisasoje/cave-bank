@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "sonner";
 
 import { Geist, DM_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
@@ -39,6 +40,15 @@ export default async function RootLayout({
         <body className="min-h-full flex flex-col">
           {children}
           <HomePageFloatingNav />
+          <Toaster
+            position="top-right"
+            duration={4000}
+            richColors
+            closeButton
+            expand={false}
+            visibleToasts={3}
+            gap={8}
+          />
         </body>
       </ClientProviders>
     </html>

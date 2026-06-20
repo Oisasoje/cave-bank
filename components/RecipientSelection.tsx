@@ -4,7 +4,7 @@ import useDebounce from "@/lib/hooks/useDebounce";
 import { getUserByWalletAddress } from "@/services/transfer";
 import { Beneficiary } from "@/app/wallet/send/page";
 import { useQuery } from "@tanstack/react-query";
-import { getRecentCounterparties } from "@/services/user";
+import { getRecentCounterparties, getFavorites } from "@/services/user";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -43,11 +43,12 @@ const RecipientSelection = ({
 
   const handleBeneficiaryClick = (b: any) => {
     selectedFromList.current = true;
-    setRecipientInput(b.displayAddress);
+    const address = b.displayAddress || b.walletAddress;
+    setRecipientInput(address);
     setSelectedRecipient({
-      accountId: b.accountId,
-      name: b.displayName,
-      walletAddress: b.displayAddress,
+      accountId: b.accountId || b.id,
+      name: b.displayName || b.name,
+      walletAddress: address,
     });
   };
 
@@ -102,14 +103,25 @@ const RecipientSelection = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const { data: uniqueRecentRecipients, isLoading: favoritesLoading } =
-    useQuery({
-      queryKey: ["recent-counterparties"],
-      queryFn: getRecentCounterparties,
-      staleTime: Infinity,
-    });
+  const { data: uniqueRecentRecipients, isLoading: recentsLoading } = useQuery({
+    queryKey: ["recent-counterparties"],
+    queryFn: getRecentCounterparties,
+    staleTime: Infinity,
+  });
 
-  console.log(uniqueRecentRecipients?.data);
+  const { data: favorites, isLoading: favoritesLoading } = useQuery({
+    queryKey: ["favorites"],
+    queryFn: getFavorites,
+    staleTime: Infinity,
+  });
+
+  const [recentsLimit, setRecentsLimit] = useState(5);
+  const [savedLimit, setSavedLimit] = useState(5);
+
+  const currentList =
+    activeTab === "recents" ? uniqueRecentRecipients?.data : favorites?.data;
+  const currentLimit = activeTab === "recents" ? recentsLimit : savedLimit;
+  const isLoading = activeTab === "recents" ? recentsLoading : favoritesLoading;
 
   const isDisabled = !selectedRecipient?.name;
 
@@ -206,6 +218,7 @@ const RecipientSelection = ({
                   <span className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-[#D2B627] rounded-full" />
                 )}
               </button>
+
               <button
                 type="button"
                 onClick={() => setActiveTab("saved")}
@@ -222,29 +235,42 @@ const RecipientSelection = ({
               </button>
             </div>
 
-            <button
-              type="button"
-              className="text-[12px] font-bold text-neutral-800 hover:underline flex items-center gap-0.5 cursor-pointer"
-            >
-              See all
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="3"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="mt-0.5"
+            {currentList && currentList.length > 5 && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (activeTab === "recents") {
+                    setRecentsLimit((prev) =>
+                      prev > 5 ? 5 : currentList.length,
+                    );
+                  } else {
+                    setSavedLimit((prev) =>
+                      prev > 5 ? 5 : currentList.length,
+                    );
+                  }
+                }}
+                className="text-[12px] font-bold text-neutral-800 hover:underline flex items-center gap-0.5 cursor-pointer"
               >
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </button>
+                {currentLimit > 5 ? "See less" : "See all"}
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className={`mt-0.5 transition-transform duration-200 ${currentLimit > 5 ? "rotate-90" : ""}`}
+                >
+                  <polyline points="9 18 15 12 9 6" />
+                </svg>
+              </button>
+            )}
           </div>
 
           <div className="divide-y divide-neutral-100 p-4 space-y-3.5 divide-none">
-            {favoritesLoading ? (
+            {isLoading ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
@@ -257,39 +283,44 @@ const RecipientSelection = ({
                   </div>
                 </div>
               ))
-            ) : uniqueRecentRecipients?.data?.length > 0 ? (
-              uniqueRecentRecipients?.data.map((b: any) => (
-                <div
-                  key={b.accountId}
-                  onClick={() => {
-                    handleBeneficiaryClick(b);
-                  }}
-                  className="flex items-center gap-3.5 py-1 hover:bg-neutral-50/50 rounded-xl transition-colors cursor-pointer group active:scale-[0.99] duration-100"
-                >
-                  <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 border border-neutral-250/30">
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="text-neutral-400 group-hover:text-neutral-500 transition-colors"
-                    >
-                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                    </svg>
-                  </div>
+            ) : currentList && currentList.length > 0 ? (
+              currentList.slice(0, currentLimit).map((b: any) => {
+                const id = b.accountId || b.id;
+                const name = b.displayName || b.name;
+                const address = b.displayAddress || b.walletAddress;
+                return (
+                  <div
+                    key={id}
+                    onClick={() => {
+                      handleBeneficiaryClick(b);
+                    }}
+                    className="flex items-center gap-3.5 py-1 hover:bg-neutral-50/50 rounded-xl transition-colors cursor-pointer group active:scale-[0.99] duration-100"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 shrink-0 border border-neutral-250/30">
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="text-neutral-400 group-hover:text-neutral-500 transition-colors"
+                      >
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                      </svg>
+                    </div>
 
-                  <div className="flex-1">
-                    <p className="text-[14px] font-bold text-neutral-800 leading-tight group-hover:text-black transition-colors">
-                      {b.displayName}
-                    </p>
-                    <p
-                      className={`text-[11px] text-neutral-400 font-semibold mt-1 ${space_mono.className}`}
-                    >
-                      {b.displayAddress}
-                    </p>
+                    <div className="flex-1">
+                      <p className="text-[14px] font-bold text-neutral-800 leading-tight group-hover:text-black transition-colors">
+                        {name}
+                      </p>
+                      <p
+                        className={`text-[11px] text-neutral-400 font-semibold mt-1 ${space_mono.className}`}
+                      >
+                        {address}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <p className="text-center text-xs text-neutral-400 py-4 font-semibold">
                 No beneficiaries found
@@ -298,7 +329,7 @@ const RecipientSelection = ({
           </div>
         </div>
 
-        <div
+        {/* <div
           onClick={() => {}}
           className="mt-6 grainy bg-[#EBEBEB] border border-neutral-300/60 rounded-[16px] p-4 flex items-center justify-between hover:bg-[#e2e2e2] active:scale-[0.99] transition-all cursor-pointer shadow-xs"
         >
@@ -323,7 +354,7 @@ const RecipientSelection = ({
           >
             <polyline points="9 18 15 12 9 6" />
           </svg>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -46,16 +46,6 @@ export default function SendCoinsPage() {
   const [pin, setPin] = useState("");
   const [transactionResult, setTransactionResult] = useState<any>(null);
 
-  // Toast Alert states
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-
-  const triggerToast = (msg: string) => {
-    setToastMessage(msg);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
-  };
-
   // Unified Custom Keyboard input router
   const handleKey = (digit: string) => {
     if (step === 2) {
@@ -149,28 +139,9 @@ export default function SendCoinsPage() {
         step === 2 || step === 4 ? "overflow-hidden" : "overflow-y-auto pb-8"
       }`}
     >
-      {/* Toast Alert popup */}
-      {showToast && (
-        <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-neutral-900 text-white text-[13px] px-4 py-2.5 rounded-full shadow-lg flex items-center gap-2 border border-neutral-800 transition-all animate-bounce">
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#EAB308"
-            strokeWidth="2.5"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
       {/* HEADER SECTION */}
       <div
-        className={`${step === 6 ? "pt-0" : "pt-6"} px-6 flex items-center justify-between bg-[#F9F9F9] sticky top-0`}
+        className={`${step === 6 ? "pt-0" : "pt-6"} px-6 flex items-center justify-between bg-[#F9F9F9] sticky z-99999 top-0`}
       >
         {step !== 6 && (
           <button
@@ -253,7 +224,6 @@ export default function SendCoinsPage() {
           handleKey={handleKey}
           setTransactionResult={setTransactionResult}
           handleDelete={handleDelete}
-          triggerToast={triggerToast}
         />
       )}
 

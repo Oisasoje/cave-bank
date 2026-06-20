@@ -12,7 +12,7 @@ const AuthorizeTransaction = ({
   pin,
   handleKey,
   handleDelete,
-  triggerToast,
+
   selectedRecipient,
   amount,
   reason,
@@ -22,7 +22,7 @@ const AuthorizeTransaction = ({
   pin: string;
   handleKey: (key: string) => void;
   handleDelete: () => void;
-  triggerToast: (message: string) => void;
+
   selectedRecipient: Beneficiary | null;
   amount: number;
   reason: string;
@@ -117,7 +117,7 @@ const AuthorizeTransaction = ({
         {/* Forgot PIN Link */}
         <button
           type="button"
-          onClick={() => triggerToast("PIN reset flow requested")}
+          onClick={() => {}}
           className="text-[#D2B627] hover:underline cursor-pointer font-bold text-[14px] mt-4 mx-auto block text-center bg-transparent border-none outline-none"
         >
           Forgot PIN?
