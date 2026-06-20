@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { DM_Sans, Space_Mono } from "next/font/google";
 import { useQuery } from "@tanstack/react-query";
-import { getRecentTransactions } from "@/services/user";
+import { getRecentCounterparties } from "@/services/user";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -53,57 +53,18 @@ const AddQuickSendModal = ({
   onAddContacts: (contacts: InteractedContact[]) => void;
   existingContactNames: string[];
 }) => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isClosing, setIsClosing] = useState(false);
-  const searchRef = useRef<HTMLInputElement>(null);
-
-  const { data: recentTransactions, isLoading } = useQuery({
-    queryKey: ["transactions", { limit: 20 }],
-    queryFn: () => getRecentTransactions(20),
-    enabled: isOpen,
-  });
 
   // Extract unique interacted contacts from transactions
-  const interactedContacts: InteractedContact[] = useMemo(() => {
-    if (!recentTransactions?.data) return [];
-
-    const contactMap = new Map<string, InteractedContact>();
-
-    recentTransactions.data.forEach((tx: any) => {
-      if (tx.type === "debit" && tx.accounts_to?.users?.name) {
-        const address = tx.accounts_to.address;
-        if (!contactMap.has(address)) {
-          contactMap.set(address, {
-            id: address,
-            name: tx.accounts_to.users.name,
-            walletAddress: address,
-            interactionType: "sent",
-          });
-        }
-      } else if (tx.type === "credit" && tx.accounts_from?.users?.name) {
-        const address = tx.accounts_from.address;
-        if (!contactMap.has(address)) {
-          contactMap.set(address, {
-            id: address,
-            name: tx.accounts_from.users.name,
-            walletAddress: address,
-            interactionType: "received",
-          });
-        }
-      }
+  const { data: uniqueRecentRecipients, isLoading: favoritesLoading } =
+    useQuery({
+      queryKey: ["recent-counterparties"],
+      queryFn: getRecentCounterparties,
+      staleTime: Infinity,
     });
 
-    return Array.from(contactMap.values());
-  }, [recentTransactions]);
-
-  // Filter contacts based on search and exclude already-added contacts
-  const filteredContacts = useMemo(() => {
-    const lowerExisting = existingContactNames.map((n) => n.toLowerCase());
-    return interactedContacts
-      .filter((c) => !lowerExisting.includes(c.name.toLowerCase()))
-      .filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  }, [interactedContacts, searchQuery, existingContactNames]);
+  console.log(uniqueRecentRecipients);
 
   // Toggle selection
   const toggleSelect = (id: string) => {
@@ -123,34 +84,11 @@ const AddQuickSendModal = ({
     setIsClosing(true);
     setTimeout(() => {
       setIsClosing(false);
-      setSearchQuery("");
+
       setSelectedIds(new Set());
       onClose();
     }, 250);
   };
-
-  // Handle add
-  const handleAdd = () => {
-    const selected = interactedContacts.filter((c) => selectedIds.has(c.id));
-    onAddContacts(selected);
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsClosing(false);
-      setSearchQuery("");
-      setSelectedIds(new Set());
-      onClose();
-    }, 250);
-  };
-
-  // Focus search input when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      const timer = setTimeout(() => {
-        searchRef.current?.focus();
-      }, 350);
-      return () => clearTimeout(timer);
-    }
-  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -167,7 +105,7 @@ const AddQuickSendModal = ({
         style={{
           animation: isClosing
             ? undefined
-            : "fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+            : "fadeIn cubic-bezier(0.16, 1, 0.3, 1) forwards",
         }}
       />
 
@@ -211,61 +149,13 @@ const AddQuickSendModal = ({
             </button>
           </div>
           <p className="text-[12px] text-neutral-400 font-semibold mt-1">
-            Select people you&apos;ve interacted with
+            Select people you&apos;ve recently interacted with
           </p>
-        </div>
-
-        {/* Search */}
-        <div className="px-6 pb-4">
-          <div className="relative">
-            <svg
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-            <input
-              ref={searchRef}
-              type="text"
-              placeholder="Search by name..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-[46px] border border-neutral-200 rounded-[14px] pl-10 pr-10 text-[13px] font-semibold focus:outline-none focus:ring-1 focus:ring-[#D2B627] bg-white placeholder-neutral-400 transition-all shadow-xs"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 w-[22px] h-[22px] rounded-full bg-neutral-200 flex items-center justify-center hover:bg-neutral-300 transition-colors cursor-pointer"
-              >
-                <svg
-                  width="10"
-                  height="10"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#6B7280"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-              </button>
-            )}
-          </div>
         </div>
 
         {/* Contact List */}
         <div className="flex-1 overflow-y-auto scrollbar-none px-6 pb-4">
-          {isLoading ? (
+          {favoritesLoading ? (
             <div className="space-y-3">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div
@@ -281,130 +171,98 @@ const AddQuickSendModal = ({
                 </div>
               ))}
             </div>
-          ) : filteredContacts.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-14 h-14 rounded-full bg-neutral-100 flex items-center justify-center mb-3">
-                <svg
-                  width="22"
-                  height="22"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="#9CA3AF"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                  <circle cx="9" cy="7" r="4" />
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                </svg>
-              </div>
-              <p
-                className={`text-[13px] font-bold text-neutral-400 ${dm_sans.className}`}
-              >
-                {searchQuery
-                  ? "No contacts match your search"
-                  : "No new contacts to add"}
-              </p>
-              <p className="text-[11px] text-neutral-400 mt-1">
-                {searchQuery
-                  ? "Try a different name"
-                  : "All your recent contacts are already added"}
-              </p>
-            </div>
           ) : (
             <div className="space-y-1">
-              {filteredContacts.map((contact, index) => {
-                const isSelected = selectedIds.has(contact.id);
-                const colorClass = avatarColors[index % avatarColors.length];
-                return (
-                  <button
-                    key={contact.id}
-                    type="button"
-                    onClick={() => toggleSelect(contact.id)}
-                    className={`w-full flex items-center gap-3.5 py-2.5 px-3 rounded-[16px] transition-all duration-150 cursor-pointer group active:scale-[0.98] ${
-                      isSelected
-                        ? "bg-[#D0BD21]/10 border border-[#D0BD21]/30"
-                        : "bg-transparent border border-transparent hover:bg-neutral-100/60"
-                    }`}
-                  >
-                    {/* Avatar */}
-                    <div
-                      className={`w-[46px] h-[46px] rounded-full flex items-center justify-center font-bold text-[14px] shrink-0 select-none transition-transform group-hover:scale-105 ${colorClass}`}
-                    >
-                      {getInitials(contact.name)}
-                    </div>
-
-                    {/* Name & interaction badge */}
-                    <div className="flex-1 text-left min-w-0">
-                      <p className="text-[14px] font-bold text-neutral-800 leading-tight truncate">
-                        {contact.name}
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        {contact.interactionType === "sent" ? (
-                          <svg
-                            width="11"
-                            height="11"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#6B7280"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <line x1="7" y1="17" x2="17" y2="7" />
-                            <polyline points="7 7 17 7 17 17" />
-                          </svg>
-                        ) : (
-                          <svg
-                            width="11"
-                            height="11"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#6B7280"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <line x1="17" y1="7" x2="7" y2="17" />
-                            <polyline points="17 17 7 17 7 7" />
-                          </svg>
-                        )}
-                        <span className="text-[11px] text-neutral-400 font-semibold">
-                          {contact.interactionType === "sent"
-                            ? "Sent to them"
-                            : "Received from them"}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Selection indicator */}
-                    <div
-                      className={`w-[24px] h-[24px] rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
+              {uniqueRecentRecipients?.data?.map(
+                (contact: any, index: number) => {
+                  const isSelected = selectedIds.has(contact.accountId);
+                  const colorClass = avatarColors[index % avatarColors.length];
+                  return (
+                    <button
+                      key={contact.accountId}
+                      type="button"
+                      onClick={() => toggleSelect(contact.accountId)}
+                      className={`w-full flex items-center gap-3.5 py-2.5 px-3 rounded-[16px] transition-all duration-150 cursor-pointer group active:scale-[0.98] ${
                         isSelected
-                          ? "bg-[#0E1719] border-[#0E1719]"
-                          : "border-neutral-300 bg-white group-hover:border-neutral-400"
+                          ? "bg-[#D0BD21]/10 border border-[#D0BD21]/30"
+                          : "bg-transparent border border-transparent hover:bg-neutral-100/60"
                       }`}
                     >
-                      {isSelected && (
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="white"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
+                      {/* Avatar */}
+                      <div
+                        className={`w-[46px] h-[46px] rounded-full flex items-center justify-center font-bold text-[14px] shrink-0 select-none transition-transform group-hover:scale-105 ${colorClass}`}
+                      >
+                        {getInitials(contact.displayName)}
+                      </div>
+
+                      {/* Name & interaction badge */}
+                      <div className="flex-1 text-left min-w-0">
+                        <p className="text-[14px] font-bold text-neutral-800 leading-tight truncate">
+                          {contact.displayName}
+                        </p>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          {contact.direction === "sent" ? (
+                            <svg
+                              width="11"
+                              height="11"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#6B7280"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <line x1="7" y1="17" x2="17" y2="7" />
+                              <polyline points="7 7 17 7 17 17" />
+                            </svg>
+                          ) : (
+                            <svg
+                              width="11"
+                              height="11"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#6B7280"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <line x1="17" y1="7" x2="7" y2="17" />
+                              <polyline points="17 17 7 17 7 7" />
+                            </svg>
+                          )}
+                          <span className="text-[11px] text-neutral-400 font-semibold">
+                            {contact.direction === "sent" ? `Sent` : `Received`}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Selection indicator */}
+                      <div
+                        className={`w-[24px] h-[24px] rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
+                          isSelected
+                            ? "bg-[#0E1719] border-[#0E1719]"
+                            : "border-neutral-300 bg-white group-hover:border-neutral-400"
+                        }`}
+                      >
+                        {isSelected && (
+                          <svg
+                            width="12"
+                            height="12"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <polyline points="20 6 9 17 4 12" />
+                          </svg>
+                        )}
+                      </div>
+                    </button>
+                  );
+                },
+              )}
             </div>
           )}
         </div>
@@ -414,7 +272,7 @@ const AddQuickSendModal = ({
           <button
             type="button"
             disabled={selectedCount === 0}
-            onClick={handleAdd}
+            // onClick={handleAdd}
             className={`w-full h-[54px] rounded-[14px] font-bold text-[15px] flex items-center justify-center gap-2 transition-all duration-200 ${
               selectedCount > 0
                 ? "bg-[#0E1719] text-white hover:bg-[#18262a] cursor-pointer shadow-md active:scale-[0.98]"

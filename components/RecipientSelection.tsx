@@ -4,7 +4,7 @@ import useDebounce from "@/lib/hooks/useDebounce";
 import { getUserByWalletAddress } from "@/services/transfer";
 import { Beneficiary } from "@/app/wallet/send/page";
 import { useQuery } from "@tanstack/react-query";
-import { getRecentTransactions } from "@/services/user";
+import { getRecentCounterparties } from "@/services/user";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -28,10 +28,7 @@ const RecipientSelection = ({
   setStep: (step: number) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { data: recentTransactions, isLoading } = useQuery({
-    queryKey: ["transactions", { limit: 5 }],
-    queryFn: () => getRecentTransactions(5),
-  });
+
   const [activeTab, setActiveTab] = useState<"recents" | "saved">("recents");
   const [recipientInput, setRecipientInput] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
@@ -105,24 +102,14 @@ const RecipientSelection = ({
     return () => clearTimeout(timer);
   }, []);
 
-  const recentReceipients = recentTransactions?.data.map((tx: any) => ({
-    displayName:
-      tx.type === "credit"
-        ? tx.accounts_from.users.name
-        : tx.accounts_to.users.name,
-    displayAddress:
-      tx.type === "credit" ? tx.accounts_from.address : tx.accounts_to.address,
-    accountId: tx.type === "credit" ? tx.accounts_from.id : tx.accounts_to.id,
-    isSaved: true,
-  }));
+  const { data: uniqueRecentRecipients, isLoading: favoritesLoading } =
+    useQuery({
+      queryKey: ["recent-counterparties"],
+      queryFn: getRecentCounterparties,
+      staleTime: Infinity,
+    });
 
-  const uniqueRecentReceipients = recentReceipients?.filter(
-    (item: any, index: number) =>
-      index ===
-      recentReceipients.findIndex(
-        (t: any) => t.displayAddress === item.displayAddress,
-      ),
-  );
+  console.log(uniqueRecentRecipients?.data);
 
   const isDisabled = !selectedRecipient?.name;
 
@@ -160,7 +147,7 @@ const RecipientSelection = ({
 
         <div className="h-50 flex flex-col gap-2">
           <div
-            className={` ${selectedRecipient ? "h-0" : "h-4 transition-all duration-300 ease-out mt-1"}   `}
+            className={` ${selectedRecipient ? "h-0" : "h-4 transition-all duration-300 ease-out"}   `}
           >
             {error && (
               <div className={`flex items-center`}>
@@ -257,7 +244,7 @@ const RecipientSelection = ({
           </div>
 
           <div className="divide-y divide-neutral-100 p-4 space-y-3.5 divide-none">
-            {isLoading ? (
+            {favoritesLoading ? (
               Array.from({ length: 3 }).map((_, i) => (
                 <div
                   key={i}
@@ -270,8 +257,8 @@ const RecipientSelection = ({
                   </div>
                 </div>
               ))
-            ) : uniqueRecentReceipients?.length > 0 ? (
-              uniqueRecentReceipients.map((b: any) => (
+            ) : uniqueRecentRecipients?.data?.length > 0 ? (
+              uniqueRecentRecipients?.data.map((b: any) => (
                 <div
                   key={b.accountId}
                   onClick={() => {

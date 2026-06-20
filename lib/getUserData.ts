@@ -2,6 +2,8 @@ import { getUser } from "@/services/auth";
 import { queryClient } from "./queryClient";
 import {
   getBalance,
+  getFavorites,
+  getRecentCounterparties,
   getRecentTransactions,
   getTransactions,
 } from "@/services/user";
@@ -24,6 +26,16 @@ const generateUserData = async () => {
     queryClient.prefetchQuery({
       queryKey: ["transactions", { limit: 5 }],
       queryFn: () => getRecentTransactions(5),
+      staleTime: Infinity,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["favorites"],
+      queryFn: getFavorites,
+      staleTime: Infinity,
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["recent-counterparties"],
+      queryFn: getRecentCounterparties,
       staleTime: Infinity,
     }),
     queryClient.prefetchInfiniteQuery({

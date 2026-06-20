@@ -32,3 +32,21 @@ export const getTransactionById = (transactionId: string) => {
     method: "GET",
   });
 };
+export const getRecentCounterparties = () => {
+  return api("/user/recent-counterparties", {
+    method: "GET",
+  });
+};
+
+export const postFavorites = (userIds: string[]) => {
+  return api("/user/favorites", {
+    method: "POST",
+    body: JSON.stringify(userIds),
+  });
+};
+
+export const getFavorites = () => {
+  return api("/user/favorites", {
+    method: "GET",
+  });
+};

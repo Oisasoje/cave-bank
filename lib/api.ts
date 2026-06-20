@@ -5,7 +5,7 @@ export const API_BASE_URL = IS_SERVER
       ? process.env.NEXT_PUBLIC_API_URL
       : process.env.NEXT_PUBLIC_API_URL_DEV || "http://localhost:8000")
   : "/api";
-const api = async (endpoint: String, options: RequestInit = {}) => {
+const api = async (endpoint: String, options: RequestInit = {}): Promise<any> => {
   if (typeof window !== "undefined" && !window.navigator.onLine) {
     throw new Error("You are offline.");
   }
