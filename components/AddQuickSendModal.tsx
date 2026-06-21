@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react";
 import { DM_Sans } from "next/font/google";
 import { useQuery } from "@tanstack/react-query";
-import { addFavorites, getRecentCounterparties } from "@/services/user";
+import {
+  addFavorites,
+  getRecentCounterparties,
+  removeFavorite,
+} from "@/services/user";
+import { getUser } from "@/services/auth";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -27,6 +32,33 @@ const AddQuickSendModal = ({
 }) => {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isClosing, setIsClosing] = useState(false);
+  const [contactToRemove, setContactToRemove] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const { data: me } = useQuery({
+    queryKey: ["me"],
+    queryFn: getUser,
+  });
+
+  const handleRemoveFavorite = async () => {
+    if (!contactToRemove) return;
+
+    setIsRemoving(true);
+    try {
+      await removeFavorite(contactToRemove.id);
+      toast.success(`${contactToRemove.name} removed from favorites`);
+      queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      setContactToRemove(null);
+    } catch (error: any) {
+      toast.error(error.message || "Couldn't remove favorite, try again.");
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
   const handleAddFavorites = async (ids: string[]) => {
     if (!ids.length) return;
 
@@ -40,8 +72,8 @@ const AddQuickSendModal = ({
         queryKey: ["favorites"],
       });
       setSelectedIds(new Set());
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong, try again later.");
     }
   };
   // Extract unique interacted contacts from transactions
@@ -191,24 +223,28 @@ const AddQuickSendModal = ({
                   return (
                     <button
                       key={contact.userId}
-                      disabled={isDisabled}
                       type="button"
                       onClick={() => {
-                        toggleSelect(contact.userId);
+                        if (isDisabled) {
+                          setContactToRemove({
+                            id: contact.userId,
+                            name: contact.displayName,
+                          });
+                        } else {
+                          toggleSelect(contact.userId);
+                        }
                       }}
-                      className={`w-full flex items-center gap-3.5 py-2.5 px-3 rounded-[16px] transition-all duration-150 group active:scale-[0.98] ${
+                      className={`w-full flex items-center gap-3.5 py-2.5 px-3 rounded-[16px] transition-all duration-150 group active:scale-[0.98] cursor-pointer ${
                         isDisabled
-                          ? "bg-neutral-100/40 border border-transparent cursor-not-allowed opacity-60"
+                          ? "bg-neutral-100/40 border border-transparent hover:bg-neutral-100/70"
                           : isSelected
-                            ? "bg-[#D0BD21]/10 border border-[#D0BD21]/30 cursor-pointer"
-                            : "bg-transparent border border-transparent hover:bg-neutral-100/60 cursor-pointer"
+                            ? "bg-[#D0BD21]/10 border border-[#D0BD21]/30"
+                            : "bg-transparent border border-transparent hover:bg-neutral-100/60"
                       }`}
                     >
                       {/* Avatar */}
                       <div
-                        className={`w-[46px] h-[46px] rounded-full border flex items-center justify-center font-bold text-[14px] shrink-0 select-none transition-transform ${
-                          isDisabled ? "" : "group-hover:scale-105"
-                        } ${colorClass}`}
+                        className={`w-[46px] h-[46px] rounded-full border flex items-center justify-center font-bold text-[14px] shrink-0 select-none transition-transform group-hover:scale-105 ${colorClass}`}
                       >
                         {getInitials(contact.displayName)}
                       </div>
@@ -272,25 +308,42 @@ const AddQuickSendModal = ({
                       <div
                         className={`w-[24px] h-[24px] rounded-full border-2 flex items-center justify-center shrink-0 transition-all duration-200 ${
                           isDisabled
-                            ? "bg-neutral-200 border-neutral-200"
+                            ? "bg-neutral-100 group-hover:bg-red-50 border-neutral-200 group-hover:border-red-200"
                             : isSelected
                               ? "bg-[#0E1719] border-[#0E1719]"
                               : "border-neutral-300 bg-white group-hover:border-neutral-400"
                         }`}
                       >
                         {isDisabled ? (
-                          <svg
-                            width="12"
-                            height="12"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="#9CA3AF"
-                            strokeWidth="3"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="20 6 9 17 4 12" />
-                          </svg>
+                          <>
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#9CA3AF"
+                              strokeWidth="3"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="group-hover:hidden"
+                            >
+                              <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            <svg
+                              width="12"
+                              height="12"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="#EF4444"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="hidden group-hover:block"
+                            >
+                              <line x1="18" y1="6" x2="6" y2="18" />
+                              <line x1="6" y1="6" x2="18" y2="18" />
+                            </svg>
+                          </>
                         ) : (
                           isSelected && (
                             <svg
@@ -341,6 +394,42 @@ const AddQuickSendModal = ({
           </button>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {contactToRemove && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center px-6 animate-fade-in">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setContactToRemove(null)}
+          />
+          <div className="relative bg-white rounded-[20px] p-5 w-full max-w-sm shadow-xl animate-scale-up">
+            <h3
+              className={`text-[16px] font-bold text-neutral-900 ${dm_sans.className}`}
+            >
+              Remove {contactToRemove.name}?
+            </h3>
+            <p className="text-[13px] text-neutral-500 font-medium mt-1.5">
+              They&apos;ll be removed from your Quick Send favorites. You can
+              add them again later.
+            </p>
+            <div className="flex gap-3 mt-5">
+              <button
+                onClick={() => setContactToRemove(null)}
+                className="flex-1 h-[46px] rounded-[12px] font-bold text-[14px] text-neutral-700 bg-neutral-100 hover:bg-neutral-200 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRemoveFavorite}
+                disabled={isRemoving}
+                className="flex-1 h-[46px] rounded-[12px] font-bold text-[14px] text-white bg-red-500 hover:bg-red-600 transition-colors cursor-pointer disabled:opacity-60"
+              >
+                {isRemoving ? "Removing..." : "Remove"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

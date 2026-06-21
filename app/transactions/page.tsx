@@ -149,12 +149,12 @@ export default function TransactionsPage() {
     >
       {/* ──── STICKY HEADER ──── */}
       <div className="sticky top-0 z-30 bg-neutral-50">
-        {/* Top bar with back button and title */}
-        <div className="flex items-center gap-3 px-5 pt-6 pb-4">
+        {/* Top bar */}
+        <div className="flex items-center gap-3 px-5 pt-6 pb-5">
           <button
             id="transactions-back-btn"
             onClick={() => router.back()}
-            className="w-[38px] h-[38px] rounded-full bg-white border border-neutral-200 flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all cursor-pointer shadow-xs"
+            className="w-9 h-9 rounded-full bg-white border border-neutral-200 flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all cursor-pointer"
           >
             <svg
               width="16"
@@ -178,8 +178,7 @@ export default function TransactionsPage() {
 
         {/* Filter tabs + Month selector */}
         <div className="flex items-center justify-between gap-3 px-5 pb-4">
-          {/* Tabs */}
-          <div className="flex bg-white border border-neutral-200 rounded-[12px] p-[3px] shadow-xs">
+          <div className="flex bg-white border border-neutral-200 rounded-[12px] p-1 gap-0.5">
             {tabs.map((tab) => {
               const tabType = tabToType[tab];
               const isActive = filter.type === tabType;
@@ -188,12 +187,9 @@ export default function TransactionsPage() {
                   id={`transactions-tab-${tab.toLowerCase()}`}
                   key={tab}
                   onClick={() =>
-                    setFilter((prev) => ({
-                      ...prev,
-                      type: tabType,
-                    }))
+                    setFilter((prev) => ({ ...prev, type: tabType }))
                   }
-                  className={`px-2.5 py-[10px] rounded-[6px] ${dm_sans.className} text-[14px] transition-all duration-200 cursor-pointer ${
+                  className={`px-3 py-2 rounded-[9px] ${dm_sans.className} text-[13px] font-semibold transition-all duration-200 cursor-pointer ${
                     isActive
                       ? "bg-[#D0BD21] text-black border-[1.2px] border-black shadow-sm"
                       : "text-neutral-500 hover:text-neutral-700"
@@ -205,12 +201,11 @@ export default function TransactionsPage() {
             })}
           </div>
 
-          {/* Month dropdown */}
           <div className="relative">
             <button
               id="transactions-month-selector"
               onClick={() => setShowMonthDropdown(!showMonthDropdown)}
-              className="flex items-center gap-1.5 text-[12px] font-bold text-neutral-600 bg-white border border-neutral-200 px-4 py-[6px] rounded-[10px] hover:bg-neutral-100 transition-colors cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 text-[12px] font-bold text-neutral-600 bg-white border border-neutral-200 px-3.5 py-2 rounded-[12px] hover:bg-neutral-50 transition-colors cursor-pointer"
             >
               {formatMonthKey(filter.month)}
               <svg
@@ -222,22 +217,19 @@ export default function TransactionsPage() {
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className={`transition-transform duration-200 ${
-                  showMonthDropdown ? "rotate-180" : ""
-                }`}
+                className={`transition-transform duration-200 ${showMonthDropdown ? "rotate-180" : ""}`}
               >
                 <polyline points="6 9 12 15 18 9" />
               </svg>
             </button>
 
-            {/* Dropdown */}
             {showMonthDropdown && (
               <>
                 <div
                   className="fixed inset-0 z-40"
                   onClick={() => setShowMonthDropdown(false)}
                 />
-                <div className="absolute right-0 top-full mt-2 w-[160px] bg-white border border-neutral-200 rounded-[14px] shadow-lg z-50 py-1.5 max-h-[240px] overflow-y-auto scrollbar-none animate-fade-in">
+                <div className="absolute right-0 top-full mt-2 w-[160px] bg-white border border-neutral-200 rounded-[12px] shadow-lg z-50 py-1.5 max-h-[240px] overflow-y-auto scrollbar-none animate-fade-in">
                   <button
                     onClick={() => {
                       setFilter((prev) => ({ ...prev, month: "all" }));
@@ -273,7 +265,6 @@ export default function TransactionsPage() {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="h-px bg-neutral-200/60" />
       </div>
 

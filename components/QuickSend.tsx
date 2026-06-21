@@ -1,6 +1,9 @@
 import { DM_Sans } from "next/font/google";
-import React from "react";
+
 import { getInitials, getColorClass } from "@/lib/avatar";
+import { Shimmer } from "./TransactionsSkeleton";
+import selectedRecipientStore from "@/store/selectedRecipientStore";
+import { useRouter } from "next/navigation";
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
@@ -10,10 +13,34 @@ const dm_sans = DM_Sans({
 const QuickSend = ({
   contacts,
   onAddClick,
+  isLoading,
 }: {
   contacts: any[];
   onAddClick?: () => void;
+  isLoading: boolean;
 }) => {
+  const setSelectedRecipient = selectedRecipientStore(
+    (state) => state.setSelectedRecipient,
+  );
+  const router = useRouter();
+
+  const handleQuickSend = ({
+    id,
+    name,
+    walletAddress,
+  }: {
+    id: string;
+    name: string;
+    walletAddress: string;
+  }) => {
+    setSelectedRecipient({
+      accountId: id,
+      name,
+      walletAddress,
+    });
+    router.push("/wallet/send");
+  };
+
   return (
     <div className="mt-7">
       <h3
@@ -46,18 +73,47 @@ const QuickSend = ({
         </div>
 
         {/* Contacts Slider */}
+        {isLoading ? (
+          <div className="">
+            <Shimmer className={`h-[11px] w-[80px] rounded mb-3.5`} />
+            <div className="flex gap-4 overflow-hidden pb-1">
+              {/* Add button */}
+              <div className="flex flex-col items-center gap-2 shrink-0">
+                <Shimmer className="w-[58px] h-[58px] rounded-full" />
+                <Shimmer className="w-[28px] h-[10px] rounded" />
+              </div>
+              {/* Contacts */}
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="flex flex-col items-center gap-2 shrink-0"
+                >
+                  <Shimmer className="w-[58px] h-[58px] rounded-full" />
+                  <Shimmer className="w-[44px] h-[10px] rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
         {contacts?.map((contact) => {
-          const id = contact.id || contact.userId || contact.accountId;
-          const fullName = contact.displayName || contact.name || "Unknown";
+          const id = contact.id;
+          const fullName = contact.name;
           const firstName = fullName.split(" ")[0];
           const initials = contact.initials || getInitials(fullName);
-          const colorClass = contact.color || getColorClass(String(id || fullName));
+          const colorClass =
+            contact.color || getColorClass(String(id || fullName));
 
           return (
             <div
               key={id}
               className="flex flex-col items-center min-w-0 shrink-0 snap-start group cursor-pointer"
-              onClick={() => {}}
+              onClick={() => {
+                handleQuickSend({
+                  id: contact.accountId,
+                  name: fullName,
+                  walletAddress: contact.walletAddress,
+                });
+              }}
             >
               <div
                 className={`w-[58px] h-[58px] rounded-full border flex items-center justify-center font-bold text-[15px] shadow-sm select-none transition-all group-hover:scale-105 active:scale-95 ${colorClass}`}

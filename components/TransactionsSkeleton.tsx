@@ -1,4 +1,4 @@
-function Shimmer({
+export function Shimmer({
   className = "",
   style = {},
 }: {

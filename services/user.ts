@@ -50,3 +50,9 @@ export const addFavorites = (favoriteUserIds: string[]) => {
     body: JSON.stringify({ favoriteUserIds }),
   });
 };
+
+export const removeFavorite = (favoriteId: string) => {
+  return api(`/user/favorites/${favoriteId}`, {
+    method: "DELETE",
+  });
+};

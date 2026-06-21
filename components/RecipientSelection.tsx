@@ -2,7 +2,7 @@ import { DM_Sans, Space_Mono } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
 import useDebounce from "@/lib/hooks/useDebounce";
 import { getUserByWalletAddress } from "@/services/transfer";
-import { Beneficiary } from "@/app/wallet/send/page";
+import { RecipientInterface } from "@/store/selectedRecipientStore";
 import { useQuery } from "@tanstack/react-query";
 import { getRecentCounterparties, getFavorites } from "@/services/user";
 
@@ -22,15 +22,17 @@ const RecipientSelection = ({
 
   setStep,
 }: {
-  selectedRecipient: Beneficiary | null;
-  setSelectedRecipient: (recipient: Beneficiary | null) => void;
+  selectedRecipient: RecipientInterface | null;
+  setSelectedRecipient: (recipient: RecipientInterface | null) => void;
 
   setStep: (step: number) => void;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const [activeTab, setActiveTab] = useState<"recents" | "saved">("recents");
-  const [recipientInput, setRecipientInput] = useState<string>("");
+  const [recipientInput, setRecipientInput] = useState<string>(
+    selectedRecipient?.walletAddress || "",
+  );
   const [error, setError] = useState<string | null>(null);
 
   const debouncedWalletAddress = useDebounce(recipientInput);
@@ -42,8 +44,8 @@ const RecipientSelection = ({
   const selectedFromList = useRef(false);
 
   const handleBeneficiaryClick = (b: any) => {
-    selectedFromList.current = true;
     const address = b.displayAddress || b.walletAddress;
+    selectedFromList.current = true;
     setRecipientInput(address);
     setSelectedRecipient({
       accountId: b.accountId || b.id,
@@ -52,11 +54,16 @@ const RecipientSelection = ({
     });
   };
 
-  // in the effect:
   useEffect(() => {
     if (selectedFromList.current) {
-      selectedFromList.current = false;
-      return; // skip — already set from list click
+      if (debouncedWalletAddress === recipientInput) {
+        selectedFromList.current = false;
+      }
+      return;
+    }
+
+    if (selectedRecipient?.walletAddress === debouncedWalletAddress) {
+      return;
     }
 
     if (
@@ -64,15 +71,14 @@ const RecipientSelection = ({
       debouncedWalletAddress.trim().length < 13
     ) {
       setSelectedRecipient(null);
-
       return;
     }
 
-    let cancelled = false; // ← add this
+    let cancelled = false;
     const fetchRecipient = async () => {
       try {
         const { user } = await getUserByWalletAddress(debouncedWalletAddress);
-        if (cancelled) return; // ← stale response, ignore
+        if (cancelled) return;
         setError(null);
         setSelectedRecipient({
           accountId: user.data.accountId,
@@ -80,7 +86,7 @@ const RecipientSelection = ({
           walletAddress: debouncedWalletAddress,
         });
       } catch (err: any) {
-        if (cancelled) return; // ← stale error, ignore
+        if (cancelled) return;
         setSelectedRecipient(null);
         setError(
           err.message === "Something went wrong. Please try again."
@@ -173,8 +179,8 @@ const RecipientSelection = ({
           <div
             className={`grainy ${dm_sans.className} flex items-center bg-[#D0BD21]/50 rounded-[14px] border-2 border-neutral-400 font-semibold text-lg transition-all duration-300 ease-out origin-top ${
               selectedRecipient?.name
-                ? "h-14 opacity-100 p-4 mt-2 scale-y-100"
-                : "h-0 opacity-0 p-0 border-none mt-0 scale-y-95 pointer-events-none overflow-hidden"
+                ? "h-14 opacity-100 p-4 scale-y-100"
+                : "h-0 opacity-0 p-0 border-none scale-y-95 pointer-events-none overflow-hidden"
             }`}
           >
             {selectedRecipient?.name}

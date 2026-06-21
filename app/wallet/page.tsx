@@ -120,6 +120,7 @@ export default function WalletPage() {
         <QuickSend
           contacts={favorites?.data}
           onAddClick={() => setIsAddModalOpen(true)}
+          isLoading={favoritesLoading}
         />
 
         {/* RECENT TRANSACTIONS */}

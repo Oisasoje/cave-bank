@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Keyboard from "./Keyboard";
 import { initiateTransfer } from "@/services/transfer";
 
-import { Beneficiary } from "@/app/wallet/send/page";
+import { RecipientInterface } from "@/store/selectedRecipientStore";
 
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/services/auth";
@@ -23,7 +23,7 @@ const AuthorizeTransaction = ({
   handleKey: (key: string) => void;
   handleDelete: () => void;
 
-  selectedRecipient: Beneficiary | null;
+  selectedRecipient: RecipientInterface | null;
   amount: number;
   reason: string;
   setStep: Dispatch<SetStateAction<number>>;

@@ -11,6 +11,7 @@ import TransferSuccess from "@/components/TransferSuccess";
 import { getBalance } from "@/services/user";
 import { useQuery } from "@tanstack/react-query";
 import Receipt from "@/components/Receipt";
+import selectedRecipientStore from "@/store/selectedRecipientStore";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,7 +25,7 @@ const dm_sans = DM_Sans({
 
 export interface Beneficiary {
   accountId: string;
-  name: string | null;
+  name: string;
   walletAddress: string;
 }
 
@@ -37,8 +38,7 @@ export default function SendCoinsPage() {
   const formattedBalance = balance?.data?.balance?.toFixed(2);
   const [step, setStep] = useState(1);
 
-  const [selectedRecipient, setSelectedRecipient] =
-    useState<Beneficiary | null>(null);
+  const { selectedRecipient, setSelectedRecipient } = selectedRecipientStore();
 
   // Transaction details (Step 2, 3, 4 & 5)
   const [amountDigits, setAmountDigits] = useState("");
