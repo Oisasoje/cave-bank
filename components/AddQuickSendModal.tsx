@@ -209,6 +209,10 @@ const AddQuickSendModal = ({
                 </div>
               ))}
             </div>
+          ) : uniqueRecentRecipients?.data?.length === 0 ? (
+            <div className="text-center py-10">
+              <p className="text-neutral-500">You have no recent contacts.</p>
+            </div>
           ) : (
             <div className="space-y-1">
               {uniqueRecentRecipients?.data?.map(

@@ -34,6 +34,7 @@ export default function SocketProvider({
       ({ type, amount }: { type: string; amount: number }) => {
         queryClient.invalidateQueries({ queryKey: ["balance"] });
         queryClient.invalidateQueries({ queryKey: ["transactions"] });
+        queryClient.invalidateQueries({ queryKey: ["favorites"] });
       },
     );
 

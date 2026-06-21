@@ -7,6 +7,7 @@ import { RecipientInterface } from "@/store/selectedRecipientStore";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/services/auth";
 import Loading from "./Loading";
+import { queryClient } from "@/lib/queryClient";
 
 const AuthorizeTransaction = ({
   pin,
@@ -61,6 +62,12 @@ const AuthorizeTransaction = ({
         });
 
         setTransactionResult(transactionResult.data);
+
+        queryClient.invalidateQueries({ queryKey: ["balance"] });
+        queryClient.invalidateQueries({ queryKey: ["transactions"] });
+        queryClient.invalidateQueries({
+          queryKey: ["recent-counterparties"],
+        });
 
         setStep(5);
       } catch (error: any) {
