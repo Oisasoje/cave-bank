@@ -63,7 +63,7 @@ const TransactionConfirmation = ({
       {/* Confirmation Details Card */}
       <div className="bg-white border border-neutral-200/60 rounded-[20px] p-5 shadow-sm space-y-4">
         {/* Recipient Name */}
-        <div className="flex items-center min-w-0 justify-between text-[13px]">
+        <div className="flex items-center gap-3 min-w-0 justify-between text-[13px]">
           <span className="text-neutral-450 font-bold shrink-0">
             Recipient Name
           </span>
