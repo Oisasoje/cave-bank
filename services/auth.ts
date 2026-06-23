@@ -60,3 +60,9 @@ export function getUser() {
     method: "GET",
   });
 }
+
+export function logout() {
+  return api("/auth/logout", {
+    method: "POST",
+  });
+}

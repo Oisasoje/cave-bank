@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Inter, DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { getUser } from "@/services/auth";
+import { getUser, logout } from "@/services/auth";
 import { getInitials, getColorClass } from "@/lib/avatar";
 import Link from "next/link";
 
@@ -150,8 +150,10 @@ export default function AccountPage() {
   const [emailNotif, setEmailNotif] = useState(true);
   const [pushNotif, setPushNotif] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logout();
     router.push("/auth/login/start");
+    router.refresh();
   };
 
   return (
@@ -187,7 +189,7 @@ export default function AccountPage() {
 
       <div className="flex-1 px-6">
         {/* ── Profile card ─────────────────────────────────────────── */}
-        <div className="relative grainy bg-[#D0BD21] rounded-[22px] p-5 shadow-sm overflow-hidden">
+        <div className="relative grainy bg-[#ffdf41] rounded-[22px] p-5 shadow-sm overflow-hidden">
           <div className="flex items-center gap-4">
             {/* Avatar circle */}
             <div className="w-[70px] h-[70px] rounded-full border-[3px] border-black/20 bg-neutral-800 flex items-center justify-center font-bold text-[22px] text-white shrink-0 select-none overflow-hidden shadow-sm">
@@ -280,24 +282,6 @@ export default function AccountPage() {
           <Link href="https://wa.link/4u169w" target="_blank">
             <ChevronRow label="Chat With Us" />
           </Link>
-        </Card>
-
-        {/* ── About ─────────────────────────────────────────────────── */}
-        <div className="mt-6 mb-2 px-1">
-          <button
-            type="button"
-            className="w-full flex items-center justify-between cursor-pointer"
-          >
-            <p
-              className={`text-[11px] font-bold text-neutral-400 uppercase tracking-wider ${dm_sans.className}`}
-            >
-              About
-            </p>
-          </button>
-        </div>
-
-        <Card>
-          <ChevronRow label="The Cave Bank" />
         </Card>
       </div>
 
