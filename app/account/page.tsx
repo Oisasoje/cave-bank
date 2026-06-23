@@ -146,13 +146,8 @@ export default function AccountPage() {
   const userId: string = me?.data?.user?.id ?? name;
   const colorClass = getColorClass(userId);
 
-  // ── local UI state (no backend wiring — UI only) ──────────────────────────
   const [emailNotif, setEmailNotif] = useState(true);
   const [pushNotif, setPushNotif] = useState(false);
-  const [biometric, setBiometric] = useState(false);
-  const [hideBalance, setHideBalance] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [aboutExpanded, setAboutExpanded] = useState(true);
 
   const handleLogout = () => {
     router.push("/auth/login/start");
@@ -192,27 +187,6 @@ export default function AccountPage() {
       <div className="flex-1 px-6">
         {/* ── Profile card ─────────────────────────────────────────── */}
         <div className="relative grainy bg-[#D0BD21] rounded-[22px] p-5 shadow-sm overflow-hidden">
-          {/* Edit button — top right */}
-          <button
-            type="button"
-            className="absolute top-4 right-4 cursor-pointer active:scale-95 transition-transform"
-            aria-label="Edit profile"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="rgba(0,0,0,0.55)"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-          </button>
-
           <div className="flex items-center gap-4">
             {/* Avatar circle */}
             <div className="w-[70px] h-[70px] rounded-full border-[3px] border-black/20 bg-neutral-800 flex items-center justify-center font-bold text-[22px] text-white shrink-0 select-none overflow-hidden shadow-sm">
@@ -270,33 +244,13 @@ export default function AccountPage() {
         <SectionLabel label="Security" />
         <Card>
           <ChevronRow label="Change PIN" />
-          <ChevronRow label="Reset Password" />
-          <ToggleRow
-            label="Fingerprint/Face ID Unlock"
-            enabled={biometric}
-            onToggle={() => setBiometric((v) => !v)}
-          />
-        </Card>
-
-        {/* ── Preferences ───────────────────────────────────────────── */}
-        <SectionLabel label="Preferences" />
-        <Card>
-          <ToggleRow
-            label="Hide Balance"
-            enabled={hideBalance}
-            onToggle={() => setHideBalance((v) => !v)}
-          />
-          <ToggleRow
-            label="Dark Mode"
-            enabled={darkMode}
-            onToggle={() => setDarkMode((v) => !v)}
-          />
+          <ChevronRow label="Reset PIN" />
         </Card>
 
         {/* ── Support ───────────────────────────────────────────────── */}
         <SectionLabel label="Support" />
         <Card>
-          <ChevronRow label="FAQs" />
+          <ChevronRow label="FAQs" onClick={() => router.push("/faqs")} />
           {/* Feedback row — with subtitle */}
           <button
             type="button"
@@ -305,9 +259,6 @@ export default function AccountPage() {
             <div className="flex flex-col items-start gap-0.5">
               <span className="text-[14px] font-semibold text-neutral-800">
                 Feedback
-              </span>
-              <span className="text-[11px] text-neutral-400 font-medium leading-snug max-w-[220px] text-left">
-                Tell us about your experience and how we can serve you better.
               </span>
             </div>
             <svg
@@ -331,7 +282,6 @@ export default function AccountPage() {
         <div className="mt-6 mb-2 px-1">
           <button
             type="button"
-            onClick={() => setAboutExpanded((v) => !v)}
             className="w-full flex items-center justify-between cursor-pointer"
           >
             <p
@@ -339,28 +289,12 @@ export default function AccountPage() {
             >
               About
             </p>
-            <svg
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#9CA3AF"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className={`transition-transform duration-200 ${aboutExpanded ? "rotate-0" : "rotate-180"}`}
-            >
-              <polyline points="18 15 12 9 6 15" />
-            </svg>
           </button>
         </div>
-        {aboutExpanded && (
-          <Card>
-            <ChevronRow label="The Cave Bank" />
-            <ChevronRow label="Terms and Condition" />
-            <ChevronRow label="Privacy Policy" />
-          </Card>
-        )}
+
+        <Card>
+          <ChevronRow label="The Cave Bank" />
+        </Card>
       </div>
 
       {/* ── Log out ───────────────────────────────────────────────────── */}

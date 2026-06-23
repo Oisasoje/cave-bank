@@ -14,7 +14,6 @@ const generateUserData = async () => {
       queryKey: ["me"],
       queryFn: getUser,
       staleTime: Infinity,
-      gcTime: 60 * 60 * 1000,
     }),
 
     ,
