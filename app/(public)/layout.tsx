@@ -1,4 +1,4 @@
-import { getSessionIdFromCookie } from "@/lib/getSessionIdFromCookie";
+import { getCurrentUser } from "@/lib/getCurrentUser";
 
 import { redirect } from "next/navigation";
 import React from "react";
@@ -8,9 +8,9 @@ const PublicLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const sessionId = await getSessionIdFromCookie();
+  const user = await getCurrentUser();
 
-  if (sessionId) {
+  if (user) {
     redirect("/wallet");
   }
 
