@@ -3,7 +3,7 @@
 import { DM_Sans, Space_Mono } from "next/font/google";
 import React, { useEffect, useState } from "react";
 import Keyboard from "./Keyboard";
-import { Beneficiary } from "@/app/wallet/send/page";
+import { Beneficiary } from "@/app/(private)/wallet/send/page";
 import Image from "next/image";
 
 const dm_sans = DM_Sans({

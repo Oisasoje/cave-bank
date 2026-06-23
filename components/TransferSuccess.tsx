@@ -1,6 +1,5 @@
-import { Beneficiary } from "@/app/wallet/send/page";
+import { Beneficiary } from "@/app/(private)/wallet/send/page";
 import { DM_Sans, Space_Mono } from "next/font/google";
-import React from "react";
 import ConfettiAnimation from "./Confetti";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
