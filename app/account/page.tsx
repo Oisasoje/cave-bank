@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/services/auth";
 import { getInitials, getColorClass } from "@/lib/avatar";
+import Link from "next/link";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -252,8 +253,9 @@ export default function AccountPage() {
         <Card>
           <ChevronRow label="FAQs" onClick={() => router.push("/faqs")} />
           {/* Feedback row — with subtitle */}
-          <button
-            type="button"
+          <Link
+            href="https://forms.gle/Bq2HKZnRvS3mH8XM7"
+            target="_blank"
             className="w-full flex items-center justify-between py-3.5 px-4 bg-white hover:bg-neutral-50 transition-colors cursor-pointer active:scale-[0.99]"
           >
             <div className="flex flex-col items-start gap-0.5">
@@ -274,8 +276,10 @@ export default function AccountPage() {
             >
               <polyline points="9 18 15 12 9 6" />
             </svg>
-          </button>
-          <ChevronRow label="Chat With Us" />
+          </Link>
+          <Link href="https://wa.link/4u169w" target="_blank">
+            <ChevronRow label="Chat With Us" />
+          </Link>
         </Card>
 
         {/* ── About ─────────────────────────────────────────────────── */}

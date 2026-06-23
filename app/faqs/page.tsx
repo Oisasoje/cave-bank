@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Inter, DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -54,18 +55,12 @@ const FAQ_ITEMS: FAQItem[] = [
 
 export default function FAQsPage() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
+
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const toggleExpand = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
   };
-
-  const filteredFaqs = FAQ_ITEMS.filter(
-    (item) =>
-      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.answer.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
 
   return (
     <div
@@ -101,92 +96,66 @@ export default function FAQsPage() {
 
       <div className="flex-1 flex flex-col px-6 mt-4">
         {/* ── Accordion List ────────────────────────────────────────── */}
-        {filteredFaqs.length > 0 ? (
-          <div className="border border-neutral-200/60 bg-white rounded-[16px] overflow-hidden shadow-xs divide-y divide-neutral-100 mb-8">
-            {filteredFaqs.map((faq) => {
-              const isOpen = expandedId === faq.id;
-              return (
-                <div key={faq.id} className="transition-all duration-200">
-                  <button
-                    type="button"
-                    onClick={() => toggleExpand(faq.id)}
-                    className="w-full flex items-center justify-between py-4 px-4 hover:bg-neutral-50/50 transition-colors cursor-pointer text-left"
-                  >
-                    <span className="text-[14px] font-semibold text-neutral-800 pr-4 leading-snug">
-                      {faq.question}
-                    </span>
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#9CA3AF"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className={`shrink-0 transition-transform duration-200 ${
-                        isOpen ? "rotate-180" : "rotate-0"
-                      }`}
-                    >
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
-                  </button>
-                  <div
-                    className={`grid transition-all duration-250 ease-in-out overflow-hidden ${
-                      isOpen
-                        ? "grid-rows-[1fr] opacity-100"
-                        : "grid-rows-[0fr] opacity-0"
+
+        <div className="border border-neutral-200/60 bg-white rounded-[16px] overflow-hidden shadow-xs divide-y divide-neutral-100 mb-8">
+          {FAQ_ITEMS.map((faq) => {
+            const isOpen = expandedId === faq.id;
+            return (
+              <div key={faq.id} className="transition-all duration-200">
+                <button
+                  type="button"
+                  onClick={() => toggleExpand(faq.id)}
+                  className="w-full flex items-center justify-between py-4 px-4 hover:bg-neutral-50/50 transition-colors cursor-pointer text-left"
+                >
+                  <span className="text-[14px] font-semibold text-neutral-800 pr-4 leading-snug">
+                    {faq.question}
+                  </span>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#9CA3AF"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`shrink-0 transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : "rotate-0"
                     }`}
                   >
-                    <div className="overflow-hidden">
-                      <div className="px-4 pb-4.5 pt-1 text-[13px] text-neutral-500 leading-relaxed">
-                        {faq.answer}
-                      </div>
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </button>
+                <div
+                  className={`grid transition-all duration-250 ease-in-out overflow-hidden ${
+                    isOpen
+                      ? "grid-rows-[1fr] opacity-100"
+                      : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-4 pb-4.5 pt-1 text-[13px] text-neutral-500 leading-relaxed">
+                      {faq.answer}
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center py-12 text-center">
-            <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-400 mb-3">
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                <line x1="8" y1="11" x2="14" y2="11" />
-              </svg>
-            </div>
-            <p className="text-[14px] font-semibold text-neutral-700">
-              No results found
-            </p>
-            <p className="text-[12px] text-neutral-400 mt-1 max-w-[240px]">
-              We couldn't find any FAQs matching "{searchQuery}". Try using
-              other terms.
-            </p>
-          </div>
-        )}
+              </div>
+            );
+          })}
+        </div>
 
         {/* ── Footer / CTA Section ──────────────────────────────────── */}
         <div className="mt-auto pt-6 flex flex-col items-center gap-3">
           <span className="text-[13px] font-medium text-neutral-500">
             Can't find what you are looking for?
           </span>
-          <button
-            type="button"
+          <Link
+            href="https://wa.link/4u169w"
+            target="_blank"
             className="h-[48px] bg-[#0E1719] hover:bg-[#18262a] active:scale-98 text-white rounded-[12px] font-bold text-[14px] px-8 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm mb-4"
           >
             Chat with Us
-          </button>
+          </Link>
         </div>
       </div>
     </div>
