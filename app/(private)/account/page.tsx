@@ -152,8 +152,7 @@ export default function AccountPage() {
 
   const handleLogout = async () => {
     await logout();
-    router.push("/auth/login/start");
-    router.refresh();
+    window.location.href = "/auth/login/start";
   };
 
   return (

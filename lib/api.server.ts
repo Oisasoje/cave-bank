@@ -23,6 +23,7 @@ export const apiServer = async (
     response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
+      cache: "no-store",
     });
   } catch (error: any) {
     throw new Error(error.message || "Something went wrong. Please try again.");

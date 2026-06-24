@@ -67,7 +67,7 @@ const Verify = () => {
       await loginVerify(loginAttemptID, digits);
       await generateUserData();
 
-      router.push("/wallet");
+      window.location.href = "/wallet";
     } catch (error: any) {
       setErrors(error.message);
       setIsSubmitting(false);
