@@ -1,0 +1,646 @@
+"use client";
+
+import { Inter, DM_Sans, Space_Mono } from "next/font/google";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const dm_sans = DM_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const space_mono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] });
+
+// ── Keyboard with optional Close button ───────────────────────────────────────
+function PinKeyboard({
+  onKey,
+  onDelete,
+  onClose,
+}: {
+  onKey: (k: string) => void;
+  onDelete: () => void;
+  onClose?: () => void;
+}) {
+  const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+
+  return (
+    <div
+      className={`fixed bottom-0 left-0 right-0 w-full bg-[#D1D5DB]/70 backdrop-blur-xl pb-[calc(env(safe-area-inset-bottom)+16px)] select-none ${space_mono.className}`}
+    >
+      {/* Close row */}
+      {onClose && (
+        <div className="flex justify-end px-4 pt-2 pb-0">
+          <button
+            onClick={onClose}
+            className={`text-[13px] font-semibold text-neutral-500 hover:text-neutral-800 transition-colors cursor-pointer ${dm_sans.className}`}
+          >
+            Close
+          </button>
+        </div>
+      )}
+
+      <div className="px-2 pt-2">
+        <div className="grid grid-cols-3 gap-2">
+          {/* 1–9 */}
+          {keys.slice(0, 9).map((k) => (
+            <div
+              key={k}
+              className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
+              onClick={() => onKey(k)}
+            >
+              <span className="text-[24px] leading-none">{k}</span>
+            </div>
+          ))}
+
+          {/* 0 (col-span-2) */}
+          <div
+            className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex col-span-2 items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
+            onClick={() => onKey("0")}
+          >
+            <span className="text-[24px] leading-none">0</span>
+          </div>
+
+          {/* Delete */}
+          <div
+            className="h-[52px] rounded-[5px] flex items-center justify-center text-black cursor-pointer active:bg-neutral-300/40 transition-colors"
+            onClick={onDelete}
+          >
+            <svg
+              width="22"
+              height="16"
+              viewBox="0 0 22 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 14L2 8L9 2H20V14H9Z" />
+              <path d="M12 5L17 10M17 5L12 10" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Single PIN bar (login-verify style) ───────────────────────────────────────
+function PinBar({
+  label,
+  value,
+  isActive,
+  showValue,
+  onToggleShow,
+  onFocus,
+  error,
+}: {
+  label: string;
+  value: string;
+  isActive: boolean;
+  showValue: boolean;
+  onToggleShow: () => void;
+  onFocus: () => void;
+  error?: boolean;
+}) {
+  return (
+    <div className="space-y-2">
+      <label
+        className={`text-[13px] font-semibold text-neutral-800 ${dm_sans.className}`}
+      >
+        {label}
+      </label>
+
+      {/* Input row */}
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+          onFocus();
+        }}
+        className={`flex items-center border rounded-[10px] px-4 h-[48px] bg-white justify-between cursor-pointer transition-colors ${
+          error
+            ? "border-red-500"
+            : isActive
+            ? "border-amber-500"
+            : "border-neutral-200"
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          {/* Lock icon */}
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#6B7280"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+
+          {/* Dots + cursor */}
+          <div
+            className={`flex items-center gap-1.5 mt-0.5 ${space_mono.className}`}
+          >
+            <span className="text-[15px] font-medium tracking-wide text-neutral-900">
+              {showValue
+                ? value
+                : Array.from({ length: value.length }, () => "•")}
+            </span>
+            {isActive && (
+              <span
+                className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5"
+                style={{ animation: "blink 1s step-end infinite" }}
+              />
+            )}
+          </div>
+        </div>
+
+        {/* Eye toggle */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleShow();
+          }}
+          className="text-neutral-400 hover:text-neutral-600 transition-colors p-1 cursor-pointer"
+          aria-label="Toggle PIN visibility"
+        >
+          {showValue ? (
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+              <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+              <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+              <line x1="2" y1="2" x2="22" y2="22" />
+            </svg>
+          ) : (
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ── Step 1: verify current PIN (4-box style) ─────────────────────────────────
+function StepOne({
+  onVerified,
+  onBack,
+}: {
+  onVerified: (pin: string) => void;
+  onBack: () => void;
+}) {
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleKey = (key: string) => {
+    if (pin.length < 4) setPin((p) => p + key);
+  };
+  const handleDelete = () => {
+    setPin((p) => p.slice(0, -1));
+    setError("");
+  };
+
+  const handleContinue = async () => {
+    if (pin.length < 4 || isSubmitting) return;
+    setIsSubmitting(true);
+    setError("");
+    await new Promise((r) => setTimeout(r, 400));
+    setIsSubmitting(false);
+    onVerified(pin);
+  };
+
+  const isDisabled = pin.length < 4 || isSubmitting;
+
+  return (
+    <div
+      className={`max-w-md mx-auto bg-[#F9F9F9] flex flex-col w-full min-h-dvh ${inter.className} select-none`}
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3 px-6 pt-14 pb-4 bg-[#F9F9F9]">
+        <button
+          onClick={onBack}
+          className="p-1 -ml-1 text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+          aria-label="Go back"
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <span
+          className={`text-[16px] font-semibold text-neutral-900 ${dm_sans.className}`}
+        >
+          Change Pin
+        </span>
+      </div>
+
+      <div className="flex-1 px-6 pt-2 flex flex-col items-center">
+        <h1
+          className={`text-[24px] font-bold text-neutral-900 tracking-tight leading-tight text-center ${dm_sans.className}`}
+        >
+          Enter Transaction Pin
+        </h1>
+        <p
+          className={`text-[14px] text-neutral-500 mt-2 font-normal leading-snug text-center ${dm_sans.className}`}
+        >
+          Enter your current transaction pin to proceed
+        </p>
+
+        {/* 4-box PIN input */}
+        <div className="flex justify-center gap-3.5 mt-8">
+          {[0, 1, 2, 3].map((idx) => {
+            const isFilled = pin.length > idx;
+            const isBoxActive = pin.length === idx;
+            return (
+              <div
+                key={idx}
+                className={`w-[58px] h-[58px] rounded-[12px] bg-white border flex items-center justify-center transition-all ${
+                  error
+                    ? "border-red-500 ring-1 ring-red-500"
+                    : isBoxActive
+                    ? "border-[#D2B627] ring-1 ring-[#D2B627]"
+                    : "border-neutral-200"
+                }`}
+              >
+                {isFilled ? (
+                  <span className="text-neutral-800 text-[20px] font-bold mt-1 select-none">
+                    *
+                  </span>
+                ) : isBoxActive ? (
+                  <span
+                    className="w-[1.5px] h-[18px] bg-neutral-900"
+                    style={{ animation: "blink 1s step-end infinite" }}
+                  />
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Error */}
+        <div className="h-5 mt-4 flex items-center justify-center">
+          {error && (
+            <span className="text-[12px] font-semibold text-red-500 flex items-center gap-1">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              {error}
+            </span>
+          )}
+        </div>
+
+        {/* Forgot PIN */}
+        <div className="flex justify-center mt-1 w-full">
+          <button
+            className={`text-[13px] font-semibold text-[#D2B627] hover:opacity-80 transition-opacity cursor-pointer ${dm_sans.className}`}
+          >
+            Forgot PIN?
+          </button>
+        </div>
+
+        {/* Continue */}
+        <div className="mt-6 w-full">
+          <button
+            disabled={isDisabled}
+            onClick={handleContinue}
+            className={`w-full h-[52px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center transition-colors ${
+              isDisabled
+                ? "bg-neutral-200 text-neutral-400 opacity-50 cursor-not-allowed"
+                : "bg-black text-white hover:bg-neutral-800 cursor-pointer active:scale-[0.99]"
+            }`}
+          >
+            {isSubmitting ? "Verifying..." : "Continue"}
+          </button>
+        </div>
+      </div>
+
+      <PinKeyboard onKey={handleKey} onDelete={handleDelete} />
+
+      <style jsx global>{`
+        @keyframes blink {
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// ── Step 2: set new PIN ───────────────────────────────────────────────────────
+function StepTwo({
+  onSave,
+  onCancel,
+}: {
+  onSave: (newPin: string) => void;
+  onCancel: () => void;
+}) {
+  const [newPin, setNewPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
+  const [activeField, setActiveField] = useState<"new" | "confirm">("new");
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleKey = (key: string) => {
+    if (activeField === "new") {
+      if (newPin.length < 4) {
+        const next = newPin + key;
+        setNewPin(next);
+        if (next.length === 4) setActiveField("confirm");
+      }
+    } else {
+      if (confirmPin.length < 4) setConfirmPin((p) => p + key);
+    }
+  };
+
+  const handleDelete = () => {
+    if (activeField === "confirm") {
+      if (confirmPin.length === 0) {
+        setActiveField("new");
+      } else {
+        setConfirmPin((p) => p.slice(0, -1));
+      }
+    } else {
+      setNewPin((p) => p.slice(0, -1));
+    }
+  };
+
+  const pinsMatch =
+    newPin.length === 4 && confirmPin.length === 4 && newPin === confirmPin;
+  const pinsMismatch =
+    newPin.length === 4 && confirmPin.length === 4 && newPin !== confirmPin;
+  const isDisabled = !pinsMatch || isSubmitting;
+
+  const handleSave = async () => {
+    if (isDisabled) return;
+    setIsSubmitting(true);
+    await new Promise((r) => setTimeout(r, 400));
+    setIsSubmitting(false);
+    onSave(newPin);
+  };
+
+  return (
+    <div
+      className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-dvh ${inter.className} select-none`}
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3 px-6 pt-14 pb-4">
+        <button
+          onClick={onCancel}
+          className="p-1 -ml-1 text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+          aria-label="Go back"
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <span
+          className={`text-[16px] font-semibold text-neutral-900 ${dm_sans.className}`}
+        >
+          Change Pin
+        </span>
+      </div>
+
+      <div className="flex-1 px-6 pt-2 flex flex-col">
+        <h1
+          className={`text-[24px] font-bold text-neutral-900 tracking-tight leading-tight ${dm_sans.className}`}
+        >
+          Create a new PIN
+        </h1>
+        <p
+          className={`text-[14px] text-neutral-500 mt-2 font-normal leading-snug ${dm_sans.className}`}
+        >
+          Choose a 4-digit PIN you'll be using for your transactions going forward.
+        </p>
+
+        {/* PIN fields */}
+        <div className="mt-6 space-y-4">
+          <PinBar
+            label="New PIN"
+            value={newPin}
+            isActive={activeField === "new"}
+            showValue={showNew}
+            onToggleShow={() => setShowNew((v) => !v)}
+            onFocus={() => setActiveField("new")}
+          />
+          <PinBar
+            label="Confirm new PIN"
+            value={confirmPin}
+            isActive={activeField === "confirm"}
+            showValue={showConfirm}
+            onToggleShow={() => setShowConfirm((v) => !v)}
+            onFocus={() => setActiveField("confirm")}
+            error={pinsMismatch}
+          />
+        </div>
+
+        {/* Match / mismatch feedback */}
+        <div className="h-5 mt-2 flex items-center">
+          {pinsMismatch && (
+            <span className="text-[12px] font-semibold text-red-500 flex items-center gap-1">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              PINs do not match
+            </span>
+          )}
+          {pinsMatch && (
+            <span className="text-[12px] font-semibold text-emerald-600 flex items-center gap-1">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M8 12l3 3 5-5" />
+              </svg>
+              PINs match
+            </span>
+          )}
+        </div>
+
+        {/* Buttons */}
+        <div className="mt-4 space-y-3">
+          <button
+            disabled={isDisabled}
+            onClick={handleSave}
+            className={`w-full h-[52px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center transition-all ${
+              isDisabled
+                ? "bg-neutral-200 text-neutral-400 opacity-50 cursor-not-allowed"
+                : "bg-black text-white hover:bg-neutral-800 cursor-pointer active:scale-[0.99]"
+            }`}
+          >
+            {isSubmitting ? "Saving..." : "Save"}
+          </button>
+
+          <button
+            onClick={onCancel}
+            className={`w-full h-[52px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center text-neutral-600 hover:text-neutral-900 transition-colors cursor-pointer`}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+
+      <PinKeyboard
+        onKey={handleKey}
+        onDelete={handleDelete}
+        onClose={onCancel}
+      />
+
+      <style jsx global>{`
+        @keyframes blink {
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0;
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+// ── Step 3: Success ───────────────────────────────────────────────────────────
+function StepSuccess({ onDone }: { onDone: () => void }) {
+  return (
+    <div
+      className={`max-w-md mx-auto bg-white flex flex-col items-center justify-center w-full min-h-dvh px-12 ${inter.className} select-none`}
+    >
+      <div className="w-[72px] h-[72px] rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mb-6">
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#10b981"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M8 12l3 3 5-5" />
+        </svg>
+      </div>
+      <h1
+        className={`text-[24px] font-bold text-neutral-900 tracking-tight text-center ${dm_sans.className}`}
+      >
+        PIN Updated!
+      </h1>
+      <p
+        className={`text-[14px] text-neutral-500 mt-2 text-center leading-relaxed ${dm_sans.className}`}
+      >
+        Your transaction PIN has been changed successfully.
+      </p>
+      <button
+        onClick={onDone}
+        className={`w-full h-[52px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center bg-black text-white hover:bg-neutral-800 cursor-pointer active:scale-[0.99] transition-all mt-10`}
+      >
+        Done
+      </button>
+    </div>
+  );
+}
+
+// ── Root page ─────────────────────────────────────────────────────────────────
+export default function ChangePinPage() {
+  const router = useRouter();
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  if (step === 1) {
+    return (
+      <StepOne
+        onVerified={() => setStep(2)}
+        onBack={() => router.back()}
+      />
+    );
+  }
+
+  if (step === 2) {
+    return (
+      <StepTwo
+        onSave={() => {
+          // TODO: call API once endpoint is available
+          setStep(3);
+        }}
+        onCancel={() => setStep(1)}
+      />
+    );
+  }
+
+  return <StepSuccess onDone={() => router.back()} />;
+}

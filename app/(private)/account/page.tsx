@@ -152,6 +152,7 @@ export default function AccountPage() {
 
   const handleLogout = async () => {
     await logout();
+    await new Promise((resolve) => setTimeout(resolve, 250));
     window.location.href = "/auth/login/start";
   };
 
@@ -245,7 +246,10 @@ export default function AccountPage() {
         {/* ── Security ──────────────────────────────────────────────── */}
         <SectionLabel label="Security" />
         <Card>
-          <ChevronRow label="Change PIN" />
+          <ChevronRow
+            label="Change PIN"
+            onClick={() => router.push("/account/change-pin")}
+          />
           <ChevronRow label="Reset PIN" />
         </Card>
 

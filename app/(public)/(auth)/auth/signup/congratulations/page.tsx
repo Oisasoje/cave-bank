@@ -96,7 +96,10 @@ export default function CongratulationsPage() {
       {/* Go to Wallet button */}
       <div className="px-6 pb-10">
         <button
-          onClick={() => { window.location.href = "/wallet"; }}
+          onClick={async () => {
+            await new Promise((resolve) => setTimeout(resolve, 250));
+            window.location.href = "/wallet";
+          }}
           className={`w-full h-[54px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center select-none transition-colors border border-neutral-200 bg-neutral-50 text-neutral-600 hover:bg-neutral-100 cursor-pointer`}
         >
           Go to Wallet
