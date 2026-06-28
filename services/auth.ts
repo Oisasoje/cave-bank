@@ -61,6 +61,24 @@ export function getUser() {
   });
 }
 
+export function verifyPin(pin: string) {
+  return api("/auth/verify-pin", {
+    method: "POST",
+    body: JSON.stringify({
+      pin,
+    }),
+  });
+}
+
+export function changePin(pin: string) {
+  return api("/auth/change-pin", {
+    method: "POST",
+    body: JSON.stringify({
+      newPin: pin,
+    }),
+  });
+}
+
 export function logout() {
   return api("/auth/logout", {
     method: "POST",

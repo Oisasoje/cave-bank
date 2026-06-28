@@ -1,88 +1,22 @@
 "use client";
 
+import Keyboard from "@/components/Keyboard";
+import { changePin, verifyPin } from "@/services/auth";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { toast } from "sonner";
 
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
-const dm_sans = DM_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+const dm_sans = DM_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 const space_mono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] });
 
-// ── Keyboard with optional Close button ───────────────────────────────────────
-function PinKeyboard({
-  onKey,
-  onDelete,
-  onClose,
-}: {
-  onKey: (k: string) => void;
-  onDelete: () => void;
-  onClose?: () => void;
-}) {
-  const keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-
-  return (
-    <div
-      className={`fixed bottom-0 left-0 right-0 w-full bg-[#D1D5DB]/70 backdrop-blur-xl pb-[calc(env(safe-area-inset-bottom)+16px)] select-none ${space_mono.className}`}
-    >
-      {/* Close row */}
-      {onClose && (
-        <div className="flex justify-end px-4 pt-2 pb-0">
-          <button
-            onClick={onClose}
-            className={`text-[13px] font-semibold text-neutral-500 hover:text-neutral-800 transition-colors cursor-pointer ${dm_sans.className}`}
-          >
-            Close
-          </button>
-        </div>
-      )}
-
-      <div className="px-2 pt-2">
-        <div className="grid grid-cols-3 gap-2">
-          {/* 1–9 */}
-          {keys.slice(0, 9).map((k) => (
-            <div
-              key={k}
-              className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex flex-col items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-              onClick={() => onKey(k)}
-            >
-              <span className="text-[24px] leading-none">{k}</span>
-            </div>
-          ))}
-
-          {/* 0 (col-span-2) */}
-          <div
-            className="h-[52px] bg-white rounded-[6px] shadow-[0_1px_0_rgba(0,0,0,0.25)] flex col-span-2 items-center justify-center cursor-pointer active:bg-neutral-200 transition-colors"
-            onClick={() => onKey("0")}
-          >
-            <span className="text-[24px] leading-none">0</span>
-          </div>
-
-          {/* Delete */}
-          <div
-            className="h-[52px] rounded-[5px] flex items-center justify-center text-black cursor-pointer active:bg-neutral-300/40 transition-colors"
-            onClick={onDelete}
-          >
-            <svg
-              width="22"
-              height="16"
-              viewBox="0 0 22 16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M9 14L2 8L9 2H20V14H9Z" />
-              <path d="M12 5L17 10M17 5L12 10" />
-            </svg>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Single PIN bar (login-verify style) ───────────────────────────────────────
 function PinBar({
   label,
   value,
@@ -118,8 +52,8 @@ function PinBar({
           error
             ? "border-red-500"
             : isActive
-            ? "border-amber-500"
-            : "border-neutral-200"
+              ? "border-amber-500"
+              : "border-neutral-200"
         }`}
       >
         <div className="flex items-center gap-3">
@@ -208,7 +142,7 @@ function StepOne({
   onVerified,
   onBack,
 }: {
-  onVerified: (pin: string) => void;
+  onVerified: () => void;
   onBack: () => void;
 }) {
   const [pin, setPin] = useState("");
@@ -224,12 +158,20 @@ function StepOne({
   };
 
   const handleContinue = async () => {
-    if (pin.length < 4 || isSubmitting) return;
-    setIsSubmitting(true);
-    setError("");
-    await new Promise((r) => setTimeout(r, 400));
-    setIsSubmitting(false);
-    onVerified(pin);
+    try {
+      if (pin.length < 4 || isSubmitting) return;
+      setIsSubmitting(true);
+      setError("");
+
+      await verifyPin(pin);
+
+      onVerified();
+    } catch (error: any) {
+      setError(error.message);
+      toast.error(error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const isDisabled = pin.length < 4 || isSubmitting;
@@ -241,28 +183,28 @@ function StepOne({
       {/* Header */}
       <div className="flex items-center gap-3 px-6 pt-14 pb-4 bg-[#F9F9F9]">
         <button
-          onClick={onBack}
-          className="p-1 -ml-1 text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+          onClick={() => {}}
+          className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors shadow-xs cursor-pointer active:scale-95 duration-100"
           aria-label="Go back"
         >
           <svg
-            width="22"
-            height="22"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+            stroke="#1F2937"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M15 18l-6-6 6-6" />
+            <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
-        <span
-          className={`text-[16px] font-semibold text-neutral-900 ${dm_sans.className}`}
+        <h1
+          className={`text-[18px] font-bold text-neutral-850 tracking-tight ${dm_sans.className}`}
         >
           Change Pin
-        </span>
+        </h1>
       </div>
 
       <div className="flex-1 px-6 pt-2 flex flex-col items-center">
@@ -289,8 +231,8 @@ function StepOne({
                   error
                     ? "border-red-500 ring-1 ring-red-500"
                     : isBoxActive
-                    ? "border-[#D2B627] ring-1 ring-[#D2B627]"
-                    : "border-neutral-200"
+                      ? "border-[#D2B627] ring-1 ring-[#D2B627]"
+                      : "border-neutral-200"
                 }`}
               >
                 {isFilled ? (
@@ -308,31 +250,8 @@ function StepOne({
           })}
         </div>
 
-        {/* Error */}
-        <div className="h-5 mt-4 flex items-center justify-center">
-          {error && (
-            <span className="text-[12px] font-semibold text-red-500 flex items-center gap-1">
-              <svg
-                width="13"
-                height="13"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
-              {error}
-            </span>
-          )}
-        </div>
-
         {/* Forgot PIN */}
-        <div className="flex justify-center mt-1 w-full">
+        <div className="flex justify-center mt-6 w-full">
           <button
             className={`text-[13px] font-semibold text-[#D2B627] hover:opacity-80 transition-opacity cursor-pointer ${dm_sans.className}`}
           >
@@ -356,7 +275,7 @@ function StepOne({
         </div>
       </div>
 
-      <PinKeyboard onKey={handleKey} onDelete={handleDelete} />
+      <Keyboard onKey={handleKey} onDelete={handleDelete} />
 
       <style jsx global>{`
         @keyframes blink {
@@ -419,11 +338,16 @@ function StepTwo({
   const isDisabled = !pinsMatch || isSubmitting;
 
   const handleSave = async () => {
-    if (isDisabled) return;
-    setIsSubmitting(true);
-    await new Promise((r) => setTimeout(r, 400));
-    setIsSubmitting(false);
-    onSave(newPin);
+    try {
+      if (isDisabled) return;
+      setIsSubmitting(true);
+      await changePin(newPin);
+      setIsSubmitting(false);
+      toast.success("PIN changed successfully");
+    } catch (error: any) {
+      toast.error(error.message);
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -466,7 +390,8 @@ function StepTwo({
         <p
           className={`text-[14px] text-neutral-500 mt-2 font-normal leading-snug ${dm_sans.className}`}
         >
-          Choose a 4-digit PIN you'll be using for your transactions going forward.
+          Choose a 4-digit PIN you'll be using for your transactions going
+          forward.
         </p>
 
         {/* PIN fields */}
@@ -554,11 +479,7 @@ function StepTwo({
         </div>
       </div>
 
-      <PinKeyboard
-        onKey={handleKey}
-        onDelete={handleDelete}
-        onClose={onCancel}
-      />
+      <Keyboard onKey={handleKey} onDelete={handleDelete} />
 
       <style jsx global>{`
         @keyframes blink {
@@ -623,10 +544,7 @@ export default function ChangePinPage() {
 
   if (step === 1) {
     return (
-      <StepOne
-        onVerified={() => setStep(2)}
-        onBack={() => router.back()}
-      />
+      <StepOne onVerified={() => setStep(2)} onBack={() => router.back()} />
     );
   }
 
