@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
         source: "/api/:path*",
         destination:
           process.env.NODE_ENV === "production"
-            ? "https://cave-bank-api.vercel.app/:path*"
+            ? "https://api.housecave.org/:path*"
             : "http://localhost:8000/:path*",
       },
     ];
