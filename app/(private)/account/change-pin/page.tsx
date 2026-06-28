@@ -1,5 +1,6 @@
 "use client";
 
+import ConfettiAnimation from "@/components/Confetti";
 import Keyboard from "@/components/Keyboard";
 import { changePin, verifyPin } from "@/services/auth";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
@@ -175,15 +176,15 @@ function StepOne({
   };
 
   const isDisabled = pin.length < 4 || isSubmitting;
-
+  const router = useRouter();
   return (
     <div
       className={`max-w-md mx-auto bg-[#F9F9F9] flex flex-col w-full min-h-dvh ${inter.className} select-none`}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-6 pt-14 pb-4 bg-[#F9F9F9]">
+      <div className="flex items-center gap-3 px-6 pt-6 pb-4 bg-[#F9F9F9]">
         <button
-          onClick={() => {}}
+          onClick={() => router.back()}
           className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors shadow-xs cursor-pointer active:scale-95 duration-100"
           aria-label="Go back"
         >
@@ -297,7 +298,7 @@ function StepTwo({
   onSave,
   onCancel,
 }: {
-  onSave: (newPin: string) => void;
+  onSave: () => void;
   onCancel: () => void;
 }) {
   const [newPin, setNewPin] = useState("");
@@ -344,6 +345,7 @@ function StepTwo({
       await changePin(newPin);
       setIsSubmitting(false);
       toast.success("PIN changed successfully");
+      onSave();
     } catch (error: any) {
       toast.error(error.message);
       setIsSubmitting(false);
@@ -355,7 +357,7 @@ function StepTwo({
       className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-dvh ${inter.className} select-none`}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-6 pt-14 pb-4">
+      <div className="flex items-center gap-3 px-6 pt-6 pb-4">
         <button
           onClick={onCancel}
           className="p-1 -ml-1 text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
@@ -502,6 +504,7 @@ function StepSuccess({ onDone }: { onDone: () => void }) {
     <div
       className={`max-w-md mx-auto bg-white flex flex-col items-center justify-center w-full min-h-dvh px-12 ${inter.className} select-none`}
     >
+      <ConfettiAnimation />
       <div className="w-[72px] h-[72px] rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mb-6">
         <svg
           width="32"
