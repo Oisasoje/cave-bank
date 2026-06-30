@@ -1,12 +1,18 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { Inter, DM_Sans, Space_Mono } from "next/font/google";
+import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getUser,
+  changePin,
+  resetVerify,
+  resetResendOTP,
+  resetPin,
+} from "@/services/auth";
 import ConfettiAnimation from "@/components/Confetti";
 import Keyboard from "@/components/Keyboard";
-import { changePin, verifyPin } from "@/services/auth";
-import { Inter, DM_Sans, Space_Mono } from "next/font/google";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
 import { toast } from "sonner";
 
 const inter = Inter({
@@ -19,6 +25,17 @@ const dm_sans = DM_Sans({
 });
 const space_mono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] });
 
+function maskEmail(email: string) {
+  if (!email) return "your email";
+  const [local, domain] = email.split("@");
+  if (!local || !domain) return email;
+  if (local.length <= 2) {
+    return `${local}***@${domain}`;
+  }
+  return `${local.slice(0, 2)}*******@${domain}`;
+}
+
+// ─── Input Row Component (for step 2) ────────────────────────────────────────
 function PinBar({
   label,
   value,
@@ -44,7 +61,6 @@ function PinBar({
         {label}
       </label>
 
-      {/* Input row */}
       <div
         onClick={(e) => {
           e.stopPropagation();
@@ -139,45 +155,86 @@ function PinBar({
   );
 }
 
-// ── Step 1: verify current PIN (4-box style) ─────────────────────────────────
+// ─── Step 1: OTP Code Verification (3-box layout) ───────────────────────────
 function StepOne({
+  email,
   onVerified,
-  onBack,
+  onCancel,
 }: {
+  email: string;
   onVerified: () => void;
-  onBack: () => void;
+  onCancel: () => void;
 }) {
-  const [pin, setPin] = useState("");
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [code, setCode] = useState("");
+  const [timer, setTimer] = useState(20);
+  const [isVerifying, setIsVerifying] = useState(false);
 
-  const handleKey = (key: string) => {
-    if (pin.length < 4) setPin((p) => p + key);
-  };
-  const handleDelete = () => {
-    setPin((p) => p.slice(0, -1));
-    setError("");
-  };
+  const router = useRouter();
 
-  const handleContinue = async () => {
-    try {
-      if (pin.length < 4 || isSubmitting) return;
-      setIsSubmitting(true);
-      setError("");
+  useEffect(() => {
+    if (timer <= 0) return;
+    const interval = setInterval(() => {
+      setTimer((t) => t - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [timer]);
 
-      await verifyPin(pin);
+  const handleKey = async (key: string) => {
+    const tokenId = sessionStorage.getItem("resetAttemptId");
 
-      onVerified();
-    } catch (error: any) {
-      setError(error.message);
-      toast.error(error.message);
-    } finally {
-      setIsSubmitting(false);
+    if (!tokenId) {
+      toast.error("You cannot proceed. Please start over.");
+      setTimeout(() => {
+        router.push("/account");
+      }, 2000);
+      return;
+    }
+
+    if (code.length < 6) {
+      const nextCode = code + key;
+      setCode(nextCode);
+      if (nextCode.length === 6) {
+        setIsVerifying(true);
+        try {
+          const res = await resetVerify(tokenId, nextCode);
+          sessionStorage.setItem("resetTokenId", res?.data?.reset_token_id);
+
+          onVerified();
+        } catch (error) {
+          setIsVerifying(false);
+          toast.error("Invalid verification code.");
+        }
+      }
     }
   };
 
-  const isDisabled = pin.length < 4 || isSubmitting;
-  const router = useRouter();
+  const handleDelete = () => {
+    if (!isVerifying) {
+      setCode((c) => c.slice(0, -1));
+    }
+  };
+
+  const handleResend = async () => {
+    const tokenId = sessionStorage.getItem("resetAttemptId");
+
+    if (!tokenId) {
+      toast.error("You cannot proceed. Please start over.");
+      setTimeout(() => {
+        router.push("/account");
+      }, 2000);
+      return;
+    }
+
+    try {
+      await resetResendOTP(tokenId);
+      setTimer(20);
+      setCode("");
+      toast.success("OTP resent successfully!");
+    } catch (error) {
+      toast.error("Failed to resend OTP.");
+    }
+  };
+
   return (
     <div
       className={`max-w-md mx-auto bg-[#F9F9F9] flex flex-col w-full min-h-dvh ${inter.className} select-none`}
@@ -185,7 +242,7 @@ function StepOne({
       {/* Header */}
       <div className="flex items-center gap-3 px-6 pt-6 pb-4 bg-[#F9F9F9]">
         <button
-          onClick={() => router.back()}
+          onClick={onCancel}
           className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors shadow-xs cursor-pointer active:scale-95 duration-100"
           aria-label="Go back"
         >
@@ -205,41 +262,43 @@ function StepOne({
         <h1
           className={`text-[18px] font-bold text-neutral-850 tracking-tight ${dm_sans.className}`}
         >
-          Change Pin
+          Reset PIN
         </h1>
       </div>
 
-      <div className="flex-1 px-6 pt-2 flex flex-col items-center">
+      <div className="flex-1 px-6 pt-6 flex flex-col items-center">
         <h1
           className={`text-[24px] font-bold text-neutral-900 tracking-tight leading-tight text-center ${dm_sans.className}`}
         >
-          Enter Transaction Pin
+          Reset Transaction PIN
         </h1>
         <p
-          className={`text-[14px] text-neutral-500 mt-2 font-normal leading-snug text-center ${dm_sans.className}`}
+          className={`text-[14px] text-neutral-500 mt-2.5 font-normal leading-relaxed text-center max-w-[280px] ${dm_sans.className}`}
         >
-          Enter your current transaction pin to proceed
+          Enter the code we sent to
+          <br />
+          <span className="text-neutral-850 font-semibold">
+            {maskEmail(email)}
+          </span>
         </p>
 
-        {/* 4-box PIN input */}
-        <div className="flex justify-center gap-3.5 mt-8">
-          {[0, 1, 2, 3].map((idx) => {
-            const isFilled = pin.length > idx;
-            const isBoxActive = pin.length === idx;
+        {/* 3-box OTP layout */}
+        <div className="flex justify-center items-center gap-2 mt-8">
+          {[0, 1, 2, 3, 4, 5].map((idx) => {
+            const isFilled = code.length > idx;
+            const isBoxActive = code.length === idx;
             return (
               <div
                 key={idx}
                 className={`w-[58px] h-[58px] rounded-[12px] bg-white border flex items-center justify-center transition-all ${
-                  error
-                    ? "border-red-500 ring-1 ring-red-500"
-                    : isBoxActive
-                      ? "border-[#D2B627] ring-1 ring-[#D2B627]"
-                      : "border-neutral-200"
+                  isBoxActive
+                    ? "border-[#D2B627] ring-1 ring-[#D2B627]"
+                    : "border-neutral-200"
                 }`}
               >
                 {isFilled ? (
-                  <span className="text-neutral-800 text-[20px] font-bold mt-1 select-none">
-                    *
+                  <span className="text-neutral-800 text-[22px] font-bold select-none">
+                    {code[idx]}
                   </span>
                 ) : isBoxActive ? (
                   <span
@@ -252,50 +311,41 @@ function StepOne({
           })}
         </div>
 
-        {/* Forgot PIN */}
-        <div className="flex justify-center mt-6 w-full">
-          <Link
-            href="/account/reset-pin"
-            className={`text-[13px] font-semibold text-[#D2B627] hover:opacity-80 transition-opacity cursor-pointer ${dm_sans.className}`}
-          >
-            Forgot PIN?
-          </Link>
-        </div>
-
-        {/* Continue */}
-        <div className="mt-6 w-full">
+        {/* Action Buttons */}
+        <div className="mt-8 w-full space-y-3">
           <button
-            disabled={isDisabled}
-            onClick={handleContinue}
-            className={`w-full h-[52px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center transition-colors ${
-              isDisabled
-                ? "bg-neutral-200 text-neutral-400 opacity-50 cursor-not-allowed"
+            type="button"
+            disabled={timer > 0 || isVerifying}
+            onClick={handleResend}
+            className={`w-full h-[52px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center transition-all duration-200 ${
+              timer > 0 || isVerifying
+                ? "bg-[#EAEAEA] text-neutral-400 cursor-not-allowed"
                 : "bg-black text-white hover:bg-neutral-800 cursor-pointer active:scale-[0.99]"
             }`}
           >
-            {isSubmitting ? "Verifying..." : "Continue"}
+            {isVerifying
+              ? "Verifying..."
+              : timer > 0
+                ? `Resend Code in ${timer}s`
+                : "Resend Code"}
+          </button>
+
+          <button
+            type="button"
+            onClick={onCancel}
+            className={`w-full h-[52px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center text-neutral-600 hover:text-neutral-900 transition-colors cursor-pointer`}
+          >
+            Cancel
           </button>
         </div>
       </div>
 
       <Keyboard onKey={handleKey} onDelete={handleDelete} />
-
-      <style jsx global>{`
-        @keyframes blink {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }
 
-// ── Step 2: set new PIN ───────────────────────────────────────────────────────
+// ─── Step 2: Create New PIN ──────────────────────────────────────────────────
 function StepTwo({
   onSave,
   onCancel,
@@ -340,16 +390,27 @@ function StepTwo({
     newPin.length === 4 && confirmPin.length === 4 && newPin !== confirmPin;
   const isDisabled = !pinsMatch || isSubmitting;
 
+  const router = useRouter();
+
   const handleSave = async () => {
+    if (isDisabled || isSubmitting) return;
+
+    const tokenId = sessionStorage.getItem("resetTokenId");
+
+    if (!tokenId) {
+      toast.error("You cannot proceed. Please start over.");
+      setTimeout(() => router.push("/account"), 2000);
+      return;
+    }
+
     try {
-      if (isDisabled) return;
       setIsSubmitting(true);
-      await changePin(newPin);
-      setIsSubmitting(false);
-      toast.success("PIN changed successfully");
+      await resetPin(tokenId, newPin);
+      toast.success("PIN reset successfully!");
       onSave();
-    } catch (error: any) {
-      toast.error(error.message);
+    } catch (err) {
+      toast.error("Failed to reset PIN.");
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -484,24 +545,25 @@ function StepTwo({
       </div>
 
       <Keyboard onKey={handleKey} onDelete={handleDelete} />
-
-      <style jsx global>{`
-        @keyframes blink {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }
 
-// ── Step 3: Success ───────────────────────────────────────────────────────────
+// ─── Step 3: Success Screen (with countdown auto-redirect) ───────────────────
 function StepSuccess({ onDone }: { onDone: () => void }) {
+  const [redirectCountdown, setRedirectCountdown] = useState(5);
+
+  useEffect(() => {
+    if (redirectCountdown <= 0) {
+      onDone();
+      return;
+    }
+    const interval = setTimeout(() => {
+      setRedirectCountdown((c) => c - 1);
+    }, 1000);
+    return () => clearTimeout(interval);
+  }, [redirectCountdown, onDone]);
+
   return (
     <div
       className={`max-w-md mx-auto bg-white flex flex-col items-center justify-center w-full min-h-dvh px-12 ${inter.className} select-none`}
@@ -525,45 +587,55 @@ function StepSuccess({ onDone }: { onDone: () => void }) {
       <h1
         className={`text-[24px] font-bold text-neutral-900 tracking-tight text-center ${dm_sans.className}`}
       >
-        PIN Updated!
+        Success!
       </h1>
       <p
         className={`text-[14px] text-neutral-500 mt-2 text-center leading-relaxed ${dm_sans.className}`}
       >
-        Your transaction PIN has been changed successfully.
+        Your new transaction PIN was set successfully, you can now authorize
+        transactions with it.
       </p>
-      <button
-        onClick={onDone}
-        className={`w-full h-[52px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center bg-black text-white hover:bg-neutral-800 cursor-pointer active:scale-[0.99] transition-all mt-10`}
-      >
-        Done
-      </button>
+
+      <div className="w-full mt-10 flex flex-col items-center gap-2">
+        <button
+          onClick={onDone}
+          className={`w-full h-[52px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center bg-black text-white hover:bg-neutral-800 cursor-pointer active:scale-[0.99] transition-all`}
+        >
+          Back to Wallet
+        </button>
+        <span className="text-[12px] font-semibold text-neutral-400">
+          in {redirectCountdown}s
+        </span>
+      </div>
     </div>
   );
 }
 
-// ── Root page ─────────────────────────────────────────────────────────────────
-export default function ChangePinPage() {
+// ─── Root Page ───────────────────────────────────────────────────────────────
+export default function ResetPinPage() {
   const router = useRouter();
   const [step, setStep] = useState<1 | 2 | 3>(1);
 
+  // Fetch logged in user email to mask it
+  const { data: me } = useQuery({
+    queryKey: ["me"],
+    queryFn: getUser,
+  });
+  const email = me?.data?.user?.email ?? "";
+
   if (step === 1) {
     return (
-      <StepOne onVerified={() => setStep(2)} onBack={() => router.back()} />
-    );
-  }
-
-  if (step === 2) {
-    return (
-      <StepTwo
-        onSave={() => {
-          // TODO: call API once endpoint is available
-          setStep(3);
-        }}
-        onCancel={() => setStep(1)}
+      <StepOne
+        email={email}
+        onVerified={() => setStep(2)}
+        onCancel={() => router.back()}
       />
     );
   }
 
-  return <StepSuccess onDone={() => router.back()} />;
+  if (step === 2) {
+    return <StepTwo onSave={() => setStep(3)} onCancel={() => setStep(1)} />;
+  }
+
+  return <StepSuccess onDone={() => router.push("/account")} />;
 }

@@ -102,10 +102,9 @@ export default function EnterPhonePage() {
       sessionStorage.setItem("userEmail", email);
 
       router.push("/auth/signup/verify");
-      // ✅ isSubmitting stays true during navigation
     } catch (error: any) {
       setErrors(error.message || "Failed to search for Cave profile.");
-      setIsSubmitting(false); // ✅ only reset on failure
+      setIsSubmitting(false);
     }
   };
   if (isSubmitting) {

@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { Inter, DM_Sans } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { getUser, logout } from "@/services/auth";
+import { getUser, logout, resetStart } from "@/services/auth";
 import { getInitials, getColorClass } from "@/lib/avatar";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -144,9 +145,18 @@ export default function AccountPage() {
         year: "numeric",
       })
     : "";
-  const userId: string = me?.data?.user?.id ?? name;
-  const colorClass = getColorClass(userId);
 
+  const userId = me?.data.user.id;
+
+  const handleResetPinStart = async () => {
+    try {
+      const res = await resetStart(userId);
+      sessionStorage.setItem("resetAttemptId", res?.data?.id);
+      router.push("/account/reset-pin");
+    } catch (error: any) {
+      toast.error(error.message || "Something went wrong. Try again later.");
+    }
+  };
   const [emailNotif, setEmailNotif] = useState(true);
   const [pushNotif, setPushNotif] = useState(false);
 
@@ -250,7 +260,7 @@ export default function AccountPage() {
             label="Change PIN"
             onClick={() => router.push("/account/change-pin")}
           />
-          <ChevronRow label="Reset PIN" />
+          <ChevronRow label="Reset PIN" onClick={handleResetPinStart} />
         </Card>
 
         {/* ── Support ───────────────────────────────────────────────── */}

@@ -79,6 +79,44 @@ export function changePin(pin: string) {
   });
 }
 
+export function resetStart(id: string) {
+  return api("/auth/reset-pin/start", {
+    method: "POST",
+    body: JSON.stringify({
+      id,
+    }),
+  });
+}
+
+export function resetVerify(id: string, otp: string) {
+  return api("/auth/reset-pin/verify-otp", {
+    method: "POST",
+    body: JSON.stringify({
+      reset_token_id: id,
+      otp,
+    }),
+  });
+}
+
+export function resetPin(id: string, pin: string) {
+  return api("/auth/reset-pin/set-new-pin", {
+    method: "POST",
+    body: JSON.stringify({
+      reset_token_id: id,
+      newPin: pin,
+    }),
+  });
+}
+
+export function resetResendOTP(id: string) {
+  return api("/auth/reset-pin/resend-otp", {
+    method: "POST",
+    body: JSON.stringify({
+      id,
+    }),
+  });
+}
+
 export function logout() {
   return api("/auth/logout", {
     method: "POST",
