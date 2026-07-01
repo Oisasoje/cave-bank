@@ -222,29 +222,29 @@ function StepOne({
         </p>
 
         {/* 4-box PIN input */}
-        <div className="flex justify-center gap-3.5 mt-8">
+        <div className="flex gap-2.5 mt-8 justify-center">
           {[0, 1, 2, 3].map((idx) => {
             const isFilled = pin.length > idx;
             const isBoxActive = pin.length === idx;
             return (
               <div
                 key={idx}
-                className={`w-[58px] h-[58px] rounded-[12px] bg-white border flex items-center justify-center transition-all ${
+                className={`w-[48px] h-[54px] bg-[#F3F4F6] rounded-[10px] flex items-center justify-center transition-all ${
                   error
-                    ? "border-red-500 ring-1 ring-red-500"
+                    ? "border-2 border-red-500 ring-1 ring-red-500 bg-white"
                     : isBoxActive
-                      ? "border-[#D2B627] ring-1 ring-[#D2B627]"
-                      : "border-neutral-200"
+                      ? "border-2 border-amber-500 ring-1 ring-amber-500 bg-white"
+                      : isFilled
+                        ? "border border-neutral-300 bg-white"
+                        : "border border-neutral-200"
                 }`}
               >
                 {isFilled ? (
-                  <span className="text-neutral-800 text-[20px] font-bold mt-1 select-none">
+                  <span className="text-[20px] font-bold text-neutral-900 mt-1 select-none">
                     *
                   </span>
                 ) : isBoxActive ? (
-                  <span
-                    className="w-[1.5px] h-[18px] bg-neutral-900 animate-blink"
-                  />
+                  <span className="w-[1.5px] h-[20px] bg-neutral-900 ml-0.5 animate-blink" />
                 ) : null}
               </div>
             );
