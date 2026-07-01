@@ -230,7 +230,7 @@ function StepOne({
       className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-dvh ${inter.className} select-none`}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-6 pt-6 pb-4">
+      <div className="flex items-center gap-3 px-6 pt-6 pb-4 shrink-0 bg-white z-10">
         <button
           onClick={onCancel}
           className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors shadow-xs cursor-pointer active:scale-95 duration-100"
@@ -256,7 +256,7 @@ function StepOne({
         </h1>
       </div>
 
-      <div className="flex-1 px-6 pt-6 flex flex-col items-center">
+      <div className="flex-1 px-6 pt-6 flex flex-col items-center overflow-y-auto pb-[280px] scrollbar-none">
         <h1
           className={`text-[24px] font-bold text-neutral-900 tracking-tight leading-tight text-center ${dm_sans.className}`}
         >
@@ -407,7 +407,7 @@ function StepTwo({
       className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-dvh ${inter.className} select-none`}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-6 pt-6 pb-4">
+      <div className="flex items-center gap-3 px-6 pt-6 pb-4 shrink-0 bg-white z-10">
         <button
           onClick={onCancel}
           className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 active:scale-95 duration-100 transition-colors shadow-xs cursor-pointer shrink-0"
@@ -433,7 +433,7 @@ function StepTwo({
         </h1>
       </div>
 
-      <div className="flex-1 px-6 pt-2 flex flex-col">
+      <div className="flex-1 px-6 pt-2 flex flex-col overflow-y-auto pb-[280px] scrollbar-none">
         <h1
           className={`text-[24px] font-bold text-neutral-900 tracking-tight leading-tight ${dm_sans.className}`}
         >

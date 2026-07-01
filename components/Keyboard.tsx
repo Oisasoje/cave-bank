@@ -20,7 +20,7 @@ const Keyboard = ({
 }) => {
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 w-full ${space_mono.className} bg-[#D1D5DB]/70 backdrop-blur-xl font-semibold pb-[calc(env(safe-area-inset-bottom)+24px)] select-none`}
+      className={`fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-40 ${space_mono.className} bg-[#D1D5DB]/70 backdrop-blur-xl font-semibold pb-[calc(env(safe-area-inset-bottom)+24px)] select-none`}
     >
       <div className="px-2 pt-2">
         <div className="grid grid-cols-3 gap-2">
