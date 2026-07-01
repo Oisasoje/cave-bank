@@ -12,7 +12,7 @@ import Loading from "@/components/Loading";
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["100", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const space_mono = Space_Mono({
@@ -22,7 +22,7 @@ const space_mono = Space_Mono({
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
-  weight: ["100", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export default function LoginPage() {
@@ -97,14 +97,14 @@ export default function LoginPage() {
       className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-dvh ${inter.className}`}
       onClick={() => setFocus(false)}
     >
-      <div className="flex-1 pt-10 px-6 flex flex-col">
+      <div className="flex-1 pt-6 px-6 flex flex-col">
         {/* Welcome Header */}
         <div className="mt-6">
-          <h1 className="text-[28px] font-bold text-neutral-900 tracking-tight leading-tight">
+          <h1 className="text-[24px] font-bold text-neutral-900 tracking-tight leading-tight">
             Welcome Back
           </h1>
           <p
-            className={`text-[15px] text-neutral-500 mt-2 font-normal ${dm_sans.className}`}
+            className={`text-[15px] text-neutral-500 mt-2 font-normal leading-relaxed ${dm_sans.className}`}
           >
             Enter your Cave phone number to continue
           </p>
@@ -143,13 +143,20 @@ export default function LoginPage() {
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-              />
+              >
+              </path>
             </svg>
           </div>
 
           {/* Phone Input Box */}
           <div
-            className={`flex-1 ${focus ? "border-amber-500" : errors ? "border-red-500" : "border-neutral-200"} border  rounded-[10px] px-4 h-[48px] bg-white flex items-center`}
+            className={`flex-1 ${
+              focus
+                ? "border-amber-500 ring-1 ring-amber-500"
+                : errors
+                  ? "border-red-500"
+                  : "border-neutral-200"
+            } border rounded-[10px] px-4 h-[48px] bg-white flex items-center`}
             onClick={(e) => {
               e.stopPropagation();
               setFocus(true);
@@ -157,7 +164,7 @@ export default function LoginPage() {
           >
             <span
               className={`text-[15px] font-medium tracking-wide ${
-                digits.length > 0 ? "text-neutral-900" : "text-neutral-400"
+                digits.length > 0 ? "text-neutral-900" : "text-neutral-300"
               }`}
             >
               {focus || formatted.length > 0 ? formatted : "8123456789"}
@@ -165,18 +172,34 @@ export default function LoginPage() {
             {/* Fake cursor */}
             {focus && (
               <span
-                className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5"
-                style={{ animation: "blink 1s step-end infinite" }}
+                className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5 animate-blink"
               />
             )}
           </div>
         </div>
 
-        <div className={`h-5 ${inter.className} `}>
+        <div className={`h-5 mt-3 flex items-center gap-1.5 ${inter.className}`}>
           {errors && (
-            <span className="text-[12px] font-semibold text-red-500">
-              {errors}
-            </span>
+            <>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-red-500"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <span className="text-[12px] font-semibold text-red-500">
+                {errors}
+              </span>
+            </>
           )}
         </div>
 
@@ -184,11 +207,11 @@ export default function LoginPage() {
         <button
           onClick={handleSubmit}
           disabled={isDisabled}
-          className={`w-full h-[54px] ${dm_sans.className} ${
+          className={`w-full h-[52px] ${dm_sans.className} ${
             !isDisabled
-              ? "bg-[#0E1B1B] text-white"
-              : "bg-neutral-200 text-neutral-400"
-          } rounded-[10px] font-semibold text-[15px] flex items-center justify-center mt-8 select-none transition-colors cursor-pointer`}
+              ? "bg-[#0E1B1B] text-white hover:bg-black cursor-pointer"
+              : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
+          } rounded-[12px] font-semibold text-[15px] flex items-center justify-center mt-6 select-none transition-colors`}
         >
           Continue
         </button>

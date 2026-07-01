@@ -180,10 +180,10 @@ function StepOne({
   const router = useRouter();
   return (
     <div
-      className={`max-w-md mx-auto bg-[#F9F9F9] flex flex-col w-full min-h-dvh ${inter.className} select-none`}
+      className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-dvh ${inter.className} select-none`}
     >
       {/* Header */}
-      <div className="flex items-center gap-3 px-6 pt-6 pb-4 bg-[#F9F9F9]">
+      <div className="flex items-center gap-3 px-6 pt-6 pb-4">
         <button
           onClick={() => router.back()}
           className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 transition-colors shadow-xs cursor-pointer active:scale-95 duration-100"
@@ -243,8 +243,7 @@ function StepOne({
                   </span>
                 ) : isBoxActive ? (
                   <span
-                    className="w-[1.5px] h-[18px] bg-neutral-900"
-                    style={{ animation: "blink 1s step-end infinite" }}
+                    className="w-[1.5px] h-[18px] bg-neutral-900 animate-blink"
                   />
                 ) : null}
               </div>
@@ -362,27 +361,27 @@ function StepTwo({
       <div className="flex items-center gap-3 px-6 pt-6 pb-4">
         <button
           onClick={onCancel}
-          className="p-1 -ml-1 text-neutral-700 hover:text-neutral-900 transition-colors cursor-pointer"
+          className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 active:scale-95 duration-100 transition-colors shadow-xs cursor-pointer shrink-0"
           aria-label="Go back"
         >
           <svg
-            width="22"
-            height="22"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
+            stroke="#1F2937"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
           >
-            <path d="M15 18l-6-6 6-6" />
+            <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
-        <span
-          className={`text-[16px] font-semibold text-neutral-900 ${dm_sans.className}`}
+        <h1
+          className={`text-[18px] font-bold text-neutral-900 tracking-tight ${dm_sans.className}`}
         >
           Change Pin
-        </span>
+        </h1>
       </div>
 
       <div className="flex-1 px-6 pt-2 flex flex-col">

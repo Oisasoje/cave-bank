@@ -127,7 +127,7 @@ const TransferSuccess = ({
           onClick={() => {
             setStep(6);
           }}
-          className="w-full h-[54px] rounded-[14px] bg-[#0E1719] text-white hover:bg-[#18262a] active:scale-[0.98] font-bold text-[14px] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md"
+          className="w-full h-[52px] rounded-[12px] bg-[#0E1B1B] text-white hover:bg-black active:scale-[0.98] font-bold text-[14px] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-md"
         >
           Share Receipt
         </button>
@@ -137,7 +137,7 @@ const TransferSuccess = ({
             router.replace("/wallet");
             handleResetFlow();
           }}
-          className="w-full h-[54px] rounded-[14px] bg-white border border-neutral-300 text-neutral-800 hover:bg-neutral-50 active:scale-[0.98] font-bold text-[14px] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs"
+          className="w-full h-[52px] rounded-[12px] bg-white border border-neutral-300 text-neutral-800 hover:bg-neutral-50 active:scale-[0.98] font-bold text-[14px] flex items-center justify-center transition-all duration-200 cursor-pointer shadow-xs"
         >
           Done
         </button>

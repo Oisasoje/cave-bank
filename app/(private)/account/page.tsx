@@ -168,13 +168,13 @@ export default function AccountPage() {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-neutral-50 min-h-dvh flex flex-col w-full pb-28 select-none ${inter.className}`}
+      className={`max-w-md mx-auto bg-white min-h-dvh flex flex-col w-full pb-28 select-none ${inter.className}`}
     >
       {/* ── Header ─────────────────────────────────────────────────── */}
-      <div className="sticky top-0 z-10 bg-neutral-50 px-6 pt-6 pb-3 flex items-center gap-3">
+      <div className="sticky top-0 z-10 bg-white px-6 pt-6 pb-3 flex items-center gap-3">
         <button
           onClick={() => router.back()}
-          className="w-[38px] h-[38px] rounded-full bg-white border border-neutral-200 flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-xs cursor-pointer shrink-0"
+          className="w-[42px] h-[42px] rounded-full bg-white border border-neutral-200 flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all shadow-xs cursor-pointer shrink-0"
           aria-label="Go back"
         >
           <svg

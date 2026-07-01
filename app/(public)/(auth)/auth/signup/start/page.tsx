@@ -14,7 +14,7 @@ import Loading from "@/components/Loading";
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const space_mono = Space_Mono({
@@ -24,7 +24,7 @@ const space_mono = Space_Mono({
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
-  weight: ["400", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export default function EnterPhonePage() {
@@ -127,20 +127,20 @@ export default function EnterPhonePage() {
         <div className="flex justify-between items-center mt-5">
           <button
             onClick={() => router.back()}
-            className="w-8 h-8 flex items-center justify-start text-neutral-800 hover:text-black cursor-pointer transition-colors"
+            className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 active:scale-95 duration-100 transition-colors cursor-pointer shrink-0 shadow-xs"
+            aria-label="Go back"
           >
-            {/* Left Chevron SVG */}
             <svg
               width="20"
               height="20"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="currentColor"
+              stroke="#1F2937"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path d="M15 18l-6-6 6-6" />
+              <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
           <button
@@ -206,7 +206,7 @@ export default function EnterPhonePage() {
           <div
             className={`flex-1 border rounded-[10px] px-4 h-[48px] bg-white flex items-center transition-all ${
               focus
-                ? "border-amber-500"
+                ? "border-amber-500 ring-1 ring-amber-500"
                 : errors
                   ? "border-red-500"
                   : "border-neutral-200"
@@ -227,13 +227,12 @@ export default function EnterPhonePage() {
             {/* Blinking fake cursor */}
             {focus && (
               <span
-                className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5"
-                style={{ animation: "blink 1s step-end infinite" }}
+                className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5 animate-blink"
               />
             )}
           </div>
         </div>
-        <div className="h-6 mt-2 flex items-center">
+        <div className="h-5 mt-3 flex items-center">
           {errors && (
             <span className="text-[12px] font-semibold text-red-500 flex items-center gap-1">
               <svg
@@ -304,11 +303,11 @@ export default function EnterPhonePage() {
             handleSubmit();
           }}
           disabled={isDisabled}
-          className={`w-full h-[54px] ${dm_sans.className} ${
+          className={`w-full h-[52px] ${dm_sans.className} ${
             !isDisabled
               ? "bg-[#0E1B1B] text-white hover:bg-black cursor-pointer"
               : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
-          } rounded-[10px] font-semibold text-[15px] flex items-center justify-center mt-6 select-none transition-colors`}
+          } rounded-[12px] font-semibold text-[15px] flex items-center justify-center mt-6 select-none transition-colors`}
         >
           {isSubmitting ? "Searching..." : "Continue"}
         </button>

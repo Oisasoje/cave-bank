@@ -43,14 +43,8 @@ const RecentTransactions = ({
           <Shimmer className="h-[11px] w-[130px] rounded" />
           <Shimmer className="h-[11px] w-[48px] rounded" />
         </div>
-        <div className="flex justify-between items-center mb-3">
-          <div className="h-[13px] w-[140px] rounded bg-neutral-100 animate-pulse" />
-          <div className="h-[13px] w-[48px] rounded bg-neutral-100 animate-pulse" />
-        </div>
         <div className="space-y-3.5">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <TransactionSkeleton key={i} />
-          ))}
+          <TransactionSkeleton style="mt-0" number={[1, 2, 3, 4, 5]} />
         </div>
       </div>
     );

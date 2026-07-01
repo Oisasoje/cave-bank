@@ -9,12 +9,12 @@ import { useEffect, useState } from "react";
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["100", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const dm_sans = DM_Sans({
   subsets: ["latin"],
-  weight: ["100", "700"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const space_mono = Space_Mono({
@@ -89,14 +89,14 @@ const Verify = () => {
       className={`max-w-md mx-auto bg-white flex flex-col justify-between w-full min-h-dvh ${inter.className}`}
       onClick={() => setFocus(false)}
     >
-      <div className="flex-1 pt-10 px-6 flex flex-col">
+      <div className="flex-1 pt-6 px-6 flex flex-col">
         {/* Welcome Header */}
         <div className="mt-6">
-          <h1 className="text-[28px] font-bold text-neutral-900 tracking-tight leading-tight">
+          <h1 className="text-[24px] font-bold text-neutral-900 tracking-tight leading-tight">
             Hello, Caveman!
           </h1>
           <p
-            className={`text-[15px] text-neutral-500 mt-2 font-normal ${dm_sans.className}`}
+            className={`text-[15px] text-neutral-500 mt-2 font-normal leading-relaxed ${dm_sans.className}`}
           >
             Enter your PIN to login to your account
           </p>
@@ -104,7 +104,13 @@ const Verify = () => {
 
         {/* PIN Input Box with Red Border Error State */}
         <div
-          className={`flex items-center border ${focus ? "border-amber-500" : errors ? "border-red-500" : "border-neutral-200"} rounded-[10px] px-4 h-[48px] bg-white mt-8 justify-between`}
+          className={`flex items-center border ${
+            focus
+              ? "border-amber-500 ring-1 ring-amber-500"
+              : errors
+                ? "border-red-500"
+                : "border-neutral-200"
+          } rounded-[10px] px-4 h-[48px] bg-white mt-8 justify-between`}
           onClick={(e) => {
             e.stopPropagation();
             setFocus(true);
@@ -138,37 +144,51 @@ const Verify = () => {
               {/* Fake cursor */}
               {focus && (
                 <span
-                  className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5"
-                  style={{ animation: "blink 1s step-end infinite" }}
+                  className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5 animate-blink"
                 />
               )}
             </div>
           </div>
 
           {/* Eye Icon (Visibility Toggle) */}
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#6B7280"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="cursor-pointer"
-            onClick={() => setShowPin(!showPin)}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowPin(!showPin);
+            }}
+            className="text-neutral-400 hover:text-neutral-600 transition-colors p-1 cursor-pointer"
+            aria-label="Toggle PIN visibility"
           >
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-            <circle cx="12" cy="12" r="3" />
-          </svg>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              {showPin ? (
+                <>
+                  <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                  <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                  <path d="M6.61 6.61A13.52 13.52 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                  <line x1="2" y1="2" x2="22" y2="22" />
+                </>
+              ) : (
+                <>
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </>
+              )}
+            </svg>
+          </button>
         </div>
 
-        {/* Error Message and Forgot PIN Row */}
-
         {/* Error Message */}
-        <div className="flex items-center h-5 gap-1.5 text-red-500">
-          {/* Error Warning Icon */}
-
+        <div className="flex items-center h-5 mt-3 gap-1.5 text-red-500">
           {errors && (
             <>
               <svg
@@ -195,7 +215,7 @@ const Verify = () => {
         {/* Forgot PIN Link */}
         <div className="flex justify-end">
           <span
-            className={`text-neutral-500 mt-3 text-[13px] ${dm_sans.className} font-semibold hover:text-neutral-800 cursor-pointer`}
+            className={`text-[#D2B627] mt-3 text-[13px] ${dm_sans.className} font-semibold hover:underline cursor-pointer`}
           >
             Forgot PIN?
           </span>
@@ -205,11 +225,11 @@ const Verify = () => {
         <button
           disabled={isDisabled}
           onClick={handleSubmit}
-          className={`w-full h-[54px] ${dm_sans.className} ${
+          className={`w-full h-[52px] ${dm_sans.className} ${
             isDisabled
-              ? "bg-neutral-200 text-neutral-400 opacity-50 cursor-not-allowed"
-              : "bg-black text-white cursor-pointer"
-          } rounded-[10px] font-semibold text-[15px] flex items-center justify-center mt-3 select-none transition-colors`}
+              ? "bg-neutral-200 text-neutral-400 cursor-not-allowed"
+              : "bg-[#0E1B1B] text-white hover:bg-black cursor-pointer"
+          } rounded-[12px] font-semibold text-[15px] flex items-center justify-center mt-3 select-none transition-colors`}
         >
           {isSubmitting ? "Verifying..." : "Login"}
         </button>

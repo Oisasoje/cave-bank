@@ -145,20 +145,21 @@ export default function TransactionsPage() {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-neutral-50 flex flex-col w-full min-h-dvh relative ${inter.className} select-none`}
+      className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-dvh relative ${inter.className} select-none`}
     >
       {/* ──── STICKY HEADER ──── */}
-      <div className="sticky top-0 z-30 bg-neutral-50">
+      <div className="sticky top-0 z-30 bg-white">
         {/* Top bar */}
         <div className="flex items-center gap-3 px-5 pt-6 pb-5">
           <button
             id="transactions-back-btn"
             onClick={() => router.back()}
-            className="w-9 h-9 rounded-full bg-white border border-neutral-200 flex items-center justify-center hover:bg-neutral-100 active:scale-95 transition-all cursor-pointer"
+            className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 active:scale-95 duration-100 transition-colors shadow-xs cursor-pointer shrink-0"
+            aria-label="Go back"
           >
             <svg
-              width="16"
-              height="16"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
               fill="none"
               stroke="#1F2937"
@@ -170,7 +171,7 @@ export default function TransactionsPage() {
             </svg>
           </button>
           <h1
-            className={`text-[17px] font-bold text-neutral-900 tracking-tight ${dm_sans.className}`}
+            className={`text-[18px] font-bold text-neutral-900 tracking-tight ${dm_sans.className}`}
           >
             Transaction History
           </h1>

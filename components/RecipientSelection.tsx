@@ -282,10 +282,10 @@ const RecipientSelection = ({
                   key={i}
                   className="flex items-center gap-3.5 py-1 animate-pulse"
                 >
-                  <div className="w-10 h-10 rounded-full bg-neutral-100 shrink-0" />
-                  <div>
-                    <div className="h-[13px] w-[110px] rounded bg-neutral-100 mb-2" />
-                    <div className="h-[11px] w-[150px] rounded bg-neutral-100" />
+                  <div className="w-10 h-10 rounded-full bg-neutral-200 shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-[13px] w-[110px] rounded bg-neutral-200" />
+                    <div className="h-[11px] w-[150px] rounded bg-neutral-200" />
                   </div>
                 </div>
               ))

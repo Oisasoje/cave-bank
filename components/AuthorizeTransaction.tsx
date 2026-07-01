@@ -97,9 +97,9 @@ const AuthorizeTransaction = ({
             return (
               <div
                 key={idx}
-                className={`w-[58px] h-[58px] rounded-[12px] bg-white border flex items-center justify-center text-[22px] font-bold transition-all ${
+                className={`w-[48px] h-[54px] rounded-[10px] bg-white border flex items-center justify-center text-[22px] font-bold transition-all ${
                   isActive
-                    ? "border-[#D2B627] ring-1 ring-[#D2B627]"
+                    ? "border-amber-500 ring-1 ring-amber-500"
                     : "border-neutral-200"
                 }`}
               >
@@ -108,9 +108,7 @@ const AuthorizeTransaction = ({
                     *
                   </span>
                 ) : isActive ? (
-                  <span className="text-neutral-600 font-light animate-blink select-none">
-                    |
-                  </span>
+                  <span className="w-[1.5px] h-[18px] bg-neutral-900 animate-blink select-none" />
                 ) : (
                   ""
                 )}
@@ -125,7 +123,7 @@ const AuthorizeTransaction = ({
         <button
           type="button"
           onClick={() => {}}
-          className="text-[#D2B627] hover:underline cursor-pointer font-bold text-[14px] mt-4 mx-auto block text-center bg-transparent border-none outline-none"
+          className="text-[#D2B627] hover:underline cursor-pointer font-semibold text-[14px] mt-4 mx-auto block text-center bg-transparent border-none outline-none"
         >
           Forgot PIN?
         </button>

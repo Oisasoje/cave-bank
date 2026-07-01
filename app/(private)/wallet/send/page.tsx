@@ -133,7 +133,7 @@ export default function SendCoinsPage() {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-[#F9F9F9] flex flex-col w-full h-dvh relative ${
+      className={`max-w-md mx-auto bg-white flex flex-col w-full h-dvh relative ${
         inter.className
       } select-none overflow-x-hidden ${
         step === 2 || step === 4 ? "overflow-hidden" : "overflow-y-auto pb-8"
@@ -141,7 +141,7 @@ export default function SendCoinsPage() {
     >
       {/* HEADER SECTION */}
       <div
-        className={`${step === 6 ? "pt-0" : "pt-6"} px-6 flex items-center justify-between bg-[#F9F9F9] sticky z-99 top-0`}
+        className={`${step === 6 ? "pt-0" : "pt-6"} px-6 flex items-center justify-between bg-white sticky z-99 top-0`}
       >
         {step !== 6 && (
           <button

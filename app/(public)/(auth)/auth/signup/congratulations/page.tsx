@@ -100,7 +100,7 @@ export default function CongratulationsPage() {
             await new Promise((resolve) => setTimeout(resolve, 250));
             window.location.href = "/wallet";
           }}
-          className={`w-full h-[54px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center select-none transition-colors border border-neutral-200 bg-neutral-50 text-neutral-600 hover:bg-neutral-100 cursor-pointer`}
+          className={`w-full h-[52px] ${dm_sans.className} rounded-[12px] font-semibold text-[15px] flex items-center justify-center select-none transition-colors border border-neutral-200 bg-neutral-50 text-neutral-600 hover:bg-neutral-100 cursor-pointer`}
         >
           Go to Wallet
         </button>

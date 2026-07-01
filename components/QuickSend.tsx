@@ -73,28 +73,16 @@ const QuickSend = ({
         </div>
 
         {/* Contacts Slider */}
-        {isLoading ? (
-          <div className="">
-            <Shimmer className={`h-[11px] w-[80px] rounded mb-3.5`} />
-            <div className="flex gap-4 overflow-hidden pb-1">
-              {/* Add button */}
-              <div className="flex flex-col items-center gap-2 shrink-0">
-                <Shimmer className="w-[58px] h-[58px] rounded-full" />
-                <Shimmer className="w-[28px] h-[10px] rounded" />
-              </div>
-              {/* Contacts */}
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="flex flex-col items-center gap-2 shrink-0"
-                >
-                  <Shimmer className="w-[58px] h-[58px] rounded-full" />
-                  <Shimmer className="w-[44px] h-[10px] rounded" />
-                </div>
-              ))}
+        {isLoading &&
+          [1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center gap-2 shrink-0 animate-pulse"
+            >
+              <div className="w-[58px] h-[58px] rounded-full bg-neutral-200" />
+              <div className="w-[44px] h-[10px] rounded bg-neutral-200" />
             </div>
-          </div>
-        ) : null}
+          ))}
         {contacts?.map((contact) => {
           const id = contact.id;
           const fullName = contact.name;

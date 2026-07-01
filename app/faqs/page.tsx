@@ -64,13 +64,13 @@ export default function FAQsPage() {
 
   return (
     <div
-      className={`max-w-md mx-auto bg-neutral-50 min-h-dvh flex flex-col w-full pb-12 select-none ${inter.className}`}
+      className={`max-w-md mx-auto bg-white min-h-dvh flex flex-col w-full pb-12 select-none ${inter.className}`}
     >
       {/* ── Header ─────────────────────────────────────────────────── */}
-      <div className="sticky top-0 z-10 bg-neutral-50 px-6 pt-6 pb-3 flex items-center justify-between">
+      <div className="sticky top-0 z-10 bg-white px-6 pt-6 pb-3 flex items-center gap-3">
         <button
           onClick={() => router.back()}
-          className="cursor-pointer active:scale-90 transition-all text-neutral-800 p-1 -ml-1 flex items-center justify-center"
+          className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 active:scale-95 duration-100 transition-colors shadow-xs cursor-pointer shrink-0"
           aria-label="Go back"
         >
           <svg
@@ -78,7 +78,7 @@ export default function FAQsPage() {
             height="20"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
+            stroke="#1F2937"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -87,11 +87,10 @@ export default function FAQsPage() {
           </svg>
         </button>
         <h1
-          className={`text-[17px] font-bold text-neutral-800 absolute left-1/2 -translate-x-1/2 ${dm_sans.className}`}
+          className={`text-[18px] font-bold text-neutral-800 ${dm_sans.className}`}
         >
           FAQs
         </h1>
-        <div className="w-5" />
       </div>
 
       <div className="flex-1 flex flex-col px-6 mt-4">
@@ -152,7 +151,7 @@ export default function FAQsPage() {
           <Link
             href="https://wa.link/4u169w"
             target="_blank"
-            className="h-[48px] bg-[#0E1719] hover:bg-[#18262a] active:scale-98 text-white rounded-[12px] font-bold text-[14px] px-8 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm mb-4"
+            className="w-full h-[52px] bg-[#0E1B1B] hover:bg-black active:scale-98 text-white rounded-[12px] font-bold text-[14px] px-8 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm mb-4"
           >
             Chat with Us
           </Link>

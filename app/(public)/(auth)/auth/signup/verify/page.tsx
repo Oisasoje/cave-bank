@@ -128,19 +128,20 @@ export default function VerifySignup() {
         <div className="flex justify-between items-center mt-5">
           <button
             onClick={() => router.back()}
-            className="w-8 h-8 flex items-center justify-start text-neutral-800 hover:text-black cursor-pointer transition-colors"
+            className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 active:scale-95 duration-100 transition-colors cursor-pointer shrink-0 shadow-xs"
+            aria-label="Go back"
           >
             <svg
               width="20"
               height="20"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="currentColor"
+              stroke="#1F2937"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path d="M15 18l-6-6 6-6" />
+              <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
           <button
@@ -217,7 +218,7 @@ export default function VerifySignup() {
                 key={index}
                 className={`w-[48px] h-[54px] bg-[#F3F4F6] rounded-[10px] flex items-center justify-center transition-all ${
                   isCurrent && focus
-                    ? "border-2 border-black bg-white"
+                    ? "border-2 border-amber-500 ring-1 ring-amber-500 bg-white"
                     : digit
                       ? "border border-neutral-300 bg-white"
                       : "border border-neutral-200"
@@ -229,7 +230,7 @@ export default function VerifySignup() {
                   {digit}
                 </span>
                 {isCurrent && focus && (
-                  <span className="w-[1.5px] h-[20px] bg-neutral-900 ml-0.5 animate-cursor-blink" />
+                  <span className="w-[1.5px] h-[20px] bg-neutral-900 ml-0.5 animate-blink" />
                 )}
               </div>
             );
@@ -237,7 +238,7 @@ export default function VerifySignup() {
         </div>
 
         {/* Error Messaging */}
-        <div className="h-6 mt-2 flex items-center">
+        <div className="h-5 mt-3 flex items-center">
           {errors && (
             <span className="text-[12px] font-semibold text-red-500 flex items-center gap-1">
               <svg
@@ -267,9 +268,9 @@ export default function VerifySignup() {
               e.stopPropagation();
               handleResend();
             }}
-            className={`w-full h-[48px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center select-none transition-colors ${
+            className={`w-full h-[52px] ${dm_sans.className} rounded-[12px] font-semibold text-[15px] flex items-center justify-center select-none transition-colors ${
               timer > 0 || isSubmitting
-                ? "bg-[#EAEAEA] text-neutral-400 cursor-not-allowed"
+                ? "bg-neutral-200 text-neutral-400 cursor-not-allowed"
                 : "bg-[#0E1B1B] text-white hover:bg-black cursor-pointer"
             }`}
           >
@@ -282,45 +283,8 @@ export default function VerifySignup() {
         </div>
       </div>
 
-      {/* Styled Inline Blinking Cursor style tag */}
-      <style jsx global>{`
-        @keyframes cursor-blink {
-          0%,
-          100% {
-            opacity: 1;
-          }
-          50% {
-            opacity: 0;
-          }
-        }
-        .animate-cursor-blink {
-          animation: cursor-blink 1s step-end infinite;
-        }
-      `}</style>
-
       {/* On-screen Custom iOS-style Numeric Keyboard */}
-      {focus && (
-        <div
-          className="fixed bottom-0 left-0 right-0 w-full bg-[#D1D5DB] border-t border-neutral-300 pb-[calc(env(safe-area-inset-bottom)+8px)] select-none z-50 transition-transform duration-200"
-          onClick={(e) => e.stopPropagation()}
-        >
-          {/* Keyboard Header */}
-          <div className="flex justify-between items-center px-4 py-2 bg-[#EFEFF4]/85 border-b border-neutral-300">
-            <span className="text-[11px] font-semibold text-neutral-500 uppercase tracking-widest">
-              Security Entry
-            </span>
-            <button
-              onClick={() => setFocus(false)}
-              className="text-[15px] font-semibold text-neutral-800 hover:text-black cursor-pointer"
-            >
-              Close
-            </button>
-          </div>
-
-          {/* Keyboard Keys Grid */}
-          {focus && <Keyboard onKey={handleKey} onDelete={handleDelete} />}
-        </div>
-      )}
+      {focus && <Keyboard onKey={handleKey} onDelete={handleDelete} />}
     </div>
   );
 }

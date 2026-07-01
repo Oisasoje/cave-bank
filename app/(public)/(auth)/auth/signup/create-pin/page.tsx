@@ -123,19 +123,20 @@ export default function CreatePin() {
         <div className="flex justify-between items-center mt-5">
           <button
             onClick={() => router.back()}
-            className="w-8 h-8 flex items-center justify-start text-neutral-800 hover:text-black cursor-pointer transition-colors"
+            className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 active:scale-95 duration-100 transition-colors cursor-pointer shrink-0 shadow-xs"
+            aria-label="Go back"
           >
             <svg
               width="20"
               height="20"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="currentColor"
+              stroke="#1F2937"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path d="M15 18l-6-6 6-6" />
+              <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
           <button
@@ -154,7 +155,7 @@ export default function CreatePin() {
             Create Your Pin
           </h1>
           <p
-            className={`text-[15px] text-neutral-500 mt-2 font-normal ${dm_sans.className}`}
+            className={`text-[15px] text-neutral-500 mt-2 font-normal leading-relaxed ${dm_sans.className}`}
           >
             Create a 4 digit pin you will use to login
           </p>
@@ -175,7 +176,7 @@ export default function CreatePin() {
               }}
               className={`flex items-center justify-between border rounded-[10px] px-4 h-[48px] bg-white cursor-pointer transition-all ${
                 activeField === "pin" && focus
-                  ? "border-amber-500 shadow-[0_0_0_1px_#F59E0B]"
+                  ? "border-amber-500 ring-1 ring-amber-500"
                   : "border-neutral-200 hover:border-neutral-300"
               }`}
             >
@@ -189,8 +190,7 @@ export default function CreatePin() {
                     </span>
                     {activeField === "pin" && focus && (
                       <span
-                        className="w-[1.5px] h-[18px] bg-neutral-900 ml-1"
-                        style={{ animation: "blink 1s step-end infinite" }}
+                        className="w-[1.5px] h-[18px] bg-neutral-900 ml-1 animate-blink"
                       />
                     )}
                   </div>
@@ -204,10 +204,7 @@ export default function CreatePin() {
                           pin.length === 0 &&
                           i === 0 && (
                             <span
-                              className="w-[1.5px] h-[18px] bg-neutral-900"
-                              style={{
-                                animation: "blink 1s step-end infinite",
-                              }}
+                              className="w-[1.5px] h-[18px] bg-neutral-900 animate-blink"
                             />
                           )}
                         <span
@@ -221,10 +218,7 @@ export default function CreatePin() {
                           pin.length > 0 &&
                           i === pin.length - 1 && (
                             <span
-                              className="w-[1.5px] h-[18px] bg-neutral-900"
-                              style={{
-                                animation: "blink 1s step-end infinite",
-                              }}
+                              className="w-[1.5px] h-[18px] bg-neutral-900 animate-blink"
                             />
                           )}
                       </React.Fragment>
@@ -238,7 +232,7 @@ export default function CreatePin() {
                   e.stopPropagation();
                   setShowPin(!showPin);
                 }}
-                className="text-neutral-400 hover:text-neutral-600 transition-colors p-1"
+                className="text-neutral-400 hover:text-neutral-600 transition-colors p-1 cursor-pointer"
               >
                 {/* Eye Icon */}
                 <svg
@@ -282,7 +276,7 @@ export default function CreatePin() {
               }}
               className={`flex items-center justify-between border rounded-[10px] px-4 h-[48px] bg-white cursor-pointer transition-all ${
                 activeField === "confirmPin" && focus
-                  ? "border-amber-500 shadow-[0_0_0_1px_#F59E0B]"
+                  ? "border-amber-500 ring-1 ring-amber-500"
                   : "border-neutral-200 hover:border-neutral-300"
               }`}
             >
@@ -296,8 +290,7 @@ export default function CreatePin() {
                     </span>
                     {activeField === "confirmPin" && focus && (
                       <span
-                        className="w-[1.5px] h-[18px] bg-neutral-900 ml-1"
-                        style={{ animation: "blink 1s step-end infinite" }}
+                        className="w-[1.5px] h-[18px] bg-neutral-900 ml-1 animate-blink"
                       />
                     )}
                   </div>
@@ -311,10 +304,7 @@ export default function CreatePin() {
                           confirmPin.length === 0 &&
                           i === 0 && (
                             <span
-                              className="w-[1.5px] h-[18px] bg-neutral-900"
-                              style={{
-                                animation: "blink 1s step-end infinite",
-                              }}
+                              className="w-[1.5px] h-[18px] bg-neutral-900 animate-blink"
                             />
                           )}
                         <span
@@ -328,10 +318,7 @@ export default function CreatePin() {
                           confirmPin.length > 0 &&
                           i === confirmPin.length - 1 && (
                             <span
-                              className="w-[1.5px] h-[18px] bg-neutral-900"
-                              style={{
-                                animation: "blink 1s step-end infinite",
-                              }}
+                              className="w-[1.5px] h-[18px] bg-neutral-900 animate-blink"
                             />
                           )}
                       </React.Fragment>
@@ -345,7 +332,7 @@ export default function CreatePin() {
                   e.stopPropagation();
                   setShowConfirmPin(!showConfirmPin);
                 }}
-                className="text-neutral-400 hover:text-neutral-600 transition-colors p-1"
+                className="text-neutral-400 hover:text-neutral-600 transition-colors p-1 cursor-pointer"
               >
                 {/* Eye Icon */}
                 <svg
@@ -378,7 +365,7 @@ export default function CreatePin() {
         </div>
 
         {/* Error message */}
-        <div className="h-6 mt-4 flex items-center">
+        <div className="h-5 mt-3 flex items-center">
           {errors && (
             <span className="text-[12px] font-semibold text-red-500 flex items-center gap-1">
               <svg
@@ -413,7 +400,7 @@ export default function CreatePin() {
           <button
             onClick={handleSubmit}
             disabled={isDisabled}
-            className={`w-full h-[54px] ${dm_sans.className} rounded-[10px] font-semibold text-[15px] flex items-center justify-center select-none transition-colors ${
+            className={`w-full h-[52px] ${dm_sans.className} rounded-[12px] font-semibold text-[15px] flex items-center justify-center select-none transition-colors ${
               !isDisabled
                 ? "bg-[#0E1B1B] text-white hover:bg-black cursor-pointer"
                 : "bg-neutral-200 text-neutral-400 cursor-not-allowed"

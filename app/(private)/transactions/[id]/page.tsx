@@ -60,14 +60,14 @@ export default function TransactionDetailsPage({
 
   return (
     <div
-      className={`max-w-md mx-auto bg-neutral-50 flex flex-col w-full min-h-dvh relative text-neutral-800 pb-6 select-none ${dm_sans.className}`}
+      className={`max-w-md mx-auto bg-white flex flex-col w-full min-h-dvh relative text-neutral-800 pb-6 select-none ${dm_sans.className}`}
     >
       {/* ──── STICKY HEADER ──── */}
-      <div className="sticky top-0 z-30 bg-neutral-50 px-5 pt-6 pb-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="sticky top-0 z-30 bg-white px-5 pt-6 pb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => router.back()}
-            className="text-[16px] font-medium text-neutral-500 hover:text-neutral-900 cursor-pointer duration-100"
+            className="w-[42px] h-[42px] bg-white rounded-full border border-neutral-200 flex items-center justify-center hover:bg-neutral-50 active:scale-95 duration-100 transition-colors shadow-xs cursor-pointer shrink-0"
             aria-label="Go back"
           >
             <svg
@@ -75,7 +75,7 @@ export default function TransactionDetailsPage({
               height="20"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="currentColor"
+              stroke="#1F2937"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -83,9 +83,9 @@ export default function TransactionDetailsPage({
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
-          <span className="text-[17px] font-bold text-neutral-800 -ml-1">
+          <h1 className="text-[18px] font-bold text-neutral-800">
             Transaction Details
-          </span>
+          </h1>
         </div>
       </div>
 
@@ -219,16 +219,16 @@ export default function TransactionDetailsPage({
       </div>
 
       {/* ──── BOTTOM BUTTONS ──── */}
-      <div className="px-5 pt-4 pb-6 flex gap-4 shrink-0 bg-neutral-50">
+      <div className="px-5 pt-4 pb-6 flex gap-4 shrink-0 bg-white">
         <button
           type="button"
-          className="flex-1 h-[50px] rounded-full bg-neutral-100 border border-neutral-200/60 text-neutral-700 font-bold text-[14px] hover:bg-neutral-200/50 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center"
+          className="flex-1 h-[52px] rounded-[12px] bg-neutral-100 border border-neutral-200/60 text-neutral-700 font-bold text-[14px] hover:bg-neutral-200/50 active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center"
         >
           Report Issue
         </button>
         <button
           type="button"
-          className="flex-1 h-[50px] rounded-full bg-[#0E1719] text-white font-bold text-[14px] hover:bg-[#18262a] active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center"
+          className="flex-1 h-[52px] rounded-[12px] bg-[#0E1B1B] text-white font-bold text-[14px] hover:bg-black active:scale-[0.98] transition-all cursor-pointer flex items-center justify-center"
         >
           Share Receipt
         </button>
