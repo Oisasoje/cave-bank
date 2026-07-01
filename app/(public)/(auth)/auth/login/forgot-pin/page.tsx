@@ -283,14 +283,14 @@ function StepOne({
         </p>
 
         {/* OTP Input Slots */}
-        <div className="flex gap-2.5 mt-8 justify-between">
+        <div className="w-full max-w-[338px] flex gap-2.5 mt-8 justify-between">
           {[0, 1, 2, 3, 4, 5].map((idx) => {
             const isFilled = code.length > idx;
             const isBoxActive = code.length === idx;
             return (
               <div
                 key={idx}
-                className={`w-[48px] h-[54px] bg-[#F3F4F6] rounded-[10px] flex items-center justify-center transition-all ${
+                className={`flex-1 aspect-48/54 max-w-[48px] min-w-0 bg-[#F3F4F6] rounded-[10px] flex items-center justify-center transition-all ${
                   isBoxActive
                     ? "border-2 border-amber-500 ring-1 ring-amber-500 bg-white"
                     : isFilled

@@ -222,14 +222,14 @@ function StepOne({
         </p>
 
         {/* 4-box PIN input */}
-        <div className="flex gap-2.5 mt-8 justify-center">
+        <div className="w-full max-w-[222px] flex gap-2.5 mt-8 justify-center">
           {[0, 1, 2, 3].map((idx) => {
             const isFilled = pin.length > idx;
             const isBoxActive = pin.length === idx;
             return (
               <div
                 key={idx}
-                className={`w-[48px] h-[54px] bg-[#F3F4F6] rounded-[10px] flex items-center justify-center transition-all ${
+                className={`flex-1 aspect-48/54 max-w-[48px] min-w-0 bg-[#F3F4F6] rounded-[10px] flex items-center justify-center transition-all ${
                   error
                     ? "border-2 border-red-500 ring-1 ring-red-500 bg-white"
                     : isBoxActive

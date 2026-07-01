@@ -204,7 +204,7 @@ export default function VerifySignup() {
 
         {/* OTP Input Slots */}
         <div
-          className="flex gap-2.5 mt-8 justify-between cursor-pointer"
+          className="w-full max-w-[338px] mx-auto flex gap-2.5 mt-8 justify-between cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             setFocus(true);
@@ -216,7 +216,7 @@ export default function VerifySignup() {
             return (
               <div
                 key={index}
-                className={`w-[48px] h-[54px] bg-[#F3F4F6] rounded-[10px] flex items-center justify-center transition-all ${
+                className={`flex-1 aspect-48/54 max-w-[48px] min-w-0 bg-[#F3F4F6] rounded-[10px] flex items-center justify-center transition-all ${
                   isCurrent && focus
                     ? "border-2 border-amber-500 ring-1 ring-amber-500 bg-white"
                     : digit
