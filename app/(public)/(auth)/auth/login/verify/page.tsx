@@ -4,6 +4,7 @@ import Loading from "@/components/Loading";
 import generateUserData from "@/lib/getUserData";
 import { loginVerify } from "@/services/auth";
 import { Inter, DM_Sans, Space_Mono } from "next/font/google";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -143,9 +144,7 @@ const Verify = () => {
               </span>
               {/* Fake cursor */}
               {focus && (
-                <span
-                  className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5 animate-blink"
-                />
+                <span className="w-[1.5px] h-[18px] bg-neutral-900 ml-0.5 animate-blink" />
               )}
             </div>
           </div>
@@ -214,11 +213,12 @@ const Verify = () => {
 
         {/* Forgot PIN Link */}
         <div className="flex justify-end">
-          <span
+          <Link
+            href="/auth/login/forgot-pin"
             className={`text-[#D2B627] mt-3 text-[13px] ${dm_sans.className} font-semibold hover:underline cursor-pointer`}
           >
             Forgot PIN?
-          </span>
+          </Link>
         </div>
 
         {/* Login Button */}

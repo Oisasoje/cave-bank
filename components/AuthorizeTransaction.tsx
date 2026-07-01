@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getUser } from "@/services/auth";
 import Loading from "./Loading";
 import { queryClient } from "@/lib/queryClient";
+import Link from "next/link";
 
 const AuthorizeTransaction = ({
   pin,
@@ -120,13 +121,12 @@ const AuthorizeTransaction = ({
         <span className="h-10 mt-5 text-red-500 text-sm">{error}</span>
 
         {/* Forgot PIN Link */}
-        <button
-          type="button"
-          onClick={() => {}}
+        <Link
+          href="/account/reset-pin"
           className="text-[#D2B627] hover:underline cursor-pointer font-semibold text-[14px] mt-4 mx-auto block text-center bg-transparent border-none outline-none"
         >
           Forgot PIN?
-        </button>
+        </Link>
       </div>
 
       {/* Fixed Keyboard */}

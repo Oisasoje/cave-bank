@@ -200,42 +200,59 @@ export default function AccountPage() {
       <div className="flex-1 px-6">
         {/* ── Profile card ─────────────────────────────────────────── */}
         <div className="relative grainy bg-[#ffdf41] rounded-[22px] p-5 shadow-sm overflow-hidden">
-          <div className="flex items-center gap-4">
-            {/* Avatar circle */}
-            <div className="w-[70px] h-[70px] rounded-full border-[3px] border-black/20 bg-neutral-800 flex items-center justify-center font-bold text-[22px] text-white shrink-0 select-none overflow-hidden shadow-sm">
-              {name ? getInitials(name) : "?"}
+          {!me ? (
+            /* Skeleton */
+            <div className="flex items-center gap-4">
+              <div className="w-[70px] h-[70px] rounded-full bg-black/10 shrink-0 animate-pulse" />
+              <div className="flex-1 min-w-0 pr-6 space-y-2">
+                <div className="h-4 w-32 bg-black/10 rounded-full animate-pulse" />
+                <div className="h-3 w-24 bg-black/10 rounded-full animate-pulse" />
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="h-5 w-20 bg-black/10 rounded-full animate-pulse" />
+                  <div className="h-5 w-24 bg-black/10 rounded-full animate-pulse" />
+                </div>
+                <div className="h-3 w-28 bg-black/10 rounded-full animate-pulse" />
+              </div>
             </div>
-
-            {/* Info */}
-            <div className="flex-1 min-w-0 pr-6">
-              <p
-                className={`text-[17px] font-bold text-black leading-tight truncate ${dm_sans.className}`}
-              >
-                {name || "—"}
-              </p>
-              {institution && (
-                <p className="text-[12px] text-black/60 font-semibold mt-0.5 truncate">
-                  {institution}
-                </p>
-              )}
-
-              {/* Tribe pills */}
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
-                <span className="px-2.5 py-0.5 rounded-full border border-black/30 text-[11px] font-semibold text-black/80 bg-transparent">
-                  Tech tribe
-                </span>
-                <span className="px-2.5 py-0.5 rounded-full border border-black/20 text-[11px] font-semibold text-black/70 bg-[#D0BD21]/30">
-                  Creative Tribe
-                </span>
+          ) : (
+            /* Real content */
+            <div className="flex items-center gap-4">
+              {/* Avatar circle */}
+              <div className="w-[70px] h-[70px] rounded-full border-[3px] border-black/20 bg-neutral-800 flex items-center justify-center font-bold text-[22px] text-white shrink-0 select-none overflow-hidden shadow-sm">
+                {name ? getInitials(name) : "?"}
               </div>
 
-              {memberSince && (
-                <p className="text-[11px] text-black/55 font-semibold mt-2">
-                  Member since {memberSince}
+              {/* Info */}
+              <div className="flex-1 min-w-0 pr-6">
+                <p
+                  className={`text-[17px] font-bold text-black leading-tight truncate ${dm_sans.className}`}
+                >
+                  {name || "—"}
                 </p>
-              )}
+                {institution && (
+                  <p className="text-[12px] text-black/60 font-semibold mt-0.5 truncate">
+                    {institution}
+                  </p>
+                )}
+
+                {/* Tribe pills */}
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  <span className="px-2.5 py-0.5 rounded-full border border-black/30 text-[11px] font-semibold text-black/80 bg-transparent">
+                    Tech tribe
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full border border-black/20 text-[11px] font-semibold text-black/70 bg-[#D0BD21]/30">
+                    Creative Tribe
+                  </span>
+                </div>
+
+                {memberSince && (
+                  <p className="text-[11px] text-black/55 font-semibold mt-2">
+                    Member since {memberSince}
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* ── Notifications ─────────────────────────────────────────── */}
