@@ -25,16 +25,6 @@ const dm_sans = DM_Sans({
 });
 const space_mono = Space_Mono({ subsets: ["latin"], weight: ["400", "700"] });
 
-function maskEmail(email: string) {
-  if (!email) return "your email";
-  const [local, domain] = email.split("@");
-  if (!local || !domain) return email;
-  if (local.length <= 2) {
-    return `${local}***@${domain}`;
-  }
-  return `${local.slice(0, 2)}*******@${domain}`;
-}
-
 // ─── Input Row Component (for step 2) ────────────────────────────────────────
 function PinBar({
   label,
@@ -277,8 +267,8 @@ function StepOne({
         >
           Enter the code we sent to
           <br />
-          <span className="text-neutral-850 font-semibold">
-            {maskEmail(email)}
+          <span className="text-neutral-850 text-sm font-semibold">
+            {email}
           </span>
         </p>
 
@@ -301,9 +291,7 @@ function StepOne({
                     {code[idx]}
                   </span>
                 ) : isBoxActive ? (
-                  <span
-                    className="w-[1.5px] h-[18px] bg-neutral-900 animate-blink"
-                  />
+                  <span className="w-[1.5px] h-[18px] bg-neutral-900 animate-blink" />
                 ) : null}
               </div>
             );

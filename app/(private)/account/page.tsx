@@ -132,21 +132,38 @@ export default function AccountPage() {
     queryFn: getUser,
   });
 
+  const getMonth = (month: number): string => {
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    return months[month - 1] ?? "Invalid month";
+  };
+
   // redirect if unauthenticated
   useEffect(() => {
     if (meError) router.push("/auth/login/start");
   }, [meError, router]);
 
   const name: string = me?.data?.user?.name ?? "";
-  const institution: string = me?.data?.user?.institution ?? "";
-  const memberSince: string = me?.data?.user?.created_at
-    ? new Date(me.data.user.created_at).toLocaleDateString("en-US", {
-        month: "short",
-        year: "numeric",
-      })
-    : "";
 
-  const userId = me?.data.user.id;
+  const email = me?.data?.user?.email ?? "";
+
+  const monthJoined = getMonth(me?.data?.monthJoined);
+
+  const dateJoined = `${monthJoined} ${me?.data?.yearJoined}`;
+
+  const userId = me?.data?.user?.id;
 
   const handleResetPinStart = async () => {
     try {
@@ -201,55 +218,52 @@ export default function AccountPage() {
         {/* ── Profile card ─────────────────────────────────────────── */}
         <div className="relative grainy bg-[#ffdf41] rounded-[22px] p-5 shadow-sm overflow-hidden">
           {!me ? (
-            /* Skeleton */
+            /* Skeleton — mirrors real content exactly */
             <div className="flex items-center gap-4">
+              {/* Avatar */}
               <div className="w-[70px] h-[70px] rounded-full bg-black/10 shrink-0 animate-pulse" />
-              <div className="flex-1 min-w-0 pr-6 space-y-2">
-                <div className="h-4 w-32 bg-black/10 rounded-full animate-pulse" />
-                <div className="h-3 w-24 bg-black/10 rounded-full animate-pulse" />
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="h-5 w-20 bg-black/10 rounded-full animate-pulse" />
-                  <div className="h-5 w-24 bg-black/10 rounded-full animate-pulse" />
-                </div>
-                <div className="h-3 w-28 bg-black/10 rounded-full animate-pulse" />
+
+              {/* Info */}
+              <div className="flex-1 min-w-0">
+                {/* Name */}
+                <div className="h-[22px] w-36 bg-black/10 rounded-full animate-pulse" />
+                {/* Email */}
+                <div className="h-[16px] w-44 bg-black/10 rounded-full animate-pulse mt-[3px]" />
+                {/* Divider */}
+                <div className="h-px w-full bg-black/10 my-2.5" />
+                {/* Caveman since */}
+                <div className="h-[14px] w-28 bg-black/10 rounded-full animate-pulse" />
               </div>
             </div>
           ) : (
             /* Real content */
             <div className="flex items-center gap-4">
-              {/* Avatar circle */}
+              {/* Avatar */}
               <div className="w-[70px] h-[70px] rounded-full border-[3px] border-black/20 bg-neutral-800 flex items-center justify-center font-bold text-[22px] text-white shrink-0 select-none overflow-hidden shadow-sm">
                 {name ? getInitials(name) : "?"}
               </div>
 
               {/* Info */}
-              <div className="flex-1 min-w-0 pr-6">
+              <div className="flex-1 min-w-0">
                 <p
                   className={`text-[17px] font-bold text-black leading-tight truncate ${dm_sans.className}`}
                 >
                   {name || "—"}
                 </p>
-                {institution && (
-                  <p className="text-[12px] text-black/60 font-semibold mt-0.5 truncate">
-                    {institution}
-                  </p>
-                )}
 
-                {/* Tribe pills */}
-                <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  <span className="px-2.5 py-0.5 rounded-full border border-black/30 text-[11px] font-semibold text-black/80 bg-transparent">
-                    Tech tribe
-                  </span>
-                  <span className="px-2.5 py-0.5 rounded-full border border-black/20 text-[11px] font-semibold text-black/70 bg-[#D0BD21]/30">
-                    Creative Tribe
-                  </span>
-                </div>
+                <p
+                  className={`text-[12px] text-black/60 font-medium mt-[3px] truncate ${dm_sans.className}`}
+                >
+                  {email}
+                </p>
 
-                {memberSince && (
-                  <p className="text-[11px] text-black/55 font-semibold mt-2">
-                    Member since {memberSince}
-                  </p>
-                )}
+                <div className="h-px w-full bg-black/10 my-2.5" />
+
+                <p
+                  className={`text-[11px] text-black/50 font-semibold ${dm_sans.className}`}
+                >
+                  Caveman since {dateJoined}
+                </p>
               </div>
             </div>
           )}
